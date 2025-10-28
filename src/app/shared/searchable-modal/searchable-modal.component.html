@@ -1,0 +1,129 @@
+<div class="modal-header">
+  <div class="d-flex flex-column w-100 justify-content-start">
+    <h3 class="mb-0">{{ title }}</h3>
+    <div [ngClass]="{ 'mt-4': title !== '' }" class="">
+      <div class="flex-fill">
+        <div class="form-group">
+          <div
+            class="input-group input-group-merge"
+            [ngClass]="{ focused: focus === true }"
+          >
+            <div *ngIf="prefixIcon" class="input-group-prepend">
+              <span class="input-group-text">
+                <i class="{{ prefixIcon }}"> </i>
+              </span>
+            </div>
+
+            <input
+              (focus)="focus = true"
+              (blur)="focus = false"
+              value="{{ searchInputValue }}"
+              placeholder="{{ searchPlaceholder }}"
+              (keyup)="debounceValueChange($event)"
+              class="form-control"
+              placeholder="Phone number"
+              type="text"
+            />
+
+            <div
+              *ngIf="suffixIcon"
+              class="input-group-append"
+              [ngClass]="{ focused: focus === true }"
+            >
+              <span class="input-group-text">
+                <i class="{{ suffixIcon }}"> </i>
+              </span>
+            </div>
+          </div>
+
+          <div class="row my-3">
+            <div *ngIf="!isLoading && isFetched" class="col-lg-12">
+              <small *ngIf="totalLength > 0" class="mb-0">
+                Nombre de bénéficiaires trouvés : {{ totalLength }}
+              </small>
+              <small *ngIf="totalLength == 0" class="ml-4 mb-0">
+                Liste vide, aucun element trouvé
+              </small>
+            </div>
+
+            <div
+              *ngIf="isLoading"
+              class="spinner-border text-primary mt-4 ml-4"
+              role="status"
+            ></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div
+  style="padding: 0px !important; height: 50vh; overflow-y: auto !important"
+  class="modal-body"
+>
+  <div class="px-4">
+    <ul class="list-group list-group-flush list my--3">
+      <li
+        style="cursor: pointer"
+        *ngFor="let emp of employees"
+        class="list-group-item list-group-item-action px-0"
+      >
+        <div (click)="moveToDetails(emp.id)" class="row align-items-center">
+          <div class="col-auto mt-2 ml-2">
+            <i class="ni ni-circle-08 ni-lg"> </i>
+          </div>
+
+          <div class="col">
+            <small> Prénom et nom: </small>
+
+            <h5 class="mb-0">{{ emp.fullname }}</h5>
+          </div>
+
+          <div class="col">
+            <small> Adresse: </small>
+
+            <h5 class="mb-0">{{ emp.activeAddress }}</h5>
+          </div>
+          <div class="col">
+            <small> Temps départ/arrivée </small>
+
+            <h5 class="mb-0">
+              {{ emp.departureTime }} - {{ emp.arrivalTime }}
+            </h5>
+          </div>
+
+          <div class="col">
+            <small> Téléphone: </small>
+
+            <h5 class="mb-0">{{ emp.phoneNumber }}</h5>
+          </div>
+
+          <div class="col">
+            <small> Matricule: </small>
+
+            <h5 class="mb-0">{{ emp.employeeId }}</h5>
+          </div>
+
+          <div class="col">
+            <small> Groupe: </small>
+
+            <h5 class="mb-0">{{ emp.group }}</h5>
+          </div>
+
+          <div class="col">
+            <small> Site: </small>
+
+            <h5 class="mb-0">{{ emp.site }}</h5>
+          </div>
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div class="modal-footer d-flex justify-content-between">
+  <div class="d-flex w-100 flex-wrap align-content-stretch justify-content-end">
+    <button class="btn btn-secondary" (click)="onCancel()">Annuler</button>
+  </div>
+</div>

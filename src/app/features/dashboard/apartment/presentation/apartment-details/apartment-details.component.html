@@ -1,0 +1,419 @@
+<div class="card">
+  <div class="card-header">
+    <div class="row align-items-center">
+      <div class="col-8">
+        <h3 class="mb-0">Détails du local</h3>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-body">
+    <div class="pl-lg-4">
+      <div class="row">
+        <div class="col-lg-3">
+          <div class="form-group">
+            <h5 class="card-title text-uppercase text-muted mb-0">Matricule</h5>
+
+            <h5 class="h2 font-weight-bold mb-0 mt-1">
+              {{ apartmentDetails?.matricule }}
+            </h5>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-3">
+          <div class="form-group">
+            <h5 class="card-title text-uppercase text-muted mb-0">Adresse</h5>
+
+            <h5 class="h2 font-weight-bold mb-0 mt-1">
+              {{ apartmentDetails?.address }}
+            </h5>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-lg-3">
+          <div class="form-group">
+            <h5 class="card-title text-uppercase text-muted mb-0">Type</h5>
+
+            <h5 class="h2 font-weight-bold mb-0 mt-1">
+              {{ apartmentDetails?.type }}
+            </h5>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-lg-3">
+          <div class="form-group">
+            <h5 class="card-title text-uppercase text-muted mb-0">Nb piéces</h5>
+
+            <h5 class="h2 font-weight-bold mb-0 mt-1">
+              S+{{ apartmentDetails?.rooms }}
+            </h5>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-3">
+          <div class="form-group">
+            <h5 class="card-title text-uppercase text-muted mb-0">Bien</h5>
+
+            <h5 class="h2 font-weight-bold mb-0 mt-1">
+              {{ apartmentDetails?.property }}
+            </h5>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-3">
+          <div class="form-group">
+            <h5 class="card-title text-uppercase text-muted mb-0">
+              Propriétaire
+            </h5>
+
+            <h5 class="h2 font-weight-bold mb-0 mt-1">
+              {{ apartmentDetails?.owner }}
+            </h5>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <div class="row align-items-center">
+      <div class="col-8">
+        <h3 class="mb-0">Historique des paiements</h3>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-body">
+    <div class="row mb-3 mt-3">
+      <table class="table align-items-center table-flush table-hover">
+        <thead>
+          <tr>
+            <th scope="col">Matricule du contrat</th>
+            <th scope="col">Locataire</th>
+            <th scope="col">Montant payé en DT</th>
+            <th scope="col">Méthode</th>
+            <th scope="col">Type</th>
+            <th scope="col">Catégorie</th>
+            <th scope="col">Fréquence de paiement</th>
+            <th scope="col">Payé le</th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <div
+          *ngIf="isLoadingFetchingPayments"
+          class="spinner-border text-primary mt-4 ml-4"
+          role="status"
+        ></div>
+        <div
+          *ngIf="payments.length === 0 && !isLoadingFetchingPayments"
+          class=""
+        >
+          <p class="ml-4 mb-0">Liste vide, aucun element trouvé.</p>
+        </div>
+        <tbody>
+          <tr *ngFor="let payment of payments">
+            <td>
+              <h4>{{ payment.agreement }}</h4>
+            </td>
+            <td>
+              <h4>{{ payment.tenant }}</h4>
+            </td>
+            <td>
+              <h4>{{ payment.amount }} DT</h4>
+            </td>
+            <td>
+              <h4>{{ payment.method }}</h4>
+            </td>
+
+            <td>
+              <div class="col-auto">
+                <span
+                  *ngIf="payment.type == 'income'"
+                  class="badge badge-lg badge-success"
+                >
+                  Recette
+                </span>
+
+                <span
+                  *ngIf="payment.type == 'expense'"
+                  class="badge badge-lg badge-danger"
+                >
+                  Dépense
+                </span>
+              </div>
+            </td>
+            <td>
+              <h4>{{ payment.category }}</h4>
+            </td>
+
+            <td>
+              <h4>{{ payment.payementFrequency }}</h4>
+            </td>
+            <td>
+              <h4>{{ payment.createdAt | date: "dd/MM/yyyy" }}</h4>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <div class="row align-items-center">
+      <div class="col-8">
+        <h3 class="mb-0">Historique des contrats</h3>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-body">
+    <div class="row mb-3 mt-3">
+      <table class="table align-items-center table-flush table-hover">
+        <thead>
+          <tr>
+            <th scope="col">Matricule</th>
+            <th scope="col">Locataire</th>
+            <th scope="col">Montant</th>
+            <th scope="col">Periode de validité</th>
+          </tr>
+        </thead>
+        <div
+          *ngIf="isLoadingFetchingAgreements"
+          class="spinner-border text-primary mt-4 ml-4"
+          role="status"
+        ></div>
+        <div
+          *ngIf="agreements.length === 0 && !isLoadingFetchingAgreements"
+          class=""
+        >
+          <p class="ml-4 mb-0">Liste vide, aucun element trouvé.</p>
+        </div>
+        <tbody>
+          <tr *ngFor="let agreement of agreements">
+            <th scope="row">{{ agreement.matricule }}</th>
+            <td>
+              <h4>{{ agreement.tenant }}</h4>
+            </td>
+            <td>
+              <h4>
+                {{ agreement.paymentFrequency }} - {{ agreement.rentAmount }} DT
+              </h4>
+            </td>
+            <td>
+              <h4>
+                {{ agreement.startDate | date: "dd/MM/yyyy" }} -
+                {{ agreement.expireDate | date: "dd/MM/yyyy" }}
+              </h4>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<app-upsert-apartment
+  [apartmentDetails]="apartmentDetails"
+></app-upsert-apartment>
+
+<div class="card">
+  <div class="card-header">
+    <div class="row align-items-center">
+      <div class="col-8">
+        <h3 class="mb-0">Relevé de compte du Local</h3>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-body">
+    <div class="row mb-5 mt-3">
+      <div class="col">
+        <div class="form-group">
+          <label class="form-control-label">
+            Periode de relevé de compte
+          </label>
+
+          <input
+            formControlName="absenceRangeDate"
+            placeholder="Periode de relevé de compte"
+            type="text"
+            class="form-control"
+            bsDaterangepicker
+            [minDate]="minDate"
+            [bsConfig]="bsConfig"
+          />
+          <div class="mt-3 d-flex w-100 flex-row justify-content-end">
+            <button class="btn btn-primary" type="submit">Confirmer</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="table-responsive">
+      <div class="my-3 pr-2 d-flex w-100 flex-row justify-content-end">
+        <button class="btn btn-icon btn-secondary" type="button">
+          <span class="btn-inner--icon">
+            <i class="ni ni-cloud-download-95"> </i>
+          </span>
+
+          <span class="btn-inner--text"> Exporter </span>
+        </button>
+      </div>
+      <table class="table align-items-center table-bordered table-hover">
+        <thead>
+          <tr>
+            <th scope="col">DATE</th>
+            <th scope="col">COMPTES</th>
+            <th class="text-center" scope="col">LIBELLES</th>
+            <th scope="col">DEBIT</th>
+            <th scope="col">CREDIT</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let payment of financialBalance?.payments">
+            <th scope="row">{{ payment.createdAt | date: "dd/MM/yyyy" }}</th>
+            <td>
+              <h4>{{ payment.agreement }}</h4>
+            </td>
+            <td>
+              <div class="row">
+                <div class="col-6">
+                  <h4>{{ payment.tenant }}</h4>
+                </div>
+                <div class="col-6">
+                  <h4>{{ payment.category }}</h4>
+                </div>
+              </div>
+            </td>
+            <td>
+              <h4 *ngIf="payment.type == 'expense'">
+                <i class="fas fa-arrow-down text-warning mr-3"> </i>
+                {{ payment.amount }} DT
+              </h4>
+            </td>
+            <td>
+              <h4 *ngIf="payment.type == 'income'">
+                <i class="fas fa-arrow-up text-success mr-3"> </i>
+                {{ payment.amount }} DT
+              </h4>
+            </td>
+          </tr>
+          <!-- <tr>
+            <th scope="row">20/08/2024</th>
+            <td>
+              <h4>MAG 3</h4>
+            </td>
+            <td>
+              <div class="row">
+                <div class="col-6"><h4>Monsieur Sahbi Ben Amor</h4></div>
+                <div class="col-6"><h4>Loyer aout 2024</h4></div>
+              </div>
+            </td>
+            <td>
+              <h4></h4>
+            </td>
+            <td>
+              <h4>750 DT</h4>
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">27/08/2024</th>
+            <td>
+              <h4>MAG 3</h4>
+            </td>
+            <td>
+              <div class="row">
+                <div class="col-6"><h4>Monsieur Sahbi Ben Amor</h4></div>
+                <div class="col-6"><h4>Loyer Septembre 2024</h4></div>
+              </div>
+            </td>
+            <td>
+              <h4></h4>
+            </td>
+            <td>
+              <h4>750 DT</h4>
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">27/08/2024</th>
+            <td>
+              <h4>Apt N3</h4>
+            </td>
+            <td>
+              <div class="row">
+                <div class="col-6"><h4>MR Mongi JMILI</h4></div>
+                <div class="col-6"><h4>Avance sur travaux peinture</h4></div>
+              </div>
+            </td>
+            <td>
+              <h4>200 DT</h4>
+            </td>
+            <td>
+              <h4></h4>
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">15/09/2024</th>
+            <td>
+              <h4>Apt N3</h4>
+            </td>
+            <td>
+              <div class="row">
+                <div class="col-6"><h4>MR FARHAT HAJAM</h4></div>
+                <div class="col-6">
+                  <h4>Solde Sur divers travaux de plomberie</h4>
+                </div>
+              </div>
+            </td>
+            <td>
+              <h4>200 DT</h4>
+            </td>
+            <td>
+              <h4></h4>
+            </td>
+          </tr> -->
+
+          <tr>
+            <td colspan="3">
+              <div class="d-flex justify-content-end">
+                <h4>TOTAL:</h4>
+              </div>
+            </td>
+            <td>
+              <h4 class="text-warning">
+                <i class="fas fa-arrow-down text-warning mr-3"> </i
+                >{{ financialBalance?.totalExpense }} DT
+              </h4>
+            </td>
+            <td>
+              <h4 class="text-success">
+                <i class="fas fa-arrow-up text-success mr-3"> </i>
+                {{ financialBalance?.totalIncome }} DT
+              </h4>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="3">
+              <div class="d-flex justify-content-end">
+                <h4>Solde créditeur:</h4>
+              </div>
+            </td>
+            <td colspan="2">
+              <h4>{{ financialBalance?.netBalance }} DT</h4>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,187 @@
+<div class="card">
+  <div class="card-header">
+    <h3 *ngIf="apartmentDetails" class="mb-0">Modifier local</h3>
+    <h3 *ngIf="!apartmentDetails" class="mb-0">Nouveau local</h3>
+  </div>
+
+  <div class="card-body">
+    <form [formGroup]="formGroup" (ngSubmit)="upsertApartment()">
+      <div class="row mb-4">
+        <label
+          class="col-md-2 col-form-label form-control-label"
+          for="example-time-input"
+        >
+          Propriété (bien) <span class="text-danger">*</span>
+        </label>
+        <div class="col-md-10">
+          <app-search-input
+            [clearInput]="false"
+            [prefixIcon]="'fas fa-search'"
+            [searchPlaceholder]="'Chercher un bien'"
+            [searchLabel]="'Résultats'"
+            [isInvalid]="
+              submitted &&
+              createApartmentForm['propertyId'].errors?.['required']
+            "
+            [errorMessage]="'Champs incorrect, Propriété est obligatoire'"
+            [triggerSearchOnOpen]="true"
+            (searchValue)="onSearchPropertyValueChanged($event)"
+            [searchInputValue]="searchPropertyValue"
+            (selectedResultItem)="onSelectedPropertySearchItem($event)"
+            [searchResult]="propertyOptions"
+          ></app-search-input>
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label
+          class="col-md-2 col-form-label form-control-label"
+          for="example-text-input"
+        >
+          Adresse <span class="text-danger">*</span>
+        </label>
+
+        <div class="col-md-10">
+          <div class="input-group input-group-merge">
+            <input
+              [ngClass]="{
+                focused: focus1 === true,
+                'is-invalid':
+                  submitted &&
+                  createApartmentForm['address'].errors?.['required'],
+              }"
+              formControlName="address"
+              class="form-control"
+              id="example-text-input"
+              type="text"
+              value=""
+              placeholder="Adresse"
+              (focus)="focus1 = true"
+              (blur)="focus1 = false"
+            />
+          </div>
+          <small class="text-muted font-weight-light">
+            Exemple: 12 Rue Habib Bourguiba, Cité Ennasr 2, 2037 Ariana, Tunisie
+          </small>
+          <div
+            *ngIf="
+              submitted && createApartmentForm['address'].errors?.['required']
+            "
+            class="error-text"
+          >
+            Champs incorrect, adresse est obligatoire.
+          </div>
+        </div>
+      </div>
+
+      <div class="row mb-4">
+        <label
+          class="col-md-2 col-form-label form-control-label"
+          for="example-time-input"
+        >
+          Type <span class="text-danger">*</span>
+        </label>
+        <div class="col-md-10">
+          <app-search-input
+            [clearInput]="false"
+            [prefixIcon]="'fas fa-search'"
+            [searchPlaceholder]="'Chercher propriétaire'"
+            [searchLabel]="'Résultats'"
+            [maxSize]="4"
+            [isInvalid]="
+              submitted && createApartmentForm['type'].errors?.['required']
+            "
+            [errorMessage]="'Champs incorrect, Type est obligatoire'"
+            [searchInputValue]="apartmentDetails?.type ?? ''"
+            (selectedResultItem)="onSelectedApartmentTypeSearchItem($event)"
+            [searchResult]="apartmentsType"
+          ></app-search-input>
+        </div>
+      </div>
+
+      <div
+        class="form-group row"
+        [ngClass]="{
+          focused: focus4 === true,
+          'has-danger':
+            submitted && createApartmentForm['rooms'].errors?.['required'],
+        }"
+      >
+        <label
+          class="col-md-2 col-form-label form-control-label"
+          for="example-time-input"
+        >
+          Nb piéces <span class="text-danger">*</span>
+        </label>
+        <div class="col-md-10">
+          <div class="input-group input-group-merge">
+            <div class="input-group-prepend">
+              <span class="input-group-text"> S+ </span>
+            </div>
+
+            <input
+              [ngClass]="{
+                focused: focus4 === true,
+                'is-invalid':
+                  submitted &&
+                  createApartmentForm['rooms'].errors?.['required'],
+              }"
+              formControlName="rooms"
+              class="form-control"
+              placeholder="Nombre de chambres"
+              type="text"
+              (focus)="focus4 = true"
+              (blur)="focus4 = false"
+            />
+          </div>
+          <div
+            *ngIf="
+              submitted && createApartmentForm['rooms'].errors?.['required']
+            "
+            class="error-text"
+          >
+            Champs incorrect, Nombre de piéces est obligatoire.
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group row mt-4">
+        <label
+          class="col-md-2 col-form-label form-control-label"
+          for="example-text-input"
+        >
+          Description
+        </label>
+
+        <div class="col-md-10">
+          <div class="input-group input-group-merge">
+            <textarea
+              formControlName="description"
+              class="form-control"
+              id="example-text-input"
+              type="text"
+              value=""
+              rows="3"
+              placeholder="Description"
+              (focus)="focus2 = true"
+              (blur)="focus2 = false"
+            ></textarea>
+          </div>
+        </div>
+      </div>
+
+      <hr />
+
+      <div class="mt-5 d-flex w-100 flex-row justify-content-end">
+        <button *ngIf="!isLoading" class="btn btn-primary" type="submit">
+          Confirmer
+        </button>
+        <div
+          *ngIf="isLoading"
+          class="spinner-border text-primary mr-5"
+          role="status"
+        ></div>
+      </div>
+    </form>
+  </div>
+</div>

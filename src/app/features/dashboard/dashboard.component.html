@@ -1,0 +1,10 @@
+<div class="">
+    <app-sidebar [user]="user" [getUserIsLoading]="fetchUserIsLoading" class="sidenav fixed-left"></app-sidebar>
+    <div class="main-content">
+        <app-navbar [user]="user" (logoutClick)="logoutUser()" [getUserIsLoading]="fetchUserIsLoading"></app-navbar>
+        <div style="height: 86vh; overflow-y: scroll;" class="p-5">
+            <router-outlet></router-outlet>
+        </div>
+        <app-footer></app-footer>
+    </div>
+</div>

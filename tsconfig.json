@@ -1,0 +1,54 @@
+/* To learn more about this file see: https://angular.io/config/tsconfig. */
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "resolveJsonModule": true,
+    "baseUrl": "./",
+    "outDir": "./dist/out-tsc",
+    "forceConsistentCasingInFileNames": true,
+    "sourceRoot": "/",
+    "paths": {
+      "@auth/*": ["src/app/features/auth/*"],
+      "@core/*": ["src/app/core/*"],
+      "@dashboard/*": ["src/app/features/dashboard/*"],
+      "@store/*": ["src/app/store/*"],
+      "@employee/*": ["src/app/features/employee/*"],
+      "@models/*": ["src/app/models/*"],
+      "@owner/*": ["src/app/features/dashboard/owner/*"],
+      "@property/*": ["src/app/features/dashboard/property/*"],
+      "@apartment/*": ["src/app/features/dashboard/apartment/*"],
+      "@shared/*": ["src/app/shared/*"]
+    },
+    "strict": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "esModuleInterop": true,
+    "emitDecoratorMetadata": true,
+    "declaration": true,
+
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "sourceMap": true,
+    "downlevelIteration": true,
+    "experimentalDecorators": true,
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "importHelpers": true,
+    "typeRoots": ["node_modules/@types"],
+    "target": "ES2022",
+    "module": "ES2022",
+    "lib": ["ES2022", "dom"],
+    "useDefineForClassFields": false
+  },
+  "include": ["src/**/*", "public"],
+  "exclude": ["node_modules", "dist"],
+  "ts-node": {
+    "files": true
+  },
+  "angularCompilerOptions": {
+    "enableI18nLegacyMessageIdFormat": false,
+    "strictInjectionParameters": true,
+    "strictInputAccessModifiers": true,
+    "strictTemplates": true
+  }
+}

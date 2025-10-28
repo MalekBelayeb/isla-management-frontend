@@ -1,0 +1,301 @@
+<div class="card">
+  <div class="card-header border-0">
+    <div class="row">
+      <div class="col-6">
+        <h3 class="mb-0">Liste des propriétaires ({{ totalLength }})</h3>
+      </div>
+    </div>
+  </div>
+
+  <div class="px-4 pt-2 pb-4">
+    <div class="row justify-content-end px-3">
+      <a
+        class="btn btn-sm btn-primary btn-round btn-icon"
+        href="javascript:void(0)"
+        routerLink="../create-owner"
+      >
+        <span class="btn-inner--icon">
+          <i class="ni ni-fat-add"> </i>
+        </span>
+        <span class="btn-inner--text"> Ajouter un propriétaire </span>
+      </a>
+    </div>
+
+    <div class="row justify-content-end my-4">
+      <div *ngIf="showClearFilterBtn" class="col-6 text-right">
+        <a
+          class="btn btn-sm btn-secondary btn-round btn-icon"
+          (click)="clearFilter()"
+          href="javascript:void(0)"
+          tooltip="Edit product"
+          placement="top"
+        >
+          <span class="btn-inner--icon">
+            <i class="fas fa-times"> </i>
+          </span>
+
+          <span class="btn-inner--text"> Effacer les filtres</span>
+        </a>
+      </div>
+    </div>
+
+    <form [formGroup]="filtersFormGroup" (ngSubmit)="filterEmployees()">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="form-group">
+            <input
+              class="form-control"
+              id="example2cols1Input"
+              formControlName="searchTerm"
+              placeholder="Nom, prénom, tél & mail"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <app-search-site-input
+              [placeholder]="'Chercher par bien'"
+              [initialList]="propertiesOptions"
+              (selectedSite)="onSelectedSiteSearchItem($event)"
+            />
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <app-search-site-input
+              [placeholder]="'Chercher par local'"
+              [initialList]="premisesOptions"
+              (selectedSite)="onSelectedSiteSearchItem($event)"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="d-flex w-100 justify-content-end">
+        <button class="btn btn-secondary" type="submit">Filtrer</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table align-items-center table-flush table-hover">
+      <thead class="thead-light">
+        <tr>
+          <th>Identifiant</th>
+          <th>Propriétaire</th>
+
+          <th>Téléphone</th>
+          <th>CIN</th>
+          <th>Nationalté</th>
+
+          <th>Type</th>
+          <th>Nb biens</th>
+          <th>Nb locaux</th>
+
+          <th></th>
+        </tr>
+      </thead>
+      <div
+        *ngIf="isLoadingFetchingOwners"
+        class="spinner-border text-primary mt-4 ml-4"
+        role="status"
+      ></div>
+      <div *ngIf="owners.length === 0 && !isLoadingFetchingOwners" class="">
+        <p class="ml-4 mb-0">Liste vide, aucun element trouvé.</p>
+      </div>
+
+      <tbody>
+        <tr *ngFor="let owner of owners">
+          <td
+            style="cursor: pointer"
+            (click)="redirectToDetails(owner.id)"
+            class="table-user"
+          >
+            <b> {{ owner.matricule }} </b>
+          </td>
+          <td
+            style="cursor: pointer"
+            (click)="redirectToDetails(owner.id)"
+            class="table-user"
+          >
+            <b> {{ owner.name }} </b>
+          </td>
+
+          <td style="cursor: pointer" (click)="redirectToDetails(owner.id)">
+            <span class=""> {{ owner.phoneNumber }} </span>
+          </td>
+          <td style="cursor: pointer" (click)="redirectToDetails(owner.id)">
+            <div class="col-auto">
+              <span class=""> {{ owner.cin }} </span>
+            </div>
+          </td>
+          <td style="cursor: pointer" (click)="redirectToDetails(owner.id)">
+            <span class="status"> {{ owner.nationality }} </span>
+          </td>
+
+          <td style="cursor: pointer" (click)="redirectToDetails(owner.id)">
+            <span class="font-weight-bold" *ngIf="owner.type == 'natural'">
+              P. Physique
+            </span>
+
+            <span class="font-weight-bold" *ngIf="owner.type == 'legal'">
+              P. Morale
+            </span>
+          </td>
+          <td style="cursor: pointer" (click)="showModal()">
+            <div class="col-auto">
+              <span class="badge badge-lg badge-secondary">
+                {{ owner.nbProperty }}
+              </span>
+            </div>
+          </td>
+          <td style="cursor: pointer" (click)="showModal()">
+            <div class="col-auto">
+              <span class="badge badge-lg badge-secondary"> 0 </span>
+            </div>
+          </td>
+          <td class="table-actions">
+            <a
+              class="table-action"
+              routerLink="../create-owner"
+              href="javascript:void(0)"
+              tooltip="Edit product"
+              placement="top"
+            >
+              <i class="fas fa-user-edit"> </i>
+            </a>
+
+            <a
+              (click)="deleteEmployee(owner.id, owner.name)"
+              class="table-action table-action-delete"
+              tooltip="Delete product"
+              placement="top"
+              href="javascript:void(0)"
+            >
+              <i class="fas fa-trash"> </i>
+            </a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card-footer py-4">
+    <nav aria-label="...">
+      <pagination
+        [totalItems]="totalLength"
+        [itemsPerPage]="pageSize"
+        [rotate]="false"
+        [boundaryLinks]="true"
+        [(ngModel)]="page"
+        firstText="&laquo;"
+        lastText="&raquo;"
+        [maxSize]="5"
+        class="justify-content-end mb-0"
+        [customPreviousTemplate]="prevTemplate"
+        (pageChanged)="pageChange($event)"
+        [customNextTemplate]="nextTemplate"
+      >
+      </pagination>
+
+      <ng-template #nextTemplate let-currentPage="currentPage">
+        <ng-container>
+          <i class="fas fa-angle-right"></i>
+        </ng-container>
+      </ng-template>
+
+      <ng-template #prevTemplate let-currentPage="currentPage">
+        <ng-container>
+          <i class="fas fa-angle-left"></i>
+        </ng-container>
+      </ng-template>
+    </nav>
+  </div>
+</div>
+
+<ng-template #modalProperties>
+  <div class="modal-header">
+    <div class="d-flex flex-column w-100 justify-content-start">
+      <h3 class="mb-0">Liste des propriétés</h3>
+    </div>
+  </div>
+  <div class="modal-body">
+    <table class="table align-items-center table-flush table-hover">
+      <thead class="thead-light">
+        <tr>
+          <th>Identifiant</th>
+          <th>Propriètaire</th>
+
+          <th>Adresse</th>
+          <th>Type</th>
+
+          <th>Nb locaux</th>
+
+          <th></th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let property of selectedProperties">
+          <td
+            style="cursor: pointer"
+            (click)="redirectToDetails(property.id)"
+            class="table-user"
+          >
+            <b> {{ property.id }} </b>
+          </td>
+          <td
+            style="cursor: pointer"
+            (click)="redirectToDetails(property.id)"
+            class="table-user"
+          >
+            <b> {{ property.owner }} </b>
+          </td>
+
+          <td
+            style="cursor: pointer"
+            (click)="redirectToDetails(property.id)"
+            class="table-user"
+          >
+            <b> {{ property.address }} </b>
+          </td>
+
+          <td
+            style="cursor: pointer"
+            (click)="redirectToDetails(property.id)"
+            class="table-user"
+          >
+            <b> {{ property.type }} </b>
+          </td>
+
+          <td style="cursor: pointer" (click)="redirectToDetails(property.id)">
+            <div class="col-auto">0</div>
+          </td>
+          <td class="table-actions">
+            <a
+              class="table-action"
+              routerLink="../create-property"
+              href="javascript:void(0)"
+              tooltip="Edit product"
+              placement="top"
+            >
+              <i class="fas fa-user-edit"> </i>
+            </a>
+
+            <a
+              class="table-action table-action-delete"
+              tooltip="Delete product"
+              placement="top"
+              href="javascript:void(0)"
+            >
+              <i class="fas fa-trash"> </i>
+            </a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="modal-footer"></div>
+</ng-template>

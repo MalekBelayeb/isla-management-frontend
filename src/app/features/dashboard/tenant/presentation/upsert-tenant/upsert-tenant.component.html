@@ -1,0 +1,372 @@
+<div class="card">
+  <div class="card-header">
+    <h3 *ngIf="tenantDetails" class="mb-0">Modifier locataire</h3>
+    <h3 *ngIf="!tenantDetails" class="mb-0">Nouveau locataire</h3>
+  </div>
+
+  <div class="card-body">
+    <form [formGroup]="formGroup" (ngSubmit)="upsertTenant()">
+      <div class="form-group row">
+        <label
+          class="col-md-2 col-form-label form-control-label"
+          for="example-text-input"
+        >
+          Prénom <span class="text-danger">*</span>
+        </label>
+
+        <div class="col-md-10">
+          <div class="input-group input-group-merge">
+            <input
+              [ngClass]="{
+                focused: focus1 === true,
+                'is-invalid':
+                  submitted &&
+                  upsertTenantForm['firstname'].errors?.['required'],
+              }"
+              formControlName="firstname"
+              class="form-control"
+              id="example-text-input"
+              type="text"
+              value=""
+              placeholder="Prénom locataire"
+              (focus)="focus1 = true"
+              (blur)="focus1 = false"
+            />
+          </div>
+          <div
+            *ngIf="
+              submitted && upsertTenantForm['firstname'].errors?.['required']
+            "
+            class="error-text"
+          >
+            Champs incorrect, Prénom est obligatoire.
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label
+          class="col-md-2 col-form-label form-control-label"
+          for="example-text-input"
+        >
+          Nom <span class="text-danger">*</span>
+        </label>
+
+        <div class="col-md-10">
+          <div class="input-group input-group-merge">
+            <input
+              [ngClass]="{
+                focused: focus1 === true,
+                'is-invalid':
+                  submitted &&
+                  upsertTenantForm['lastname'].errors?.['required'],
+              }"
+              formControlName="lastname"
+              class="form-control"
+              id="example-text-input"
+              type="text"
+              value=""
+              placeholder="Nom locataire"
+              (focus)="focus2 = true"
+              (blur)="focus2 = false"
+            />
+          </div>
+          <div
+            *ngIf="
+              submitted && upsertTenantForm['lastname'].errors?.['required']
+            "
+            class="error-text"
+          >
+            Champs incorrect, Nom est obligatoire.
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label
+          class="col-md-2 col-form-label form-control-label"
+          for="example-text-input"
+        >
+          Num CIN <span class="text-danger">*</span>
+        </label>
+
+        <div class="col-md-10">
+          <div class="input-group input-group-merge">
+            <input
+              [ngClass]="{
+                focused: focus1 === true,
+                'is-invalid':
+                  submitted &&
+                  (upsertTenantForm['cin'].errors?.['required'] ||
+                    formGroup.errors?.['cinIncorrect']),
+              }"
+              formControlName="cin"
+              class="form-control"
+              id="example-text-input"
+              type="number"
+              value=""
+              placeholder="Num Cin locataire"
+              (focus)="focus3 = true"
+              (blur)="focus3 = false"
+            />
+          </div>
+          <small class="text-muted font-weight-light">
+            Un Cin valide doit contenir exactement 8 chiffres
+          </small>
+          <div
+            *ngIf="submitted && upsertTenantForm['cin'].errors?.['required']"
+            class="error-text"
+          >
+            Champs incorrect, Num CIN est obligatoire.
+          </div>
+          <div
+            *ngIf="submitted && formGroup.errors?.['cinIncorrect']"
+            class="error-text"
+          >
+            Champs incorrect, Num CIN est incorrect.
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="form-group row"
+        [ngClass]="{
+          focused: focus4 === true,
+          'has-danger':
+            (submitted &&
+              upsertTenantForm['phoneNumber'].errors?.['required']) ||
+            formGroup.errors?.['phoneNumberIncorrect'],
+        }"
+      >
+        <label
+          class="col-md-2 col-form-label form-control-label"
+          for="example-text-input"
+        >
+          Num Tél <span class="text-danger">*</span>
+        </label>
+
+        <div class="col-md-10">
+          <div class="input-group input-group-merge">
+            <div class="input-group-prepend">
+              <span class="input-group-text"> +216 </span>
+            </div>
+            <input
+              [ngClass]="{
+                focused: focus1 === true,
+                'is-invalid':
+                  submitted &&
+                  (upsertTenantForm['phoneNumber'].errors?.['required'] ||
+                    formGroup.errors?.['phoneNumberIncorrect']),
+              }"
+              formControlName="phoneNumber"
+              class="form-control"
+              id="example-text-input"
+              type="number"
+              value=""
+              placeholder="Num Téléphone locataire"
+              (focus)="focus4 = true"
+              (blur)="focus4 = false"
+            />
+          </div>
+          <small class="text-muted font-weight-light">
+            Un Num tél valide doit contenir exactement 8 chiffres
+          </small>
+          <div
+            *ngIf="
+              submitted && upsertTenantForm['phoneNumber'].errors?.['required']
+            "
+            class="error-text"
+          >
+            Champs incorrect, Num tél est obligatoire.
+          </div>
+          <div
+            *ngIf="submitted && formGroup.errors?.['phoneNumberIncorrect']"
+            class="error-text"
+          >
+            Champs incorrect, Num tél est incorrect.
+          </div>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label
+          class="col-md-2 col-form-label form-control-label"
+          for="example-text-input"
+        >
+          Genre <span class="text-danger">*</span>
+        </label>
+
+        <div class="col-md-10">
+          <div class="input-group">
+            <div class="row ml-1 mb-1">
+              <div
+                style="cursor: pointer"
+                (click)="onChangeGender('M')"
+                class="custom-control custom-radio mb-3"
+              >
+                <input
+                  formControlName="gender"
+                  value="M"
+                  class="custom-control-input"
+                  id="customRadio7"
+                  type="radio"
+                />
+
+                <label
+                  class="custom-control-label"
+                  style="padding-left: 12px; padding-top: 12px"
+                  for="customRadio7"
+                >
+                  Homme
+                </label>
+              </div>
+
+              <div
+                style="cursor: pointer"
+                (click)="onChangeGender('F')"
+                class="custom-control custom-radio ml-4 mb-3"
+              >
+                <input
+                  formControlName="gender"
+                  value="F"
+                  class="custom-control-input"
+                  id="customRadio8"
+                  type="radio"
+                />
+
+                <label
+                  class="custom-control-label"
+                  style="padding-left: 12px; padding-top: 12px"
+                  for="customRadio8"
+                >
+                  Femme
+                </label>
+              </div>
+            </div>
+          </div>
+          <div
+            *ngIf="submitted && upsertTenantForm['gender'].errors?.['required']"
+            class="error-text"
+          >
+            Champs incorrect, Genre est obligatoire
+          </div>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label
+          class="col-md-2 col-form-label form-control-label"
+          for="example-time-input"
+        >
+          Nationalité <span class="text-danger">*</span>
+        </label>
+        <div class="col-md-10">
+          <app-search-input
+            [clearInput]="false"
+            [searchInputValue]="nationalityTypeList[0].title"
+            [prefixIcon]="'fas fa-search'"
+            [searchPlaceholder]="'Nationalité'"
+            [searchLabel]="'Résultats'"
+            [maxSize]="3"
+            [isInvalid]="
+              submitted && upsertTenantForm['nationality'].errors?.['required']
+            "
+            [errorMessage]="'Champs incorrect, Nationalité est obligatoire'"
+            (selectedResultItem)="selectedNationaliaty($event)"
+            [searchResult]="nationalityTypeList"
+          ></app-search-input>
+        </div>
+        <div
+          *ngIf="
+            submitted && upsertTenantForm['nationality'].errors?.['required']
+          "
+          class="error-text"
+        >
+          Champs incorrect, Nationalité est obligatoire
+        </div>
+      </div>
+      <div class="form-group row">
+        <label
+          class="col-md-2 col-form-label form-control-label"
+          for="example-text-input"
+        >
+          Adresse
+        </label>
+
+        <div class="col-md-10">
+          <div class="input-group input-group-merge">
+            <input
+              formControlName="address"
+              class="form-control"
+              id="example-text-input"
+              type="text"
+              value=""
+              placeholder="Adresse locataire"
+              (focus)="focus4 = true"
+              (blur)="focus4 = false"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label
+          class="col-md-2 col-form-label form-control-label"
+          for="example-text-input"
+        >
+          Email
+        </label>
+
+        <div class="col-md-10">
+          <div class="input-group input-group-merge">
+            <input
+              formControlName="email"
+              class="form-control"
+              id="example-text-input"
+              type="text"
+              value=""
+              placeholder="Adresse locataire"
+              (focus)="focus7 = true"
+              (blur)="focus7 = false"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label
+          class="col-md-2 col-form-label form-control-label"
+          for="example-text-input"
+        >
+          Emploi
+        </label>
+
+        <div class="col-md-10">
+          <div class="input-group input-group-merge">
+            <input
+              formControlName="job"
+              class="form-control"
+              id="example-text-input"
+              type="text"
+              value=""
+              placeholder="Emploi locataire"
+              (focus)="focus5 = true"
+              (blur)="focus5 = false"
+            />
+          </div>
+        </div>
+      </div>
+
+      <hr />
+
+      <div class="mt-5 d-flex w-100 flex-row justify-content-end">
+        <button *ngIf="!isLoading" class="btn btn-primary" type="submit">
+          Confirmer
+        </button>
+        <div
+          *ngIf="isLoading"
+          class="spinner-border text-primary mr-5"
+          role="status"
+        ></div>
+      </div>
+    </form>
+  </div>
+</div>

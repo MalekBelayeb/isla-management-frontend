@@ -1,0 +1,28 @@
+.input-container {
+    position: relative;
+}
+
+#selectElement {
+    position: absolute;
+    left: 0;
+    border-top: 0px;
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px;
+    margin-top: 0.00rem;
+    z-index: 100;
+
+}
+
+.inputElement {
+
+    border-bottom: 0px;
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
+
+}
+
+.table-border {
+    border: 1px solid #5e72e4;
+    border-bottom-left-radius: 4px !important;
+    border-bottom-right-radius: 4px !important;
+}

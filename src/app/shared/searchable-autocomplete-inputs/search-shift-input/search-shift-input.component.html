@@ -1,0 +1,12 @@
+<app-search-input
+  [clearInput]="false"
+  [searchInputValue]="initialValue"
+  (inputClickTriggered)="onSearchInputClickedChanged($event)"
+  [prefixIcon]="'fas fa-search'"
+  [searchPlaceholder]="'Chercher par groupe...'"
+  [searchLabel]="'Groupe'"
+  [maxSize]="3"
+  (searchValue)="onSearchValueChanged($event)"
+  (selectedResultItem)="onSelectedSearchItem($event)"
+  [searchResult]="shiftSearchResult"
+></app-search-input>

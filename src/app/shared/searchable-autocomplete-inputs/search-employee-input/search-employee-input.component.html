@@ -1,0 +1,12 @@
+<app-search-input
+  [clearInput]="false"
+  [searchInputValue]="initialValue"
+  (inputClickTriggered)="onSearchInputClickedChanged($event)"
+  [prefixIcon]="'fas fa-search'"
+  [searchPlaceholder]="'Chercher par bénéficiaire...'"
+  [searchLabel]="'bénéficiaire'"
+  [maxSize]="3"
+  (searchValue)="onSearchValueChanged($event)"
+  (selectedResultItem)="onSelectedSearchItem($event)"
+  [searchResult]="employeeSearchResult"
+></app-search-input>

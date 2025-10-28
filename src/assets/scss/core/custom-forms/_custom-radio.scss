@@ -1,0 +1,42 @@
+//
+// Custom radio
+//
+
+.custom-radio {
+  .custom-control-input~.custom-control-label {
+    cursor: pointer;
+    font-size: $font-size-sm;
+    height: $custom-control-indicator-size;
+  }
+
+  .custom-control-input {
+    &:checked {
+      ~.custom-control-label {
+        &::before {
+          border-color: $custom-control-indicator-checked-border-color;
+          top: 1rem;
+        }
+
+        &::after {
+          background-image: $custom-radio-indicator-icon-checked;
+          top: 1rem;
+
+        }
+      }
+    }
+
+    &:disabled {
+      ~.custom-control-label {
+        &::before {
+          border-color: $custom-control-indicator-disabled-bg;
+        }
+      }
+
+      &:checked {
+        &::before {
+          border-color: $custom-control-indicator-checked-disabled-bg;
+        }
+      }
+    }
+  }
+}

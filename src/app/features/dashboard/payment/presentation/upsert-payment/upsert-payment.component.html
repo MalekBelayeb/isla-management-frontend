@@ -1,0 +1,192 @@
+<div class="card">
+  <div class="card-header">
+    <h3 *ngIf="paymentDetails" class="mb-0">Modifier un mouvement de caisse</h3>
+    <h3 *ngIf="!paymentDetails" class="mb-0">Créer un mouvement de caisse</h3>
+  </div>
+
+  <div class="card-body">
+    <form [formGroup]="formGroup" (ngSubmit)="upsertPayment()">
+      <div class="form-group row">
+        <label
+          class="col-md-2 col-form-label form-control-label"
+          for="example-text-input"
+        >
+          Montant en DT <span class="text-danger">*</span>
+        </label>
+
+        <div class="col-md-10">
+          <div class="input-group input-group-merge">
+            <input
+              formControlName="amount"
+              class="form-control"
+              id="example-text-input"
+              placeholder=""
+              type="number"
+              value=""
+              [ngClass]="{
+                focused: focus1 === true,
+                'is-invalid':
+                  submitted && upsertPaymentForm['amount'].errors?.['required'],
+              }"
+              (focus)="focus1 = true"
+              (blur)="focus1 = false"
+            />
+          </div>
+          <div
+            *ngIf="
+              submitted && upsertPaymentForm['amount'].errors?.['required']
+            "
+            class="error-text"
+          >
+            Champs incorrect, Montant est obligatoire.
+          </div>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label
+          class="col-md-2 col-form-label form-control-label"
+          for="example-text-input"
+        >
+          Type de paiement <span class="text-danger">*</span>
+        </label>
+
+        <div class="col-md-10">
+          <app-search-input
+            [clearInput]="false"
+            [searchInputValue]="paymentTypeList[0].title"
+            [prefixIcon]="'fas fa-search'"
+            [searchPlaceholder]="'Type de paiement'"
+            [searchLabel]="'Résultats'"
+            [maxSize]="3"
+            [isInvalid]="
+              submitted && upsertPaymentForm['type'].errors?.['required']
+            "
+            [errorMessage]="
+              'Champs incorrect, Type de paiement est obligatoire'
+            "
+            (selectedResultItem)="selectedPaymentType($event)"
+            [searchResult]="paymentTypeList"
+          ></app-search-input>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label
+          class="col-md-2 col-form-label form-control-label"
+          for="example-text-input"
+        >
+          Categorie de paiement <span class="text-danger">*</span>
+        </label>
+
+        <div class="col-md-10">
+          <app-search-input
+            [clearInput]="false"
+            [searchInputValue]="paymentCategoryList[0].title"
+            [prefixIcon]="'fas fa-search'"
+            [searchPlaceholder]="'Type de paiement'"
+            [searchLabel]="'Résultats'"
+            [maxSize]="3"
+            [isInvalid]="
+              submitted && upsertPaymentForm['category'].errors?.['required']
+            "
+            [errorMessage]="
+              'Champs incorrect, Catégorie de paiment est obligatoire'
+            "
+            (selectedResultItem)="selectedPaymentCategory($event)"
+            [searchResult]="paymentCategoryList"
+          ></app-search-input>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label
+          class="col-md-2 col-form-label form-control-label"
+          for="example-text-input"
+        >
+          Méthode de paiment <span class="text-danger">*</span>
+        </label>
+
+        <div class="col-md-10">
+          <app-search-input
+            [clearInput]="false"
+            [searchInputValue]="paymentMethodTypeList[0].title"
+            [prefixIcon]="'fas fa-search'"
+            [searchPlaceholder]="'Methode de paiment'"
+            [searchLabel]="'Résultats'"
+            [maxSize]="3"
+            [isInvalid]="
+              submitted && upsertPaymentForm['method'].errors?.['required']
+            "
+            [errorMessage]="
+              'Champs incorrect, Méthode de paiment est obligatoire'
+            "
+            (selectedResultItem)="selectedPaymentMethod($event)"
+            [searchResult]="paymentMethodTypeList"
+          ></app-search-input>
+        </div>
+      </div>
+
+      <div class="row mb-4">
+        <label
+          class="col-md-2 col-form-label form-control-label"
+          for="example-time-input"
+        >
+          Contrat <span class="text-danger">*</span>
+        </label>
+        <div class="col-md-10">
+          <app-search-input
+            [clearInput]="false"
+            [prefixIcon]="'fas fa-search'"
+            [searchPlaceholder]="'Chercher un contrat'"
+            [searchLabel]="'Résultats'"
+            [maxSize]="5"
+            [isInvalid]="
+              submitted && upsertPaymentForm['agreementId'].errors?.['required']
+            "
+            [errorMessage]="'Champs incorrect, Contrat est obligatoire'"
+            [triggerSearchOnOpen]="true"
+            (searchValue)="onSearchAgreementValueChanged($event)"
+            [searchInputValue]="searchAgreementValue"
+            (selectedResultItem)="onSelectedAgreementSearchItem($event)"
+            [searchResult]="agreementOptions"
+          ></app-search-input>
+        </div>
+      </div>
+
+      <div class="form-group row mt-4">
+        <label
+          class="col-md-2 col-form-label form-control-label"
+          for="example-text-input"
+        >
+          Notes
+        </label>
+
+        <div class="col-md-10">
+          <div class="input-group input-group-merge">
+            <textarea
+              formControlName="notes"
+              class="form-control"
+              id="example-text-input"
+              type="text"
+              value=""
+              rows="4"
+              placeholder="Description"
+              (focus)="focus7 = true"
+              (blur)="focus7 = false"
+            ></textarea>
+          </div>
+        </div>
+      </div>
+      <hr />
+
+      <div class="mt-5 d-flex w-100 flex-row justify-content-end">
+        <button *ngIf="!isLoading" class="btn btn-primary" type="submit">
+          Confirmer
+        </button>
+        <div
+          *ngIf="isLoading"
+          class="spinner-border text-primary mr-5"
+          role="status"
+        ></div>
+      </div>
+    </form>
+  </div>
+</div>

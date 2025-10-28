@@ -1,0 +1,99 @@
+<div class="card">
+  <div class="card-header">
+    <div class="row align-items-center">
+      <div class="col-8">
+        <h3 class="mb-0">Détails Contrat</h3>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-body">
+    <div class="pl-lg-4">
+      <div class="row">
+        <div class="col-lg-3">
+          <div class="form-group">
+            <h5 class="card-title text-uppercase text-muted mb-0">
+              Identifiant
+            </h5>
+
+            <h5 class="h2 font-weight-bold mb-0 mt-1">
+              {{ agreementDetails?.matricule }}
+            </h5>
+          </div>
+        </div>
+        <div class="col-lg-3">
+          <div class="form-group">
+            <h5 class="card-title text-uppercase text-muted mb-0">Locataire</h5>
+
+            <h5 class="h2 font-weight-bold mb-0 mt-1">
+              {{ agreementDetails?.tenant }}
+            </h5>
+          </div>
+        </div>
+        <div class="col-lg-3">
+          <div class="form-group">
+            <h5 class="card-title text-uppercase text-muted mb-0">Local</h5>
+
+            <h5 class="h2 font-weight-bold mb-0 mt-1">
+              {{ agreementDetails?.apartment }}
+            </h5>
+          </div>
+        </div>
+        <div class="col-lg-3">
+          <div class="form-group">
+            <h5 class="card-title text-uppercase text-muted mb-0">
+              Montant loyer
+            </h5>
+
+            <h5 class="h5 font-weight-bold mb-0 mt-1">
+              {{ agreementDetails?.rentAmount }}
+            </h5>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-lg-3">
+          <div class="form-group">
+            <h5 class="card-title text-uppercase text-muted mb-0">
+              Fréquence de paiement
+            </h5>
+
+            <h5 class="h2 font-weight-bold mb-0 mt-1">
+              {{ agreementDetails?.paymentFrequency }}
+            </h5>
+          </div>
+        </div>
+        <div class="col-lg-3">
+          <div class="form-group">
+            <h5 class="card-title text-uppercase text-muted mb-0">Status</h5>
+
+            <h5 class="h2 font-weight-bold mb-0 mt-1">
+              {{ agreementDetails?.status }}
+            </h5>
+          </div>
+        </div>
+        <div class="col-lg-3">
+          <div class="form-group">
+            <h5 class="card-title text-uppercase text-muted mb-0">Crée le</h5>
+
+            <h5 class="h2 font-weight-bold mb-0 mt-1">
+              {{ agreementDetails?.createdAt | date: "dd/MM/yyyy" }}
+            </h5>
+          </div>
+        </div>
+        <div class="col-lg-3">
+          <div class="form-group">
+            <h5 class="card-title text-uppercase text-muted mb-0">Signé le:</h5>
+
+            <h5 class="h2 font-weight-bold mb-0 mt-1">
+              {{ agreementDetails?.signedAt | date: "dd/MM/yyyy" }}
+            </h5>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-upsert-agreement [agreementDetails]="agreementDetails" />

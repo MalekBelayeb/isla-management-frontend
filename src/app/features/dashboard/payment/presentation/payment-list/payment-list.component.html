@@ -1,0 +1,240 @@
+<div class="card">
+  <div class="card-header border-0">
+    <div class="row">
+      <div class="col-6">
+        <h3 class="mb-0">Liste des mouvements ({{ totalLength }})</h3>
+      </div>
+    </div>
+  </div>
+
+  <div class="px-4 pt-2 pb-4">
+    <div class="row justify-content-end px-3">
+      <a
+        class="btn btn-sm btn-primary btn-round btn-icon"
+        href="javascript:void(0)"
+        routerLink="../create-payment"
+      >
+        <span class="btn-inner--icon">
+          <i class="ni ni-fat-add"> </i>
+        </span>
+        <span class="btn-inner--text"> Créer un mouvement de caisse </span>
+      </a>
+    </div>
+
+    <div class="row justify-content-end my-4">
+      <div *ngIf="showClearFilterBtn" class="col-6 text-right">
+        <a
+          class="btn btn-sm btn-secondary btn-round btn-icon"
+          (click)="clearFilter()"
+          href="javascript:void(0)"
+          tooltip="Edit product"
+          placement="top"
+        >
+          <span class="btn-inner--icon">
+            <i class="fas fa-times"> </i>
+          </span>
+
+          <span class="btn-inner--text"> Effacer les filtres</span>
+        </a>
+      </div>
+    </div>
+
+    <form [formGroup]="filtersFormGroup" (ngSubmit)="filterPayments()">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="form-group">
+            <input
+              class="form-control"
+              id="example2cols1Input"
+              formControlName="name"
+              placeholder="Nom, prénom, tél & mail"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <app-search-site-input [placeholder]="'Chercher par local'" />
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-group">
+            <input
+              class="form-control"
+              id="example-datetime-local-input"
+              type="date"
+              value=""
+            />
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-group">
+            <input
+              class="form-control"
+              id="example-datetime-local-input"
+              type="date"
+              value=""
+            />
+          </div>
+        </div>
+      </div>
+
+      <div class="d-flex w-100 justify-content-end">
+        <button class="btn btn-secondary" type="submit">Filtrer</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table align-items-center table-flush table-hover">
+      <thead class="thead-light">
+        <tr>
+          <th>Contrat</th>
+          <th>Locataire</th>
+          <th>Local</th>
+          <th>Type</th>
+          <th>Catégorie</th>
+          <th>Montant (DT)</th>
+          <th>Méthode</th>
+          <th>Fréquence de paiement</th>
+          <th>Crée le:</th>
+
+          <th></th>
+        </tr>
+      </thead>
+      <div
+        *ngIf="isLoadingFetchingPayments"
+        class="spinner-border text-primary mt-4 ml-4"
+        role="status"
+      ></div>
+      <div *ngIf="payments.length === 0 && !isLoadingFetchingPayments" class="">
+        <p class="ml-4 mb-0">Liste vide, aucun element trouvé.</p>
+      </div>
+
+      <tbody>
+        <tr *ngFor="let payment of payments">
+          <td style="cursor: pointer" (click)="redirectToDetails(payment.id)">
+            <span class=""> {{ payment.agreement }} </span>
+          </td>
+          <td style="cursor: pointer" (click)="redirectToDetails(payment.id)">
+            <span class=""> {{ payment.tenant }} </span>
+          </td>
+          <td style="cursor: pointer" (click)="redirectToDetails(payment.id)">
+            <span class=""> {{ payment.apartment }} </span>
+          </td>
+          <td
+            style="cursor: pointer"
+            (click)="redirectToDetails(payment.id)"
+            class="table-user"
+          >
+            <div class="col-auto">
+              <span
+                *ngIf="payment.type == 'income'"
+                class="badge badge-lg badge-success"
+              >
+                Recette
+              </span>
+
+              <span
+                *ngIf="payment.type == 'expense'"
+                class="badge badge-lg badge-warning"
+              >
+                Dépense
+              </span>
+            </div>
+          </td>
+          <td style="cursor: pointer" (click)="redirectToDetails(payment.id)">
+            <span class=""> {{ payment.category }} </span>
+          </td>
+          <td
+            style="cursor: pointer"
+            (click)="redirectToDetails(payment.id)"
+            class="table-user"
+          >
+            <b>
+              <i
+                *ngIf="payment.type == 'expense'"
+                class="fas fa-arrow-down text-warning mr-3"
+              >
+              </i>
+              <i
+                *ngIf="payment.type == 'income'"
+                class="fas fa-arrow-up text-success mr-3"
+              >
+              </i>
+              {{ payment.amount }} DT
+            </b>
+          </td>
+
+          <td style="cursor: pointer" (click)="redirectToDetails(payment.id)">
+            <span class=""> {{ payment.method }} </span>
+          </td>
+
+          <td style="cursor: pointer" (click)="redirectToDetails(payment.id)">
+            <span class=""> {{ payment.payementFrequency }} </span>
+          </td>
+
+          <td style="cursor: pointer" (click)="redirectToDetails(payment.id)">
+            <span class=""> {{ payment.createdAt | date: "dd/MM/yyyy" }} </span>
+          </td>
+
+          <td class="table-actions">
+            <a
+              class="table-action"
+              routerLink="../create-aggrement"
+              href="javascript:void(0)"
+              tooltip="Edit product"
+              placement="top"
+            >
+              <i class="fas fa-user-edit"> </i>
+            </a>
+
+            <a
+              (click)="deletePayment(payment.id, '')"
+              class="table-action table-action-delete"
+              tooltip="Delete product"
+              placement="top"
+              href="javascript:void(0)"
+            >
+              <i class="fas fa-trash"> </i>
+            </a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card-footer py-4">
+    <nav aria-label="...">
+      <pagination
+        [totalItems]="totalLength"
+        [itemsPerPage]="pageSize"
+        [rotate]="false"
+        [boundaryLinks]="true"
+        [(ngModel)]="page"
+        firstText="&laquo;"
+        lastText="&raquo;"
+        [maxSize]="5"
+        class="justify-content-end mb-0"
+        [customPreviousTemplate]="prevTemplate"
+        (pageChanged)="pageChange($event)"
+        [customNextTemplate]="nextTemplate"
+      >
+      </pagination>
+
+      <ng-template #nextTemplate let-currentPage="currentPage">
+        <ng-container>
+          <i class="fas fa-angle-right"></i>
+        </ng-container>
+      </ng-template>
+
+      <ng-template #prevTemplate let-currentPage="currentPage">
+        <ng-container>
+          <i class="fas fa-angle-left"></i>
+        </ng-container>
+      </ng-template>
+    </nav>
+  </div>
+</div>

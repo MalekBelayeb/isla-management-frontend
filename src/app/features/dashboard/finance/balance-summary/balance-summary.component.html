@@ -1,0 +1,478 @@
+<div class="row">
+  <div class="col-xl-4 col-md-6">
+    <div class="card card-stats">
+      <div class="card-body">
+        <div class="row">
+          <div class="col">
+            <h5 class="card-title text-uppercase text-muted mb-0">Dépenses</h5>
+
+            <span class="h2 font-weight-bold mb-0"> 20 000 DT </span>
+          </div>
+
+          <div class="col-auto">
+            <div
+              class="icon icon-shape bg-gradient-red text-white rounded-circle shadow"
+            >
+              <i class="ni ni-money-coins"> </i>
+            </div>
+          </div>
+        </div>
+
+        <p class="mt-3 mb-0 text-sm">
+          <span class="text-red mr-2">
+            <i class="fa fa-arrow-up"> </i> 3.48%
+          </span>
+
+          <span class="text-nowrap"> Since last month </span>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-xl-4 col-md-6">
+    <div class="card card-stats">
+      <div class="card-body">
+        <div class="row">
+          <div class="col">
+            <h5 class="card-title text-uppercase text-muted mb-0">Recettes</h5>
+
+            <span class="h2 font-weight-bold mb-0"> 25 000 DT </span>
+          </div>
+
+          <div class="col-auto">
+            <div
+              class="icon icon-shape bg-gradient-green text-white rounded-circle shadow"
+            >
+              <i class="ni ni-money-coins"> </i>
+            </div>
+          </div>
+        </div>
+
+        <p class="mt-3 mb-0 text-sm">
+          <span class="text-green mr-2">
+            <i class="fa fa-arrow-up"> </i> 3.48%
+          </span>
+
+          <span class="text-nowrap"> Since last month </span>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-xl-4 col-md-6">
+    <div class="card card-stats">
+      <div class="card-body">
+        <div class="row">
+          <div class="col">
+            <h5 class="card-title text-uppercase text-muted mb-0">
+              BILAN TOTAL
+            </h5>
+
+            <span class="h2 font-weight-bold mb-0"> 30 000 DT </span>
+          </div>
+
+          <div class="col-auto">
+            <div
+              class="icon icon-shape bg-gradient-info text-white rounded-circle shadow"
+            >
+              <i class="ni ni-chart-bar-32"> </i>
+            </div>
+          </div>
+        </div>
+
+        <p class="mt-3 mb-0 text-sm">
+          <span class="text-success mr-2">
+            <i class="fa fa-arrow-up"> </i> 3.48%
+          </span>
+
+          <span class="text-nowrap"> Since last month </span>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header border-0">
+    <div class="row">
+      <div class="col-6">
+        <h3 class="mb-0">Filtrer les dépenses</h3>
+      </div>
+    </div>
+  </div>
+
+  <div class="px-4 pt-2 pb-4">
+    <div class="row justify-content-end my-4">
+      <div *ngIf="false" class="col-6 text-right">
+        <a
+          class="btn btn-sm btn-secondary btn-round btn-icon"
+          href="javascript:void(0)"
+          tooltip="Edit product"
+          placement="top"
+        >
+          <span class="btn-inner--icon">
+            <i class="fas fa-times"> </i>
+          </span>
+
+          <span class="btn-inner--text"> Effacer les filtres</span>
+        </a>
+      </div>
+    </div>
+
+    <form>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="row">
+            <div class="col">
+              <div class="form-group">
+                <input
+                  placeholder="Séléctionner une période"
+                  type="text"
+                  class="form-control"
+                  bsDaterangepicker
+                  [minDate]="minDate"
+                  [bsConfig]="bsConfig"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-3">
+          <div class="form-group">
+            <app-search-site-input
+              [placeholder]="'Chercher par propriètaire'"
+            />
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-group">
+            <app-search-site-input [placeholder]="'Chercher par bien'" />
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-group">
+            <app-search-site-input [placeholder]="'Chercher par local'" />
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-group">
+            <app-search-site-input [placeholder]="'Chercher par locataire'" />
+          </div>
+        </div>
+      </div>
+      <div class="d-flex w-100 justify-content-end">
+        <button class="btn btn-secondary" type="submit">Filtrer</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <div class="row align-items-center">
+      <div class="col-8">
+        <h3 class="mb-0">Dépenses</h3>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-body">
+    <div class="table-responsive">
+      <div class="my-3 pr-2 d-flex w-100 flex-row justify-content-end">
+        <button class="btn btn-icon btn-secondary" type="button">
+          <span class="btn-inner--icon">
+            <i class="ni ni-cloud-download-95"> </i>
+          </span>
+
+          <span class="btn-inner--text"> Exporter </span>
+        </button>
+      </div>
+      <table class="table align-items-center table-bordered table-hover">
+        <thead>
+          <tr>
+            <th scope="col">DATE</th>
+            <th scope="col">COMPTES</th>
+            <th class="text-center" scope="col">LIBELLES</th>
+            <th scope="col">DEBIT</th>
+            <th scope="col">CREDIT</th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">29/07/2024</th>
+            <td>
+              <h4>MAG 3</h4>
+            </td>
+            <td>
+              <div class="row">
+                <div class="col-6"><h4>Monsieur Sahbi Ben Amor</h4></div>
+                <div class="col-6"><h4>Loyer juillet 2024</h4></div>
+              </div>
+            </td>
+            <td></td>
+            <td><h4>257 DT</h4></td>
+            <td>
+              <h4>
+                <div>
+                  <a
+                    class="table-action table-action-delete"
+                    tooltip="Delete product"
+                    placement="top"
+                    href="javascript:void(0)"
+                  >
+                    <i class="fas fa-plus"> </i>
+                  </a>
+                  <a
+                    class="table-action"
+                    routerLink="../create-property"
+                    href="javascript:void(0)"
+                    tooltip="Edit product"
+                    placement="top"
+                  >
+                    <i class="fas fa-user-edit"> </i>
+                  </a>
+
+                  <a
+                    class="table-action table-action-delete"
+                    tooltip="Delete product"
+                    placement="top"
+                    href="javascript:void(0)"
+                  >
+                    <i class="fas fa-trash"> </i>
+                  </a>
+                </div>
+              </h4>
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">20/08/2024</th>
+            <td>
+              <h4>MAG 3</h4>
+            </td>
+            <td>
+              <div class="row">
+                <div class="col-6"><h4>Monsieur Sahbi Ben Amor</h4></div>
+                <div class="col-6"><h4>Loyer aout 2024</h4></div>
+              </div>
+            </td>
+            <td></td>
+            <td>
+              <h4>175 DT</h4>
+            </td>
+            <td>
+              <h4>
+                <div>
+                  <a
+                    class="table-action table-action-delete"
+                    tooltip="Delete product"
+                    placement="top"
+                    href="javascript:void(0)"
+                  >
+                    <i class="fas fa-plus"> </i>
+                  </a>
+                  <a
+                    class="table-action"
+                    routerLink="../create-property"
+                    href="javascript:void(0)"
+                    tooltip="Edit product"
+                    placement="top"
+                  >
+                    <i class="fas fa-user-edit"> </i>
+                  </a>
+
+                  <a
+                    class="table-action table-action-delete"
+                    tooltip="Delete product"
+                    placement="top"
+                    href="javascript:void(0)"
+                  >
+                    <i class="fas fa-trash"> </i>
+                  </a>
+                </div>
+              </h4>
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">27/08/2024</th>
+            <td>
+              <h4>MAG 3</h4>
+            </td>
+            <td>
+              <div class="row">
+                <div class="col-6"><h4>Monsieur Sahbi Ben Amor</h4></div>
+                <div class="col-6"><h4>Loyer Septembre 2024</h4></div>
+              </div>
+            </td>
+            <td></td>
+            <td>
+              <h4>150 DT</h4>
+            </td>
+            <td>
+              <h4>
+                <div>
+                  <a
+                    class="table-action table-action-delete"
+                    tooltip="Delete product"
+                    placement="top"
+                    href="javascript:void(0)"
+                  >
+                    <i class="fas fa-plus"> </i>
+                  </a>
+                  <a
+                    class="table-action"
+                    routerLink="../create-property"
+                    href="javascript:void(0)"
+                    tooltip="Edit product"
+                    placement="top"
+                  >
+                    <i class="fas fa-user-edit"> </i>
+                  </a>
+
+                  <a
+                    class="table-action table-action-delete"
+                    tooltip="Delete product"
+                    placement="top"
+                    href="javascript:void(0)"
+                  >
+                    <i class="fas fa-trash"> </i>
+                  </a>
+                </div>
+              </h4>
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">27/08/2024</th>
+            <td>
+              <h4>Apt N3</h4>
+            </td>
+            <td>
+              <div class="row">
+                <div class="col-6"><h4>MR Mongi JMILI</h4></div>
+                <div class="col-6"><h4>Avance sur travaux peinture</h4></div>
+              </div>
+            </td>
+            <td>
+              <h4>200 DT</h4>
+            </td>
+            <td>
+              <h4></h4>
+            </td>
+            <td>
+              <h4>
+                <div>
+                  <a
+                    class="table-action table-action-delete"
+                    tooltip="Delete product"
+                    placement="top"
+                    href="javascript:void(0)"
+                  >
+                    <i class="fas fa-plus"> </i>
+                  </a>
+                  <a
+                    class="table-action"
+                    routerLink="../create-property"
+                    href="javascript:void(0)"
+                    tooltip="Edit product"
+                    placement="top"
+                  >
+                    <i class="fas fa-user-edit"> </i>
+                  </a>
+
+                  <a
+                    class="table-action table-action-delete"
+                    tooltip="Delete product"
+                    placement="top"
+                    href="javascript:void(0)"
+                  >
+                    <i class="fas fa-trash"> </i>
+                  </a>
+                </div>
+              </h4>
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">15/09/2024</th>
+            <td>
+              <h4>Apt N3</h4>
+            </td>
+            <td>
+              <div class="row">
+                <div class="col-6"><h4>MR FARHAT HAJAM</h4></div>
+                <div class="col-6">
+                  <h4>Solde Sur divers travaux de plomberie</h4>
+                </div>
+              </div>
+            </td>
+            <td>
+              <h4>200 DT</h4>
+            </td>
+            <td>
+              <h4></h4>
+            </td>
+            <td>
+              <h4>
+                <div>
+                  <a
+                    class="table-action table-action-delete"
+                    tooltip="Delete product"
+                    placement="top"
+                    href="javascript:void(0)"
+                  >
+                    <i class="fas fa-plus"> </i>
+                  </a>
+                  <a
+                    class="table-action"
+                    routerLink="../create-property"
+                    href="javascript:void(0)"
+                    tooltip="Edit product"
+                    placement="top"
+                  >
+                    <i class="fas fa-user-edit"> </i>
+                  </a>
+
+                  <a
+                    class="table-action table-action-delete"
+                    tooltip="Delete product"
+                    placement="top"
+                    href="javascript:void(0)"
+                  >
+                    <i class="fas fa-trash"> </i>
+                  </a>
+                </div>
+              </h4>
+            </td>
+          </tr>
+
+          <tr>
+            <td colspan="3">
+              <div class="d-flex justify-content-end">
+                <h4>TOTAL:</h4>
+              </div>
+            </td>
+            <td>
+              <h4>400 DT</h4>
+            </td>
+            <td>
+              <h4>650 DT</h4>
+            </td>
+            <td></td>
+          </tr>
+          <tr>
+            <td colspan="3">
+              <div class="d-flex justify-content-end">
+                <h4>Solde créditeur:</h4>
+              </div>
+            </td>
+            <td colspan="3">
+              <h4>1750 DT</h4>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

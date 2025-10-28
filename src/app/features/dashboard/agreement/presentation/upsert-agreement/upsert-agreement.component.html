@@ -1,0 +1,358 @@
+<div class="card">
+  <div class="card-header">
+    <h3 *ngIf="agreementDetails" class="mb-0">Modifier contrat</h3>
+    <h3 *ngIf="!agreementDetails" class="mb-0">Nouveau contrat</h3>
+  </div>
+
+  <div class="card-body">
+    <form [formGroup]="formGroup" (ngSubmit)="upsertAgreement()">
+      <div class="form-group row">
+        <label
+          class="col-md-2 col-form-label form-control-label"
+          for="example-text-input"
+        >
+          Libellé <span class="text-danger">*</span>
+        </label>
+
+        <div class="col-md-10">
+          <div class="input-group input-group-merge">
+            <input
+              formControlName="matricule"
+              class="form-control"
+              id="example-text-input"
+              placeholder=""
+              type="text"
+              value=""
+              [ngClass]="{
+                focused: focus1 === true,
+                'is-invalid':
+                  submitted &&
+                  upsertAgreementForm['matricule'].errors?.['required'],
+              }"
+              (focus)="focus1 = true"
+              (blur)="focus1 = false"
+            />
+          </div>
+          <div
+            *ngIf="
+              submitted && upsertAgreementForm['matricule'].errors?.['required']
+            "
+            class="error-text"
+          >
+            Champs incorrect, Libellé est obligatoire.
+          </div>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label
+          class="col-md-2 col-form-label form-control-label"
+          for="example-datetime-local-input"
+        >
+          Date de début du contrat <span class="text-danger">*</span>
+        </label>
+
+        <div class="col-md-10">
+          <input
+            formControlName="startDate"
+            class="form-control"
+            id="example-datetime-local-input"
+            type="date"
+            [ngClass]="{
+              focused: focus2 === true,
+              'is-invalid':
+                submitted &&
+                upsertAgreementForm['startDate'].errors?.['required'],
+            }"
+            (focus)="focus2 = true"
+            (blur)="focus2 = false"
+          />
+          <div
+            *ngIf="
+              submitted && upsertAgreementForm['startDate'].errors?.['required']
+            "
+            class="error-text"
+          >
+            Champs incorrect, Date de débuté est obligatoire.
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label
+          class="col-md-2 col-form-label form-control-label"
+          for="example-datetime-local-input"
+        >
+          Date d'expiration du contrat <span class="text-danger">*</span>
+        </label>
+
+        <div class="col-md-10">
+          <input
+            formControlName="expireDate"
+            class="form-control"
+            id="example-datetime-local-input"
+            type="date"
+            [ngClass]="{
+              focused: focus2 === true,
+              'is-invalid':
+                submitted &&
+                (upsertAgreementForm['expireDate'].errors?.['required'] ||
+                  formGroup.errors?.['agreementPeriodIncorrect']),
+            }"
+            (focus)="focus2 = true"
+            (blur)="focus2 = false"
+          />
+          <div
+            *ngIf="
+              submitted &&
+              upsertAgreementForm['expireDate'].errors?.['required']
+            "
+            class="error-text"
+          >
+            Champs incorrect, Date d'expiration est obligatoire.
+          </div>
+
+          <div
+            *ngIf="submitted && formGroup.errors?.['agreementPeriodIncorrect']"
+            class="error-text"
+          >
+            Champs incorrect, Période de contrat est invalide date de début doit
+            être > date d'expiration
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label class="col-md-2 col-form-label form-control-label">
+          Montant Du Loyer (TND) <span class="text-danger">*</span>
+        </label>
+
+        <div class="col-md-10">
+          <div class="input-group input-group-merge">
+            <input
+              formControlName="rentAmount"
+              class="form-control"
+              id="example-text-input"
+              placeholder=""
+              type="number"
+              [ngClass]="{
+                focused: focus2 === true,
+                'is-invalid':
+                  submitted &&
+                  upsertAgreementForm['rentAmount'].errors?.['required'],
+              }"
+              (focus)="focus2 = true"
+              (blur)="focus2 = false"
+            />
+          </div>
+          <div
+            *ngIf="
+              submitted &&
+              upsertAgreementForm['rentAmount'].errors?.['required']
+            "
+            class="error-text"
+          >
+            Champs incorrect, Montant Du Loyer est obligatoire.
+          </div>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label
+          class="col-md-2 col-form-label form-control-label"
+          for="example-time-input"
+        >
+          Fréquence De Paiement <span class="text-danger">*</span>
+        </label>
+        <div class="col-md-10">
+          <app-search-input
+            [clearInput]="false"
+            [searchInputValue]="frequencyPaymentsTypeList[0].title"
+            [prefixIcon]="'fas fa-search'"
+            [searchPlaceholder]="'Fréquence De Paiement'"
+            [searchLabel]="'Résultats'"
+            [maxSize]="3"
+            [isInvalid]="
+              submitted &&
+              upsertAgreementForm['paymentFrequency'].errors?.['required']
+            "
+            [errorMessage]="'Champs incorrect, Fréquence De Paiement est obligatoire'"
+            (selectedResultItem)="selectedPaymentFrequency($event)"
+            [searchResult]="frequencyPaymentsTypeList"
+          ></app-search-input>
+        </div>
+      </div>
+      <div class="row mb-4">
+        <label
+          class="col-md-2 col-form-label form-control-label"
+          for="example-time-input"
+        >
+          Local <span class="text-danger">*</span>
+        </label>
+        <div class="col-md-10">
+          <app-search-input
+            [clearInput]="false"
+            [prefixIcon]="'fas fa-search'"
+            [searchPlaceholder]="'Chercher un local'"
+            [searchLabel]="'Résultats'"
+            [maxSize]="5"
+            [isInvalid]="
+              submitted &&
+              upsertAgreementForm['apartmentId'].errors?.['required']
+            "
+            [errorMessage]="'Champs incorrect, Local est obligatoire'"
+            [triggerSearchOnOpen]="true"
+            (searchValue)="onSearchApartmentValueChanged($event)"
+            [searchInputValue]="searchApartmentValue"
+            (selectedResultItem)="onSelectedApartmentSearchItem($event)"
+            [searchResult]="apartmentOptions"
+          ></app-search-input>
+        </div>
+      </div>
+      <div class="row mb-4">
+        <label
+          class="col-md-2 col-form-label form-control-label"
+          for="example-time-input"
+        >
+          Locataire <span class="text-danger">*</span>
+        </label>
+        <div class="col-md-10">
+          <app-search-input
+            [clearInput]="false"
+            [prefixIcon]="'fas fa-search'"
+            [searchPlaceholder]="'Chercher un locataire'"
+            [searchLabel]="'Résultats'"
+            [triggerSearchOnOpen]="true"
+            [isInvalid]="
+              submitted && upsertAgreementForm['tenantId'].errors?.['required']
+            "
+            [errorMessage]="'Champs incorrect, Locataire est obligatoire'"
+            (searchValue)="onSearchTenantValueChanged($event)"
+            [searchInputValue]="searchTenantValue"
+            (selectedResultItem)="onSelectedTenantSearchItem($event)"
+            [searchResult]="tenantOptions"
+          ></app-search-input>
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label
+          class="col-md-2 col-form-label form-control-label"
+          for="example-text-input"
+        >
+          Cautionnement (TND)
+        </label>
+
+        <div class="col-md-10">
+          <div class="input-group input-group-merge">
+            <div
+              class="input-group-prepend"
+              [ngClass]="{ focused: focus4 === true }"
+            >
+              <span class="input-group-text">
+                <i class="fas fa-userss"> </i>
+              </span>
+            </div>
+            <input
+              formControlName="deposit"
+              class="form-control"
+              id="example-text-input"
+              placeholder=""
+              type="text"
+              value=""
+              (focus)="focus4 = true"
+              (blur)="focus4 = false"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label
+          class="col-md-2 col-form-label form-control-label"
+          for="example-text-input"
+        >
+          Premier jour de paiement
+        </label>
+
+        <div class="col-md-10">
+          <div class="input-group input-group-merge">
+            <input
+              formControlName="expireDate"
+              class="form-control"
+              id="example-text-input"
+              placeholder=""
+              type="date"
+              (focus)="focus5 = true"
+              (blur)="focus5 = false"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label
+          class="col-md-2 col-form-label form-control-label"
+          for="example-text-input"
+        >
+          Document (url)
+        </label>
+
+        <div class="col-md-10">
+          <div class="input-group input-group-merge">
+            <div
+              class="input-group-prepend"
+              [ngClass]="{ focused: focus6 === true }"
+            >
+              <span class="input-group-text">
+                <i class="fas fa-userss"> </i>
+              </span>
+            </div>
+            <input
+              formControlName="documentUrl"
+              class="form-control"
+              id="example-text-input"
+              placeholder=""
+              type="text"
+              value=""
+              (focus)="focus6 = true"
+              (blur)="focus6 = false"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="form-group row mt-4">
+        <label
+          class="col-md-2 col-form-label form-control-label"
+          for="example-text-input"
+        >
+          Notes
+        </label>
+
+        <div class="col-md-10">
+          <div class="input-group input-group-merge">
+            <textarea
+              formControlName="notes"
+              class="form-control"
+              id="example-text-input"
+              type="text"
+              value=""
+              rows="4"
+              placeholder="Description"
+              (focus)="focus7 = true"
+              (blur)="focus7 = false"
+            ></textarea>
+          </div>
+        </div>
+      </div>
+      <hr />
+
+      <div class="mt-5 d-flex w-100 flex-row justify-content-end">
+        <button *ngIf="!isLoading" class="btn btn-primary" type="submit">
+          Confirmer
+        </button>
+        <div
+          *ngIf="isLoading"
+          class="spinner-border text-primary mr-5"
+          role="status"
+        ></div>
+      </div>
+    </form>
+  </div>
+</div>

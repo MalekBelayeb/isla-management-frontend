@@ -1,0 +1,190 @@
+<nav
+  [ngClass]="{ 'minimal-sidenav': isMinimalist, sidenav: !isMinimalist }"
+  class="navbar navbar-vertical fixed-left navbar-expand-xs navbar-light bg-white"
+  id="sidenav-main"
+>
+  <div class="">
+    <div *ngIf="!isMinimalist" class="sidenav-header d-flex align-items-center">
+      <a class="navbar-brand" [routerLink]="['/dashboards/dashboard']">
+        <div
+          *ngIf="user && !getUserIsLoading"
+          class="d-flex flex-row align-items-end mt-3"
+        >
+          <img
+            *ngIf="user?.societyLogo"
+            style="width: 42px; height: 42px; object-fit: contain"
+            src="../../../assets/img/{{ user.societyLogo }}"
+          />
+          <img />
+
+          <small
+            class="ml-2 display-3 text-uppercase font-weight-bold text-wrap mb-1"
+          >
+            {{ user.societyName }}
+          </small>
+        </div>
+      </a>
+
+      <div class="ml-auto"></div>
+    </div>
+
+    <div *ngIf="isMinimalist" class="d-flex align-items-center">
+      <a class="p-3" [routerLink]="['/dashboards/dashboard']">
+        <div
+          *ngIf="user && !getUserIsLoading"
+          class="d-flex flex-row align-items-end mt-3"
+        >
+          <img
+            *ngIf="user?.societyLogo"
+            style="width: 42px; height: 42px; object-fit: contain"
+            src="../../../assets/img/{{ user.societyLogo }}"
+          />
+          <img />
+        </div>
+      </a>
+
+      <div class="ml-auto"></div>
+    </div>
+
+    <div class="navbar-inner">
+      <div class="collapse navbar-collapse" id="sidenav-collapse-main">
+        <!-- Collapse header -->
+        <ul *ngIf="!isMinimalist" class="navbar-nav">
+          <li *ngFor="let menuitem of menuItems" class="nav-item">
+            <a
+              routerLinkActive="active"
+              [routerLink]="[menuitem.path]"
+              *ngIf="menuitem.type === 'link'"
+              class="nav-link"
+            >
+              <i class="fas {{ menuitem.icontype }} fa-lg"></i>
+              <span class="nav-link-text">{{ menuitem.title }}</span>
+            </a>
+
+            <a
+              data-toggle="collapse"
+              routerLinkActive="active"
+              *ngIf="menuitem.type === 'sub'"
+              (click)="menuitem.isCollapsed = !menuitem.isCollapsed"
+              [attr.aria-expanded]="!menuitem.isCollapsed"
+              [attr.aria-controls]="menuitem.collapse"
+              class="nav-link"
+            >
+              <i class="fas {{ menuitem.icontype }} fa-lg"></i>
+              <span class="nav-link-text">{{ menuitem.title }}</span>
+            </a>
+
+            <!--Display the submenu items-->
+            <div
+              id="{{ menuitem.collapse }}"
+              class="collapse"
+              *ngIf="menuitem.type === 'sub'"
+              [collapse]="menuitem.isCollapsed"
+              [isAnimated]="true"
+            >
+              <ul class="nav nav-sm flex-column">
+                <li
+                  *ngFor="let childitems of menuitem.children"
+                  class="nav-item"
+                >
+                  <!--If is a single link-->
+                  <a
+                    routerLinkActive="active"
+                    [routerLink]="menuitem.path + '/' + childitems.path"
+                    class="nav-link"
+                    *ngIf="childitems.type === 'link'"
+                  >
+                    {{ childitems.title }}
+                  </a>
+                  <!--If it have a submenu-->
+                  <a
+                    data-toggle="collapse"
+                    (click)="childitems.isCollapsed = !childitems.isCollapsed"
+                    [attr.aria-expanded]="!childitems.isCollapsed"
+                    [attr.aria-controls]="childitems.collapse"
+                    *ngIf="childitems.type === 'sub'"
+                    class="nav-link"
+                  >
+                    {{ childitems.title }}
+                  </a>
+                  <!--Display the submenu items-->
+                  <div
+                    id="{{ childitems.collapse }}"
+                    class="collapse"
+                    *ngIf="childitems.type === 'sub'"
+                    [collapse]="childitems.isCollapsed"
+                    [isAnimated]="true"
+                  >
+                    <ul class="nav">
+                      <li
+                        *ngFor="let childitem of childitems.children"
+                        class="nav-item"
+                      >
+                        <a href="javascript:void(0)" class="nav-link">
+                          {{ childitem.title }}
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </li>
+        </ul>
+
+        <ul *ngIf="isMinimalist" class="navbar-nav">
+          <li *ngFor="let menuitem of menuItems" class="nav-item">
+            <div
+              *ngIf="!menuitem.children"
+              class="form-group"
+              placement="top-right"
+            >
+              <a
+                routerLinkActive="active"
+                [routerLink]="[menuitem.path]"
+                class="nav-link"
+              >
+                <i class="display-3 fas {{ menuitem.icontype }} fa-lg"></i>
+              </a>
+            </div>
+
+            <div
+              *ngIf="menuitem.children"
+              class="form-group"
+              placement="top-right"
+            >
+              <a
+                routerLinkActive="active"
+                dropdown
+                dropdownToggle
+                [routerLink]="[]"
+                class="nav-link"
+              >
+                <i class="display-3 fas {{ menuitem.icontype }} fa-lg"></i>
+                <div
+                  class="dropdown-menu dropdown-menu-arrow dropdown-menu-left minimal-dropdown"
+                  *dropdownMenu
+                >
+                  <div class="dropdown-header noti-title">
+                    <h6 class="text-overflow m-0">{{ menuitem.title }}</h6>
+                  </div>
+                  <ul class="nav">
+                    <li
+                      *ngFor="let childitem of menuitem.children"
+                      class="dropdown-item w-100 px-3"
+                      routerLink="{{ menuitem.path }}/{{ childitem.path }}"
+                    >
+                      <a class="minimal-nav-item-link d-flex w-100">
+                        {{ childitem.title }}
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </a>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</nav>

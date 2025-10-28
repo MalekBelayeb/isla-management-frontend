@@ -1,0 +1,25 @@
+.minimal-sidenav {
+
+    max-width: 65px !important;
+    z-index: 1050;
+    transition: all 0.15s ease;
+    overflow-y: visible !important;
+}
+
+.minimal-nav-item-link {
+    color: rgba(0, 0, 0, 0.6) !important;
+    font-size: 0.875rem !important;
+    font-weight: 500 !important;
+    padding: 0.45rem !important;
+}
+
+
+.minimal-dropdown {
+    z-index: 500000 !important;
+    margin-left: 32px;
+    margin-top: 8px;
+    position: absolute;
+}
+
+
+.word-wrap{word-wrap: break-word !important;}

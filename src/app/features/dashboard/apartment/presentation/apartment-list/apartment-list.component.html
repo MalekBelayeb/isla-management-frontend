@@ -1,0 +1,221 @@
+<div class="card">
+  <div class="card-header border-0">
+    <div class="row">
+      <div class="col-6">
+        <h3 class="mb-0">Liste des locaux ({{ totalLength }})</h3>
+      </div>
+    </div>
+  </div>
+
+  <div class="px-4 pt-2 pb-4">
+    <div class="row justify-content-end px-3">
+      <a
+        class="btn btn-sm btn-primary btn-round btn-icon"
+        href="javascript:void(0)"
+        routerLink="../create-apartment"
+      >
+        <span class="btn-inner--icon">
+          <i class="ni ni-fat-add"> </i>
+        </span>
+        <span class="btn-inner--text"> Ajouter un local </span>
+      </a>
+    </div>
+
+    <div class="row justify-content-end my-4">
+      <div *ngIf="showClearFilterBtn" class="col-6 text-right">
+        <a
+          class="btn btn-sm btn-secondary btn-round btn-icon"
+          (click)="clearFilter()"
+          href="javascript:void(0)"
+          tooltip="Edit product"
+          placement="top"
+        >
+          <span class="btn-inner--icon">
+            <i class="fas fa-times"> </i>
+          </span>
+
+          <span class="btn-inner--text"> Effacer les filtres</span>
+        </a>
+      </div>
+    </div>
+
+    <form [formGroup]="filtersFormGroup" (ngSubmit)="filterEmployees()">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="form-group">
+            <input
+              class="form-control"
+              id="example2cols1Input"
+              formControlName="searchTerm"
+              placeholder="Matricule, adresse ..."
+            />
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <app-search-input
+              [clearInput]="false"
+              [prefixIcon]="'fas fa-search'"
+              [searchPlaceholder]="'Filtrer par type'"
+              [searchLabel]="'Résultats'"
+              [prefixText]="'Type:'"
+              [maxSize]="4"
+              [searchInputValue]="apartmentTypeSearchValue.title"
+              (selectedResultItem)="onSelectedApartmentTypeSearchItem($event)"
+              [searchResult]="apartmentsType"
+            ></app-search-input>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <app-search-input
+              [clearInput]="false"
+              [prefixIcon]="'fas fa-search'"
+              [searchPlaceholder]="'Filtrer par status'"
+              [prefixText]="'Status:'"
+              [searchLabel]="'Résultats'"
+              [maxSize]="4"
+              [searchInputValue]="apartmentStatusSearchValue.title"
+              (selectedResultItem)="onSelectedApartmentTypeSearchItem($event)"
+              [searchResult]="apartementStatus"
+            ></app-search-input>
+          </div>
+        </div>
+      </div>
+      <div class="d-flex w-100 justify-content-end">
+        <button class="btn btn-secondary" type="submit">Filtrer</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table align-items-center table-flush table-hover">
+      <thead class="thead-light">
+        <tr>
+          <th>Identifiant</th>
+          <th>Adresse</th>
+          <th>Type</th>
+          <th>Pieces</th>
+          <th>Propriété</th>
+          <th>Propriètaire</th>
+
+          <th></th>
+        </tr>
+      </thead>
+      <div
+        *ngIf="isLoadingFetchingApartments"
+        class="spinner-border text-primary mt-4 ml-4"
+        role="status"
+      ></div>
+      <div
+        *ngIf="apartments.length === 0 && !isLoadingFetchingApartments"
+        class=""
+      >
+        <p class="ml-4 mb-0">Liste vide, aucun element trouvé.</p>
+      </div>
+
+      <tbody>
+        <tr *ngFor="let apartment of apartments">
+          <td
+            style="cursor: pointer"
+            (click)="redirectToDetails(apartment.id)"
+            class="table-user"
+          >
+            <b> {{ apartment.matricule }} </b>
+          </td>
+          <td
+            style="cursor: pointer"
+            (click)="redirectToDetails(apartment.id)"
+            class="table-user"
+          >
+            <b> {{ apartment.address }} </b>
+          </td>
+
+          <td
+            style="cursor: pointer"
+            (click)="redirectToDetails(apartment.id)"
+            class="table-user"
+          >
+            <b> {{ apartment.type }} </b>
+          </td>
+          <td
+            style="cursor: pointer"
+            (click)="redirectToDetails(apartment.id)"
+            class="table-user"
+          >
+            <b> S+{{ apartment.rooms }} </b>
+          </td>
+          <td
+            style="cursor: pointer"
+            (click)="redirectToDetails(apartment.id)"
+            class="table-user"
+          >
+            <b> {{ apartment.property }} </b>
+          </td>
+          <td
+            style="cursor: pointer"
+            (click)="redirectToDetails(apartment.id)"
+            class="table-user"
+          >
+            <b> {{ apartment.owner }} </b>
+          </td>
+          <td class="table-actions">
+            <a
+              class="table-action"
+              routerLink="../create-apartment"
+              href="javascript:void(0)"
+              tooltip="Edit product"
+              placement="top"
+            >
+              <i class="fas fa-user-edit"> </i>
+            </a>
+
+            <a
+              class="table-action table-action-delete"
+              tooltip="Delete product"
+              placement="top"
+              href="javascript:void(0)"
+              (click)="deleteApartement(apartment.id, apartment.address)"
+            >
+              <i class="fas fa-trash"> </i>
+            </a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card-footer py-4">
+    <nav aria-label="...">
+      <pagination
+        [totalItems]="totalLength"
+        [itemsPerPage]="pageSize"
+        [rotate]="false"
+        [boundaryLinks]="true"
+        [(ngModel)]="page"
+        firstText="&laquo;"
+        lastText="&raquo;"
+        [maxSize]="5"
+        class="justify-content-end mb-0"
+        [customPreviousTemplate]="prevTemplate"
+        (pageChanged)="pageChange($event)"
+        [customNextTemplate]="nextTemplate"
+      >
+      </pagination>
+
+      <ng-template #nextTemplate let-currentPage="currentPage">
+        <ng-container>
+          <i class="fas fa-angle-right"></i>
+        </ng-container>
+      </ng-template>
+
+      <ng-template #prevTemplate let-currentPage="currentPage">
+        <ng-container>
+          <i class="fas fa-angle-left"></i>
+        </ng-container>
+      </ng-template>
+    </nav>
+  </div>
+</div>

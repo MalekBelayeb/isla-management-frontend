@@ -1,0 +1,11 @@
+<app-search-input
+  [clearInput]="false"
+  [searchInputValue]="initialValue"
+  (inputClickTriggered)="onSearchActivityInputClickedChanged($event)"
+  [prefixIcon]="'fas fa-search'"
+  [searchPlaceholder]="'Chercher un activité...'"
+  [searchLabel]="'activité'"
+  [maxSize]="3"
+  (selectedResultItem)="onSelectedActivitySearchItem($event)"
+  [searchResult]="activitySearchResult"
+></app-search-input>

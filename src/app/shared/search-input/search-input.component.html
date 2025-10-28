@@ -1,0 +1,142 @@
+<div>
+  <div
+    class="input-group input-group-merge"
+    [ngClass]="{
+      focused: focus === true,
+      'has-danger': isInvalid && !showSearchResult,
+    }"
+  >
+    <div *ngIf="prefixIcon" class="input-group-prepend">
+      <span
+        class="input-group-text"
+        [ngClass]="{ inputElement: showSearchResult }"
+      >
+        <i class="{{ prefixIcon }}"> </i>
+      </span>
+    </div>
+    <div
+      *ngIf="prefixText"
+      class="input-group-prepend"
+      [ngClass]="{ inputElement: showSearchResult }"
+    >
+      <span
+        [ngClass]="{ inputElement: showSearchResult }"
+        class="input-group-text"
+      >
+        {{ prefixText }}
+      </span>
+    </div>
+    <input
+      [ngClass]="{
+        inputElement: showSearchResult,
+        focused: focus === true,
+        'is-invalid': isInvalid && !showSearchResult,
+      }"
+      [disabled]="disabled"
+      (focus)="focus = true"
+      (click)="onInputClicked()"
+      (blur)="focus = false"
+      value="{{ searchInputValue }}"
+      placeholder="{{ searchPlaceholder }}"
+      (keyup)="debounceValueChange($event)"
+      class="form-control"
+      placeholder="Phone number"
+      type="text"
+    />
+
+    <div
+      *ngIf="suffixIcon"
+      class="input-group-append"
+      [ngClass]="{ focused: focus === true }"
+    >
+      <span
+        class="input-group-text"
+        [ngClass]="{ inputElement: showSearchResult }"
+      >
+        <i class="{{ suffixIcon }}"> </i>
+      </span>
+    </div>
+
+    <div
+      *ngIf="searchInputValue"
+      (click)="clearInputValue()"
+      style="cursor: pointer !important"
+      class="input-group-append"
+      [ngClass]="{ focused: focus === true }"
+    >
+      <span
+        class="input-group-text"
+        [ngClass]="{ inputElement: showSearchResult }"
+      >
+        <i class="fas fa-times"> </i>
+      </span>
+    </div>
+  </div>
+
+  <div
+    *ngIf="showSearchResult"
+    class="input-group input-group-merge"
+    [ngClass]="{ focused: focus === true }"
+  >
+    <div
+      class="table-responsive table-border"
+      style="
+        position: absolute !important;
+        z-index: 999999 !important;
+        background-color: white;
+        max-height: 232px !important;
+        box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px !important;
+      "
+    >
+      <table
+        style="
+          display: inline-table;
+          width: 100% !important;
+          table-layout: fixed !important;
+        "
+        class="table align-items-center table-flush table-hover"
+      >
+        <thead class="thead-light w-100" style="table-layout: fixed !important">
+          <tr>
+            <th style="position: sticky; top: -2px">
+              {{ searchLabel }} ({{ searchResult.length }})
+            </th>
+          </tr>
+        </thead>
+
+        <div
+          *ngIf="searchResultIsLoading"
+          class="spinner-border text-primary m-4"
+          role="status"
+        ></div>
+        <div *ngIf="!searchResultIsLoading && searchResult.length == 0">
+          <small class="ml-2 py-1">Aucun element trouvé...</small>
+        </div>
+        <tbody
+          *ngIf="!searchResultIsLoading"
+          style="
+            flex-direction: column;
+            align-items: top;
+            width: 100% !important;
+            overflow-y: scroll;
+          "
+        >
+          <tr
+            *ngFor="let resultItem of searchResult"
+            style="width: 100% !important"
+          >
+            <td
+              style="cursor: pointer; width: 100% !important"
+              class="table-user w-100"
+              (click)="onSelectedItem(resultItem)"
+            >
+              <i *ngIf="itemIcon" class="{{ itemIcon }}"> </i>
+              <b class="w-100"> {{ resultItem.title }} </b>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div *ngIf="isInvalid" class="error-text">{{ errorMessage }}.</div>
+</div>

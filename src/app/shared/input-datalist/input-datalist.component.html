@@ -1,0 +1,26 @@
+<div class="d-flex row justify-content-end">
+  <div dropdown class="dropdown no-caret">
+    <button
+      id="button-basic"
+      dropdownToggle
+      type="button"
+      class="btn btn-sm btn-neutral mr-0 dropdown-toggle"
+      aria-controls="dropdown-basic"
+    >
+      <i class="fas fa-ellipsis-h"> </i>
+    </button>
+
+    <div
+      class="dropdown-menu dropdown-menu-right dropdown-menu-arrow"
+      *dropdownMenu
+    >
+      <a class="dropdown-item" href="javascript:void(0)"> Action </a>
+
+      <a class="dropdown-item" href="javascript:void(0)"> Another action </a>
+
+      <a class="dropdown-item" href="javascript:void(0)">
+        Something else here
+      </a>
+    </div>
+  </div>
+</div>

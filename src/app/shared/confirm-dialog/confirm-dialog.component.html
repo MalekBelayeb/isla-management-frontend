@@ -1,0 +1,30 @@
+<div class=" modal-header ">
+    <div class="d-flex flex-column w-100 justify-content-start">
+        <h3 class=" mb-0">{{title}}</h3>
+    </div>
+</div>
+
+<div class=" modal-body">
+
+    {{message}}
+
+</div>
+
+<div class=" modal-footer d-flex justify-content-between">
+
+    <div class="d-flex flex-column gap-0 justify-content-start">
+
+    </div>
+
+    <div class="">
+
+        <button class=" btn btn-secondary" (click)="cancelModal()" data-calendar="delete">
+            {{cancelBtnTitle}}
+        </button>
+
+        <button class=" btn btn-primary" (click)="confirmModal()" data-calendar="delete">
+            {{confirmBtnTitle}}
+        </button>
+
+    </div>
+</div>

@@ -1,0 +1,236 @@
+<div class="card">
+  <div class="card-header border-0">
+    <div class="row">
+      <div class="col-6">
+        <h3 class="mb-0">Liste des contrats ({{ totalLength }})</h3>
+      </div>
+    </div>
+  </div>
+
+  <div class="px-4 pt-2 pb-4">
+    <div class="row justify-content-end px-3">
+      <a
+        class="btn btn-sm btn-primary btn-round btn-icon"
+        href="javascript:void(0)"
+        routerLink="../create-agreement"
+      >
+        <span class="btn-inner--icon">
+          <i class="ni ni-fat-add"> </i>
+        </span>
+        <span class="btn-inner--text"> Créer un nouveau contrat </span>
+      </a>
+    </div>
+
+    <div class="row justify-content-end my-4">
+      <div *ngIf="showClearFilterBtn" class="col-6 text-right">
+        <a
+          class="btn btn-sm btn-secondary btn-round btn-icon"
+          (click)="clearFilter()"
+          href="javascript:void(0)"
+          tooltip="Edit product"
+          placement="top"
+        >
+          <span class="btn-inner--icon">
+            <i class="fas fa-times"> </i>
+          </span>
+
+          <span class="btn-inner--text"> Effacer les filtres</span>
+        </a>
+      </div>
+    </div>
+
+    <form [formGroup]="filtersFormGroup" (ngSubmit)="filterAgreements()">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="form-group">
+            <input
+              class="form-control"
+              id="example2cols1Input"
+              formControlName="name"
+              placeholder="Nom, prénom, tél & mail"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <app-search-site-input
+              [placeholder]="'Chercher par local'"
+              (selectedSite)="onSelectedSiteSearchItem($event)"
+            />
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-group">
+            <input
+              class="form-control"
+              id="example-datetime-local-input"
+              type="date"
+              value=""
+            />
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-group">
+            <input
+              class="form-control"
+              id="example-datetime-local-input"
+              type="date"
+              value=""
+            />
+          </div>
+        </div>
+      </div>
+
+      <div class="d-flex w-100 justify-content-end">
+        <button class="btn btn-secondary" type="submit">Filtrer</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table align-items-center table-flush table-hover">
+      <thead class="thead-light">
+        <tr>
+          <th>Libellé</th>
+          <th>Locataire</th>
+          <th>Local</th>
+          <th>Période de validité du contrat</th>
+          <th>Montant du loyer</th>
+          <th>Fréquence de paiement</th>
+          <th>Status</th>
+          <th>Signé le:</th>
+          <th>Crée le:</th>
+
+          <th></th>
+        </tr>
+      </thead>
+      <div
+        *ngIf="isLoadingFetchingAgreements"
+        class="spinner-border text-primary mt-4 ml-4"
+        role="status"
+      ></div>
+      <div
+        *ngIf="agreements.length === 0 && !isLoadingFetchingAgreements"
+        class=""
+      >
+        <p class="ml-4 mb-0">Liste vide, aucun element trouvé.</p>
+      </div>
+
+      <tbody>
+        <tr *ngFor="let agreement of agreements">
+          <td
+            style="cursor: pointer"
+            (click)="redirectToDetails(agreement.id)"
+            class="table-user"
+          >
+            <span> {{ agreement.matricule }} </span>
+          </td>
+          <td
+            style="cursor: pointer"
+            (click)="redirectToDetails(agreement.id)"
+            class="table-user"
+          >
+            <b> {{ agreement.tenant }} </b>
+          </td>
+
+          <td style="cursor: pointer" (click)="redirectToDetails(agreement.id)">
+            <b class=""> {{ agreement.apartment }} </b>
+          </td>
+          <td style="cursor: pointer" (click)="redirectToDetails(agreement.id)">
+            <span class="status">
+              {{ agreement.startDate | date: "dd/MM/yyyy" }} -
+              {{ agreement.expireDate | date: "dd/MM/yyyy" }}
+            </span>
+          </td>
+          <td style="cursor: pointer" (click)="redirectToDetails(agreement.id)">
+            <span class="status"> {{ agreement.rentAmount }} DT </span>
+          </td>
+
+          <td style="cursor: pointer" (click)="redirectToDetails(agreement.id)">
+            <span class="status"> {{ agreement.paymentFrequency }} </span>
+          </td>
+
+          <td style="cursor: pointer" (click)="redirectToDetails(agreement.id)">
+            <div class="col-auto">
+              <span *ngIf="agreement.status == 'ACTIVE'" class="badge badge-lg badge-success">
+                Valide
+              </span>
+
+              <span *ngIf="agreement.status == 'EXPIRED'" class="badge badge-lg badge-danger">
+                Expiré
+              </span>
+            </div>
+          </td>
+          <td style="cursor: pointer" (click)="redirectToDetails(agreement.id)">
+            <span class="status">
+              {{ agreement.signedAt | date: "dd/MM/yyyy" }}
+            </span>
+          </td>
+
+          <td style="cursor: pointer" (click)="redirectToDetails(agreement.id)">
+            <span class="status">
+              {{ agreement.createdAt | date: "dd/MM/yyyy" }}
+            </span>
+          </td>
+
+          <td class="table-actions">
+            <a
+              class="table-action"
+              routerLink="../create-aggrement"
+              href="javascript:void(0)"
+              tooltip="Edit product"
+              placement="top"
+            >
+              <i class="fas fa-user-edit"> </i>
+            </a>
+
+            <a
+              (click)="deleteAgreement(agreement.id, '')"
+              class="table-action table-action-delete"
+              tooltip="Delete product"
+              placement="top"
+              href="javascript:void(0)"
+            >
+              <i class="fas fa-trash"> </i>
+            </a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card-footer py-4">
+    <nav aria-label="...">
+      <pagination
+        [totalItems]="totalLength"
+        [itemsPerPage]="pageSize"
+        [rotate]="false"
+        [boundaryLinks]="true"
+        [(ngModel)]="page"
+        firstText="&laquo;"
+        lastText="&raquo;"
+        [maxSize]="5"
+        class="justify-content-end mb-0"
+        [customPreviousTemplate]="prevTemplate"
+        (pageChanged)="pageChange($event)"
+        [customNextTemplate]="nextTemplate"
+      >
+      </pagination>
+
+      <ng-template #nextTemplate let-currentPage="currentPage">
+        <ng-container>
+          <i class="fas fa-angle-right"></i>
+        </ng-container>
+      </ng-template>
+
+      <ng-template #prevTemplate let-currentPage="currentPage">
+        <ng-container>
+          <i class="fas fa-angle-left"></i>
+        </ng-container>
+      </ng-template>
+    </nav>
+  </div>
+</div>

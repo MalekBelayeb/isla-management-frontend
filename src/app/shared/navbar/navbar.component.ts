@@ -1,0 +1,230 @@
+import {
+  Component,
+  OnInit,
+  TemplateRef,
+  ViewChild,
+  Input,
+  Output,
+  EventEmitter,
+} from '@angular/core';
+import { Router } from '@angular/router';
+
+import { Location } from '@angular/common';
+import { SearchResult } from '../search-input/search-input.component';
+import { ConfirmDialogService } from '../confirm-dialog/confirm-dialog.service';
+import { User } from '@models/old/user';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { ToastAlertService } from '../toast-alert/toast-alert.service';
+import { UserService } from '@auth/service/user.service';
+import { DASHBOARD_ROUTES } from '@shared/sidebar/sidebar.component';
+import { QueryStringBuilder } from '@core/query-string-builder/query-string-builder';
+import { GetAllEmployeeDTO } from '@models/dto/employee/get-all-employees-dto';
+import { RefreshNotificationsService } from '@core/services/refresh-notifications.service';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
+
+interface NotificationModel {
+  id: string;
+  title: string;
+  subtitle: string;
+}
+
+@Component({
+  selector: 'app-navbar',
+  templateUrl: './navbar.component.html',
+  styleUrls: ['./navbar.component.scss'],
+  providers: [ConfirmDialogService],
+})
+export class NavbarComponent implements OnInit {
+  public focus: any;
+  public listTitles: any[] = [];
+  public location: Location;
+  codeSociety = '';
+  searchModal?: BsModalRef;
+
+  @ViewChild('modalSearch') modalSearch?: TemplateRef<void>;
+
+  codeSocietyModal?: BsModalRef;
+  @ViewChild('modalCodeSociety') modalCodeSociety?: TemplateRef<void>;
+
+  supportContactModal?: BsModalRef;
+  @ViewChild('modalSupportContact') modalSupportContact?: TemplateRef<void>;
+
+  @Input() user?: User;
+  @Input() getUserIsLoading = false;
+
+  @Output() logoutClick = new EventEmitter<void>();
+
+  placesAutocompleResult: SearchResult[] = [];
+  sidenavOpen: boolean = true;
+  notificationsNumber = 0;
+  isLoading: boolean = false;
+  notifications: NotificationModel[] = [];
+
+  constructor(
+    location: Location,
+    private router: Router,
+    private formBuild: FormBuilder,
+    private confirmDialogService: ConfirmDialogService,
+    private modalService: BsModalService,
+    private toastAlertService: ToastAlertService,
+    private userService: UserService,
+    private queryStringBuilder: QueryStringBuilder,
+    private getAllEmployeeDto: GetAllEmployeeDTO,
+    private refreshNotificationService: RefreshNotificationsService,
+  ) {
+    this.location = location;
+  }
+
+  showModal() {
+    this.searchModal = this.modalService.show(this.modalSearch!, {
+      class: 'modal-xl',
+    });
+  }
+
+  hideModal() {
+    this.searchModal?.hide();
+  }
+
+  openSidebar() {
+    if (document.body.classList.contains('g-sidenav-pinned')) {
+      document.body.classList.remove('g-sidenav-pinned');
+      document.body.classList.add('g-sidenav-hidden');
+      this.sidenavOpen = false;
+    } else {
+      document.body.classList.add('g-sidenav-pinned');
+      document.body.classList.remove('g-sidenav-hidden');
+      this.sidenavOpen = true;
+    }
+  }
+  showModalSupport() {
+    this.supportContactModal = this.modalService.show(
+      this.modalSupportContact!,
+      {
+        class: 'modal-md',
+      },
+    );
+  }
+
+  hideCodeSocietyModalSupport() {
+    this.supportContactModal?.hide();
+  }
+
+  showCodeSocietyModal() {
+    /*if (!this.userService.user?.societyId) return;
+    this.userService
+      .fetchSocietyCode(this.userService.user?.societyId)
+      .subscribe({
+        next: (value) => {
+          console.log(value);
+          this.codeSociety = value.body.data?.attachmentCode ?? '';
+        },
+      });*/
+    this.codeSocietyModal = this.modalService.show(this.modalCodeSociety!, {
+      class: 'modal-md',
+    });
+  }
+
+  hideCodeSocietyModal() {
+    this.codeSocietyModal?.hide();
+  }
+
+  moveToEmployeeDetail(id: string) {
+    this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+      this.router.navigate([`./dashboard/employee/employee-details/${id}`]);
+    });
+
+    this.hideModal();
+  }
+
+  logout() {
+    this.toastAlertService.toastr.clear();
+
+    this.confirmDialogService.showDialog({
+      title: 'Êtes-vous sûr de vouloir confirmer ?',
+      message:
+        'Êtes-vous sûr de vouloir vous déconnecter ? Cette action fermera votre session actuelle',
+      cancelBtnTitle: 'Annuler',
+      confirmBtnTitle: 'Confirmer',
+      onCancelClick: () => {},
+      onConfirmClick: () => {
+        this.logoutClick.emit();
+      },
+    });
+  }
+
+  ngOnInit() {
+    this.listTitles = DASHBOARD_ROUTES.filter((listTitle) => listTitle);
+  }
+
+  getTitle() {
+    let titlee = this.location.prepareExternalUrl(this.location.path());
+    if (titlee.charAt(0) === '#') {
+      titlee = titlee.slice(1);
+    }
+
+    for (const listTitle of this.listTitles) {
+      if (listTitle.path === titlee) {
+        return listTitle.title;
+      }
+    }
+    return 'Dashboard';
+  }
+
+  openSearch() {
+    document.body.classList.add('g-navbar-search-showing');
+    setTimeout(function () {
+      document.body.classList.remove('g-navbar-search-showing');
+      document.body.classList.add('g-navbar-search-show');
+    }, 150);
+    setTimeout(function () {
+      document.body.classList.add('g-navbar-search-shown');
+    }, 300);
+  }
+
+  closeSearch() {
+    document.body.classList.remove('g-navbar-search-shown');
+    setTimeout(function () {
+      document.body.classList.remove('g-navbar-search-show');
+      document.body.classList.add('g-navbar-search-hiding');
+    }, 150);
+    setTimeout(function () {
+      document.body.classList.remove('g-navbar-search-hiding');
+      document.body.classList.add('g-navbar-search-hidden');
+    }, 300);
+    setTimeout(function () {
+      document.body.classList.remove('g-navbar-search-hidden');
+    }, 500);
+  }
+
+  showSocietyCodePopup() {
+    this.showCodeSocietyModal();
+  }
+
+  redirectToNotificationDetail(id: string) {
+    this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+      this.router.navigate([`./dashboard/employee/employee-details/${id}`], {
+        queryParams: { scrollTo: 'address' },
+      });
+    });
+  }
+
+  async getAllEmployee(
+    page: number,
+    pageSize: number,
+    filters?: Record<string, string>,
+    useCache = false,
+  ) {
+    this.isLoading = true;
+
+    const urlParameters = this.queryStringBuilder.create({
+      page,
+      pageSize,
+      attachment: false,
+    });
+  }
+}

@@ -1,0 +1,261 @@
+<div class="card">
+  <div class="card-header">
+    <div class="row align-items-center">
+      <div class="col-8">
+        <h3 class="mb-0">Détails locataire</h3>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-body">
+    <div class="pl-lg-4">
+      <div class="row">
+        <div class="col-lg-3">
+          <div class="form-group">
+            <h5 class="card-title text-uppercase text-muted mb-0">
+              Identifiant
+            </h5>
+
+            <h5 class="h2 font-weight-bold mb-0 mt-1">
+              {{ tenantDetails?.matricule }}
+            </h5>
+          </div>
+        </div>
+        <div class="col-lg-3">
+          <div class="form-group">
+            <h5 class="card-title text-uppercase text-muted mb-0">
+              Prénom et nom
+            </h5>
+
+            <h5 class="h2 font-weight-bold mb-0 mt-1">
+              {{ tenantDetails?.fullname }}
+            </h5>
+          </div>
+        </div>
+        <div class="col-lg-3">
+          <div class="form-group">
+            <h5 class="card-title text-uppercase text-muted mb-0">Téléphone</h5>
+
+            <h5 class="h2 font-weight-bold mb-0 mt-1">
+              {{ tenantDetails?.phoneNumber }}
+            </h5>
+          </div>
+        </div>
+        <div class="col-lg-3">
+          <div class="form-group">
+            <h5 class="card-title text-uppercase text-muted mb-0">
+              Nationalté
+            </h5>
+
+            <h5 class="h5 font-weight-bold mb-0 mt-1">
+              {{ tenantDetails?.nationality }}
+            </h5>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-lg-3">
+          <div class="form-group">
+            <h5 class="card-title text-uppercase text-muted mb-0">CIN</h5>
+
+            <h5 class="h2 font-weight-bold mb-0 mt-1">
+              {{ tenantDetails?.cin }}
+            </h5>
+          </div>
+        </div>
+        <div class="col-lg-3">
+          <div class="form-group">
+            <h5 class="card-title text-uppercase text-muted mb-0">Ajouté le</h5>
+
+            <h5 class="h2 font-weight-bold mb-0 mt-1">
+              {{ tenantDetails?.createdAt }}
+            </h5>
+          </div>
+        </div>
+        <div class="col-lg-3">
+          <div class="form-group">
+            <h5 class="card-title text-uppercase text-muted mb-0">
+              CONTRAT ACTUEL
+            </h5>
+
+            <h5 class="h2 font-weight-bold mb-0 mt-1">#66A88</h5>
+          </div>
+        </div>
+        <div class="col-lg-3">
+          <div class="form-group">
+            <h5 class="card-title text-uppercase text-muted mb-0">Local</h5>
+
+            <h5 class="h2 font-weight-bold mb-0 mt-1">P1B2L3</h5>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-upsert-tenant [tenantDetails]="tenantDetails" />
+
+<div class="card">
+  <div class="card-header">
+    <div class="row align-items-center">
+      <div class="col-8">
+        <h3 class="mb-0">Historique des paiements</h3>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-body">
+    <div class="row mb-3 mt-3">
+      <table class="table align-items-center table-flush table-hover">
+        <thead>
+          <tr>
+            <th scope="col">Matricule du contrat</th>
+            <th scope="col">Montant payé en DT</th>
+            <th scope="col">Méthode</th>
+            <th scope="col">Type</th>
+            <th scope="col">Catégorie</th>
+            <th scope="col">Local</th>
+            <th scope="col">Fréquence de paiement</th>
+            <th scope="col">Payé le</th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <div
+          *ngIf="isLoadingFetchingPayments"
+          class="spinner-border text-primary mt-4 ml-4"
+          role="status"
+        ></div>
+        <div
+          *ngIf="payments.length === 0 && !isLoadingFetchingPayments"
+          class=""
+        >
+          <p class="ml-4 mb-0">Liste vide, aucun element trouvé.</p>
+        </div>
+        <tbody>
+          <tr *ngFor="let payment of payments">
+            <td>
+              <h4>{{ payment.agreement }}</h4>
+            </td>
+
+            <td>
+              <h4>{{ payment.amount }} DT</h4>
+            </td>
+            <td>
+              <h4>{{ payment.method }}</h4>
+            </td>
+
+            <td>
+              <div class="col-auto">
+                <span
+                  *ngIf="payment.type == 'income'"
+                  class="badge badge-lg badge-success"
+                >
+                  Recette
+                </span>
+
+                <span
+                  *ngIf="payment.type == 'expense'"
+                  class="badge badge-lg badge-danger"
+                >
+                  Dépense
+                </span>
+              </div>
+            </td>
+            <td>
+              <h4>{{ payment.category }}</h4>
+            </td>
+            <td>
+              <h4>{{ payment.apartment }}</h4>
+            </td>
+            <td>
+              <h4>{{ payment.payementFrequency }}</h4>
+            </td>
+            <td>
+              <h4>{{ payment.createdAt | date: "dd/MM/yyyy" }}</h4>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <div class="row align-items-center">
+      <div class="col-8">
+        <h3 class="mb-0">Historique des contrats</h3>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-body">
+    <div class="row mb-3 mt-3">
+      <table class="table align-items-center table-flush table-hover">
+        <thead>
+          <tr>
+            <th scope="col">Matricule</th>
+            <th scope="col">Local</th>
+            <th scope="col">Periode de validité</th>
+            <th scope="col">Montant</th>
+          </tr>
+        </thead>
+        <div
+          *ngIf="isLoadingFetchingAgreements"
+          class="spinner-border text-primary mt-4 ml-4"
+          role="status"
+        ></div>
+        <div
+          *ngIf="agreements.length === 0 && !isLoadingFetchingAgreements"
+          class=""
+        >
+          <p class="ml-4 mb-0">Liste vide, aucun element trouvé.</p>
+        </div>
+        <tbody>
+          <tr *ngFor="let agreement of agreements">
+            <th scope="row">{{ agreement.matricule }}</th>
+            <td>
+              <h4>{{ agreement.apartment }}</h4>
+            </td>
+            <td>
+              <h4>
+                {{ agreement.paymentFrequency }} - {{ agreement.rentAmount }} DT
+              </h4>
+            </td>
+            <td>
+              <h4>
+                {{ agreement.startDate | date: "dd/MM/yyyy" }} -
+                {{ agreement.expireDate | date: "dd/MM/yyyy" }}
+              </h4>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <div class="row align-items-center">
+      <div class="col-8">
+        <h3 class="mb-0">Calendrier des paiements</h3>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-body">
+    <div class="widget-calendar">
+      <div class="card-header">
+        <div class="h5 text-muted mb-1 widget-calendar-year"></div>
+
+        <div class="h3 mb-0 widget-calendar-day"></div>
+      </div>
+
+      <div class="card-body">
+        <div data-toggle="widget-calendar" id="widget-calendar"></div>
+      </div>
+    </div>
+  </div>
+</div>
