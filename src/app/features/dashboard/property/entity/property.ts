@@ -4,5 +4,6 @@ export interface Property {
   matricule: string;
   owner: string;
   address: string;
+  nbApartments: number;
   apartments: string[];
 }

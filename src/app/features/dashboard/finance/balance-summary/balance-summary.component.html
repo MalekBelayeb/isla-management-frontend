@@ -6,7 +6,9 @@
           <div class="col">
             <h5 class="card-title text-uppercase text-muted mb-0">Dépenses</h5>
 
-            <span class="h2 font-weight-bold mb-0"> 20 000 DT </span>
+            <span class="h2 font-weight-bold mb-0">
+              {{ totalExpense }} DT
+            </span>
           </div>
 
           <div class="col-auto">
@@ -36,7 +38,7 @@
           <div class="col">
             <h5 class="card-title text-uppercase text-muted mb-0">Recettes</h5>
 
-            <span class="h2 font-weight-bold mb-0"> 25 000 DT </span>
+            <span class="h2 font-weight-bold mb-0"> {{ totalIncome }} DT </span>
           </div>
 
           <div class="col-auto">
@@ -68,7 +70,7 @@
               BILAN TOTAL
             </h5>
 
-            <span class="h2 font-weight-bold mb-0"> 30 000 DT </span>
+            <span class="h2 font-weight-bold mb-0"> {{ netBalance }} DT </span>
           </div>
 
           <div class="col-auto">
@@ -198,251 +200,34 @@
             <th class="text-center" scope="col">LIBELLES</th>
             <th scope="col">DEBIT</th>
             <th scope="col">CREDIT</th>
-            <th scope="col"></th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <th scope="row">29/07/2024</th>
+          <tr *ngFor="let payment of financialBalance?.payments">
+            <th scope="row">{{ payment.createdAt | date: "dd/MM/yyyy" }}</th>
             <td>
-              <h4>MAG 3</h4>
+              <h4>{{ payment.agreement }}</h4>
             </td>
             <td>
               <div class="row">
-                <div class="col-6"><h4>Monsieur Sahbi Ben Amor</h4></div>
-                <div class="col-6"><h4>Loyer juillet 2024</h4></div>
-              </div>
-            </td>
-            <td></td>
-            <td><h4>257 DT</h4></td>
-            <td>
-              <h4>
-                <div>
-                  <a
-                    class="table-action table-action-delete"
-                    tooltip="Delete product"
-                    placement="top"
-                    href="javascript:void(0)"
-                  >
-                    <i class="fas fa-plus"> </i>
-                  </a>
-                  <a
-                    class="table-action"
-                    routerLink="../create-property"
-                    href="javascript:void(0)"
-                    tooltip="Edit product"
-                    placement="top"
-                  >
-                    <i class="fas fa-user-edit"> </i>
-                  </a>
-
-                  <a
-                    class="table-action table-action-delete"
-                    tooltip="Delete product"
-                    placement="top"
-                    href="javascript:void(0)"
-                  >
-                    <i class="fas fa-trash"> </i>
-                  </a>
-                </div>
-              </h4>
-            </td>
-          </tr>
-          <tr>
-            <th scope="row">20/08/2024</th>
-            <td>
-              <h4>MAG 3</h4>
-            </td>
-            <td>
-              <div class="row">
-                <div class="col-6"><h4>Monsieur Sahbi Ben Amor</h4></div>
-                <div class="col-6"><h4>Loyer aout 2024</h4></div>
-              </div>
-            </td>
-            <td></td>
-            <td>
-              <h4>175 DT</h4>
-            </td>
-            <td>
-              <h4>
-                <div>
-                  <a
-                    class="table-action table-action-delete"
-                    tooltip="Delete product"
-                    placement="top"
-                    href="javascript:void(0)"
-                  >
-                    <i class="fas fa-plus"> </i>
-                  </a>
-                  <a
-                    class="table-action"
-                    routerLink="../create-property"
-                    href="javascript:void(0)"
-                    tooltip="Edit product"
-                    placement="top"
-                  >
-                    <i class="fas fa-user-edit"> </i>
-                  </a>
-
-                  <a
-                    class="table-action table-action-delete"
-                    tooltip="Delete product"
-                    placement="top"
-                    href="javascript:void(0)"
-                  >
-                    <i class="fas fa-trash"> </i>
-                  </a>
-                </div>
-              </h4>
-            </td>
-          </tr>
-          <tr>
-            <th scope="row">27/08/2024</th>
-            <td>
-              <h4>MAG 3</h4>
-            </td>
-            <td>
-              <div class="row">
-                <div class="col-6"><h4>Monsieur Sahbi Ben Amor</h4></div>
-                <div class="col-6"><h4>Loyer Septembre 2024</h4></div>
-              </div>
-            </td>
-            <td></td>
-            <td>
-              <h4>150 DT</h4>
-            </td>
-            <td>
-              <h4>
-                <div>
-                  <a
-                    class="table-action table-action-delete"
-                    tooltip="Delete product"
-                    placement="top"
-                    href="javascript:void(0)"
-                  >
-                    <i class="fas fa-plus"> </i>
-                  </a>
-                  <a
-                    class="table-action"
-                    routerLink="../create-property"
-                    href="javascript:void(0)"
-                    tooltip="Edit product"
-                    placement="top"
-                  >
-                    <i class="fas fa-user-edit"> </i>
-                  </a>
-
-                  <a
-                    class="table-action table-action-delete"
-                    tooltip="Delete product"
-                    placement="top"
-                    href="javascript:void(0)"
-                  >
-                    <i class="fas fa-trash"> </i>
-                  </a>
-                </div>
-              </h4>
-            </td>
-          </tr>
-          <tr>
-            <th scope="row">27/08/2024</th>
-            <td>
-              <h4>Apt N3</h4>
-            </td>
-            <td>
-              <div class="row">
-                <div class="col-6"><h4>MR Mongi JMILI</h4></div>
-                <div class="col-6"><h4>Avance sur travaux peinture</h4></div>
-              </div>
-            </td>
-            <td>
-              <h4>200 DT</h4>
-            </td>
-            <td>
-              <h4></h4>
-            </td>
-            <td>
-              <h4>
-                <div>
-                  <a
-                    class="table-action table-action-delete"
-                    tooltip="Delete product"
-                    placement="top"
-                    href="javascript:void(0)"
-                  >
-                    <i class="fas fa-plus"> </i>
-                  </a>
-                  <a
-                    class="table-action"
-                    routerLink="../create-property"
-                    href="javascript:void(0)"
-                    tooltip="Edit product"
-                    placement="top"
-                  >
-                    <i class="fas fa-user-edit"> </i>
-                  </a>
-
-                  <a
-                    class="table-action table-action-delete"
-                    tooltip="Delete product"
-                    placement="top"
-                    href="javascript:void(0)"
-                  >
-                    <i class="fas fa-trash"> </i>
-                  </a>
-                </div>
-              </h4>
-            </td>
-          </tr>
-          <tr>
-            <th scope="row">15/09/2024</th>
-            <td>
-              <h4>Apt N3</h4>
-            </td>
-            <td>
-              <div class="row">
-                <div class="col-6"><h4>MR FARHAT HAJAM</h4></div>
                 <div class="col-6">
-                  <h4>Solde Sur divers travaux de plomberie</h4>
+                  <h4>{{ payment.tenant }}</h4>
+                </div>
+                <div class="col-6">
+                  <h4>{{ payment.category }}</h4>
                 </div>
               </div>
             </td>
             <td>
-              <h4>200 DT</h4>
+              <h4 *ngIf="payment.type == 'expense'">
+                <i class="fas fa-arrow-down text-warning mr-3"> </i>
+                {{ payment.amount }} DT
+              </h4>
             </td>
             <td>
-              <h4></h4>
-            </td>
-            <td>
-              <h4>
-                <div>
-                  <a
-                    class="table-action table-action-delete"
-                    tooltip="Delete product"
-                    placement="top"
-                    href="javascript:void(0)"
-                  >
-                    <i class="fas fa-plus"> </i>
-                  </a>
-                  <a
-                    class="table-action"
-                    routerLink="../create-property"
-                    href="javascript:void(0)"
-                    tooltip="Edit product"
-                    placement="top"
-                  >
-                    <i class="fas fa-user-edit"> </i>
-                  </a>
-
-                  <a
-                    class="table-action table-action-delete"
-                    tooltip="Delete product"
-                    placement="top"
-                    href="javascript:void(0)"
-                  >
-                    <i class="fas fa-trash"> </i>
-                  </a>
-                </div>
+              <h4 *ngIf="payment.type == 'income'">
+                <i class="fas fa-arrow-up text-success mr-3"> </i>
+                {{ payment.amount }} DT
               </h4>
             </td>
           </tr>
@@ -454,12 +239,17 @@
               </div>
             </td>
             <td>
-              <h4>400 DT</h4>
+              <h4 class="text-warning">
+                <i class="fas fa-arrow-down text-warning mr-3"> </i
+                >{{ financialBalance?.totalExpense }} DT
+              </h4>
             </td>
             <td>
-              <h4>650 DT</h4>
+              <h4 class="text-success">
+                <i class="fas fa-arrow-up text-success mr-3"> </i>
+                {{ financialBalance?.totalIncome }} DT
+              </h4>
             </td>
-            <td></td>
           </tr>
           <tr>
             <td colspan="3">
@@ -467,8 +257,8 @@
                 <h4>Solde créditeur:</h4>
               </div>
             </td>
-            <td colspan="3">
-              <h4>1750 DT</h4>
+            <td colspan="2">
+              <h4>{{ financialBalance?.netBalance }} DT</h4>
             </td>
           </tr>
         </tbody>

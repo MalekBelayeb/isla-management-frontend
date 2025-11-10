@@ -92,11 +92,13 @@
       <thead class="thead-light">
         <tr>
           <th>Contrat</th>
+          <th>Libellé</th>
           <th>Locataire</th>
           <th>Local</th>
           <th>Type</th>
           <th>Catégorie</th>
           <th>Montant (DT)</th>
+          <th>Période courvré</th>
           <th>Méthode</th>
           <th>Fréquence de paiement</th>
           <th>Crée le:</th>
@@ -117,6 +119,9 @@
         <tr *ngFor="let payment of payments">
           <td style="cursor: pointer" (click)="redirectToDetails(payment.id)">
             <span class=""> {{ payment.agreement }} </span>
+          </td>
+          <td style="cursor: pointer" (click)="redirectToDetails(payment.id)">
+            <span class=""> {{ payment.label }} </span>
           </td>
           <td style="cursor: pointer" (click)="redirectToDetails(payment.id)">
             <span class=""> {{ payment.tenant }} </span>
@@ -167,7 +172,11 @@
               {{ payment.amount }} DT
             </b>
           </td>
-
+          <td style="cursor: pointer" (click)="redirectToDetails(payment.id)">
+            <span class="">
+              {{ payment.rentStartDate | date: "dd/MM/yyyy" }} - {{ payment.rentEndDate | date: "dd/MM/yyyy" }}
+            </span>
+          </td>
           <td style="cursor: pointer" (click)="redirectToDetails(payment.id)">
             <span class=""> {{ payment.method }} </span>
           </td>

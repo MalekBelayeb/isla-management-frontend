@@ -9,6 +9,7 @@ import { SearchAutocompleteInputModule } from '@shared/searchable-autocomplete-i
 import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { UpsertAgreementComponent } from './presentation/upsert-agreement/upsert-agreement.component';
 import { AgreementDetailsComponent } from './presentation/agreement-details/Agreement-details.component';
+import { DateRangePickerModule } from '@shared/form-inputs/date-range-picker/date-range-picker.module';
 
 @NgModule({
   declarations: [
@@ -23,6 +24,7 @@ import { AgreementDetailsComponent } from './presentation/agreement-details/Agre
     FormsModule,
     ReactiveFormsModule,
     SearchAutocompleteInputModule,
+    DateRangePickerModule,
     PaginationModule.forRoot(),
   ],
 })

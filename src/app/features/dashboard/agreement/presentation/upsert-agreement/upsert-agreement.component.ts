@@ -71,6 +71,17 @@ export class UpsertAgreementComponent implements OnInit {
   searchTenantValue: string = '';
   searchApartmentValue: string = '';
 
+  onStartDateChange($event: Date) {
+    this.formGroup
+      .get('startDate')
+      ?.setValue($event.toISOString().split('T')[0]);
+  }
+
+  onEndDateChange($event: Date) {
+    this.formGroup
+      .get('expireDate')
+      ?.setValue($event.toISOString().split('T')[0]);
+  }
   ngOnChanges(changes: SimpleChanges): void {
     if (
       changes['agreementDetails'] &&
@@ -134,7 +145,7 @@ export class UpsertAgreementComponent implements OnInit {
 
     this.tenantService.getAllTenant(`?${queryString}`).subscribe({
       next: (value) => {
-        const tenants = TenantMapper.mapTenants(value.body);
+        const tenants = TenantMapper.mapTenants(value.body.tenants);
         this.tenantOptions = tenants.map((item) => ({
           id: item.id,
           title: `${item.matricule} - ${item.fullname}`,
@@ -156,7 +167,7 @@ export class UpsertAgreementComponent implements OnInit {
 
     this.apartmentService.getAllApartments(`?${queryString}`).subscribe({
       next: (value) => {
-        const apartments = ApartmentMapper.mapApartments(value.body);
+        const apartments = ApartmentMapper.mapApartments(value.body.apartments);
         this.apartmentOptions = apartments.map((item) => ({
           id: item.id,
           title: `${item.matricule} - ${item.address}`,

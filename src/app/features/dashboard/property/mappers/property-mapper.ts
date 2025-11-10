@@ -21,6 +21,7 @@ export class PropertyMapper {
       address: data.address,
       type: data.type,
       owner: `${data.owner.gender == 'M' ? 'Mr' : 'Mme'}  ${data.owner.firstname} ${data.owner.lastname}`,
+      nbApartments: data._count.apartments ?? 0,
       apartments: [],
     };
   }

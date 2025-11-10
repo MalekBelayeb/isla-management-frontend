@@ -86,7 +86,7 @@ export class UpsertApartmentComponent {
     const queryString = new URLSearchParams(params).toString();
     this.propertyService.getAllProperties(`?${queryString}`).subscribe({
       next: (value) => {
-        const owners = PropertyMapper.mapProperties(value.body);
+        const owners = PropertyMapper.mapProperties(value.body.properties);
         this.propertyOptions = owners.map((item) => ({
           id: item.id,
           title: `${item.matricule} - ${item.address}`,

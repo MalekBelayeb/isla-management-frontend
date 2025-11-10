@@ -15,6 +15,7 @@ import { Payment } from '@dashboard/payment/entity/payment';
 import { PaymentService } from '@dashboard/payment/service/payment.service';
 import { PaymentMapper } from '@dashboard/payment/mappers/payment-mapper';
 import { FinancialBalance } from '@dashboard/payment/entity/financial-balance';
+import { PageChangedEvent } from 'ngx-bootstrap/pagination';
 
 @Component({
   selector: 'app-apartment-details',
@@ -53,8 +54,14 @@ export class ApartmentDetailsComponent implements OnInit {
   ];
   ngOnInit(): void {
     this.getApartmentDetails();
-    this.getAllAgreementByApartment(0, 10);
-    this.getAllPaymentByApartment(0, 10);
+    this.getAllAgreementByApartment(
+      this.getAllAgreementByApartmentPage,
+      this.getAllAgreementByApartmentPageSize,
+    );
+    this.getAllPaymentByApartment(
+      this.getAllPaymentByApartmentPage,
+      this.getAllPaymentByApartmentPageSize,
+    );
     this.getFinancialBalance();
   }
   getApartmentId(): string {
@@ -88,6 +95,19 @@ export class ApartmentDetailsComponent implements OnInit {
 
   isLoadingFetchingAgreements: boolean = false;
   agreements: Agreement[] = [];
+  getAllAgreementByApartmentTotalLength = 0;
+  getAllAgreementByApartmentPage = 1;
+  getAllAgreementByApartmentPageSize = 5;
+
+  getAllAgreementByApartmentPageChange(event: PageChangedEvent) {
+    this.getAllAgreementByApartmentPage = event.page;
+    this.getAllAgreementByApartment(
+      this.getAllAgreementByApartmentPage,
+      this.getAllAgreementByApartmentPageSize,
+      {},
+      false,
+    );
+  }
   async getAllAgreementByApartment(
     page: number,
     pageSize: number,
@@ -97,7 +117,8 @@ export class ApartmentDetailsComponent implements OnInit {
     this.isLoadingFetchingAgreements = true;
     const params = {
       apartmentId: this.getApartmentId(),
-      limit: `${defaultSearchLimit}`,
+      limit: `${pageSize}`,
+      page: `${page}`,
     };
 
     const queryString = new URLSearchParams(params).toString();
@@ -107,8 +128,11 @@ export class ApartmentDetailsComponent implements OnInit {
       .subscribe({
         next: (value) => {
           this.isLoadingFetchingAgreements = false;
+          this.getAllAgreementByApartmentTotalLength = value.body.meta.total;
 
-          this.agreements = AgreeementMapper.mapAgreements(value.body);
+          this.agreements = AgreeementMapper.mapAgreements(
+            value.body.agreements,
+          );
           console.log(this.agreements);
         },
         error: (err) => {
@@ -121,6 +145,21 @@ export class ApartmentDetailsComponent implements OnInit {
 
   isLoadingFetchingPayments: boolean = false;
   payments: Payment[] = [];
+
+  getAllPaymentByApartmentTotalLength = 0;
+  getAllPaymentByApartmentPage = 1;
+  getAllPaymentByApartmentPageSize = 5;
+
+  getAllPaymentByApartmentPageChange(event: PageChangedEvent) {
+    this.getAllPaymentByApartmentPage = event.page;
+    this.getAllPaymentByApartment(
+      this.getAllPaymentByApartmentPage,
+      this.getAllPaymentByApartmentPageSize,
+      {},
+      false,
+    );
+  }
+
   async getAllPaymentByApartment(
     page: number,
     pageSize: number,
@@ -130,7 +169,8 @@ export class ApartmentDetailsComponent implements OnInit {
     this.isLoadingFetchingPayments = true;
     const params = {
       apartmentId: this.getApartmentId(),
-      limit: `${defaultSearchLimit}`,
+      limit: `${pageSize}`,
+      page: `${page}`,
     };
 
     const queryString = new URLSearchParams(params).toString();
@@ -138,8 +178,9 @@ export class ApartmentDetailsComponent implements OnInit {
     this.paymentService.getAllPayments(`?${queryString}`, useCache).subscribe({
       next: (value) => {
         this.isLoadingFetchingPayments = false;
+        this.getAllPaymentByApartmentTotalLength = value.body.meta.total;
 
-        this.payments = PaymentMapper.mapPayments(value.body);
+        this.payments = PaymentMapper.mapPayments(value.body.payments);
         console.log(this.agreements);
       },
       error: (err) => {

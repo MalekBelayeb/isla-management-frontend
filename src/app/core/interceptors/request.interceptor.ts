@@ -12,8 +12,7 @@ import { ToastAlertService } from '@shared/toast-alert/toast-alert.service';
 import { environment } from 'src/environments/environment';
 
 interface GenericErrorBodyResponse {
-  response: boolean;
-  message: string;
+  error: { response: boolean; message: string };
 }
 
 @Injectable()
@@ -37,20 +36,19 @@ export class RequestInterceptor implements HttpInterceptor {
             if (this.codeStatus.includes(value.status)) {
               this.toastAlertService.showErrorNotification(
                 "Une erreur s'est produite",
-                (value.body as GenericErrorBodyResponse).message ?? '',
+                (value.body as GenericErrorBodyResponse).error.message ?? '',
               );
             }
           }
         },
         error: (error) => {
-          if (request.url.replace(environment.url, '') === '/auth/profile')
-            return;
+          if (request.url.replace(environment.url, '') === '/user') return;
           if (error instanceof HttpErrorResponse) {
             if (error) {
               if (this.codeStatus.includes(error.status)) {
                 this.toastAlertService.showErrorNotification(
                   "Une erreur s'est produite",
-                  error.error?.message ||
+                  error.error?.message?.message ||
                     'Erreur du serveur, veuillez réessayer plus tard',
                 );
               }

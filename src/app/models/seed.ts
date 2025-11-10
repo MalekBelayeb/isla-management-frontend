@@ -36,7 +36,7 @@ export class Seed {
     { id: '2', title: '2 - Salem Ben Ayed' },
   ];
 
-  static properties: Property[] = [
+  /*static properties: Property[] = [
     {
       id: 'P1B2',
       address: 'El Aouina, Tunis',
@@ -53,7 +53,7 @@ export class Seed {
       matricule: '3',
       apartments: [],
     },
-  ];
+  ];*/
 
   static propertiesOptions: SearchResult[] = [
     { id: '1', title: '1 - El Aouina, Tunis' },

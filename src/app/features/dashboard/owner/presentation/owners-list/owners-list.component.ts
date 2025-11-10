@@ -45,8 +45,6 @@ export class OwnersListComponent {
     this.propertiesModal = this.modalService.show(this.modalProperties!, {
       class: 'modal-lg',
     });
-
-    this.selectedProperties = Seed.properties;
   }
 
   hideModal() {

@@ -4,6 +4,6 @@
 
 export const environment = {
   production: false,
-  url: "https://recette.business.ewassali.tn/api/v1",
+  url: 'http://localhost:3001/api',
   urlAnalytics: "https://api.wassalni.analytics.ewassali.com"
 };

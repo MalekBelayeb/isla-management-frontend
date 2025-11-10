@@ -125,6 +125,7 @@ export class UpsertOwnerComponent implements OnInit, OnChanges {
   }
 
   onChangeGender(gender: string) {
+    console.log(gender);
     this.formGroup.get('gender')?.setValue(gender);
   }
 

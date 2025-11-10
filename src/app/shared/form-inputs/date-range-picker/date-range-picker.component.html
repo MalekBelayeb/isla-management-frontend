@@ -1,0 +1,76 @@
+<div class="row">
+  <div
+    class="col-md-6"
+    style="cursor: pointer"
+    (click)="openDatePicker('startDateInput')"
+  >
+    <div
+      class=""
+      [ngClass]="{
+        focused: focus1 === true,
+        'has-danger': startDateInvalid,
+      }"
+    >
+      <div class="input-group input-group-merge">
+        <div class="input-group-prepend">
+          <span class="input-group-text text-sm"> {{ startDatePrefix }} </span>
+        </div>
+
+        <input
+          id="startDateInput"
+          class="form-control"
+          style="cursor: pointer"
+          type="date"
+          [ngClass]="{
+            focused: focus1 === true,
+            'is-invalid': startDateInvalid,
+          }"
+          value=""
+          (change)="onChangeStartDate(); onChangeDatepicker()"
+          (focus)="focus1 = true"
+          (blur)="focus1 = false"
+        />
+      </div>
+      <div *ngIf="startDateInvalid" class="error-text">
+        {{ startDateErrorMessage }}
+      </div>
+    </div>
+  </div>
+  <div
+    class="col-md-6"
+    style="cursor: pointer"
+    (click)="openDatePicker('endDateInput')"
+  >
+    <div
+      class=""
+      [ngClass]="{
+        focused: focus2 === true,
+        'has-danger': endDateInvalid,
+      }"
+    >
+      <div class="input-group input-group-merge">
+        <div class="input-group-prepend">
+          <span class="input-group-text text-sm"> {{ endDatePrefix }} </span>
+        </div>
+
+        <input
+          id="endDateInput"
+          class="form-control"
+          type="date"
+          value=""
+          [ngClass]="{
+            focused: focus2 === true,
+            'is-invalid': endDateInvalid,
+          }"
+          style="cursor: pointer"
+          (change)="onChangeDatepicker()"
+          (focus)="focus2 = true"
+          (blur)="focus2 = false"
+        />
+      </div>
+      <div *ngIf="endDateInvalid" class="error-text">
+        {{ endDateErrorMessage }}
+      </div>
+    </div>
+  </div>
+</div>

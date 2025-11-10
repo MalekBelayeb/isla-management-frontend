@@ -3,6 +3,7 @@ import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 export const emailValidator: ValidatorFn = (
   control: AbstractControl,
 ): ValidationErrors | null => {
+  if (!control.value.email) return null;
   const regex = /^[\w.%+-]+@[\w.-]+\.[a-zA-Z]{2,}$/;
   return regex.test(control.value.email) ? null : { emailIncorrect: true };
 };

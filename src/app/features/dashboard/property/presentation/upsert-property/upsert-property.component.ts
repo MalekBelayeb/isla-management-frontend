@@ -71,7 +71,7 @@ export class UpsertPropertyComponent implements OnInit {
     const queryString = new URLSearchParams(params).toString();
     this.ownerService.getAllOwners(`?${queryString}`).subscribe({
       next: (value) => {
-        const owners = GetAllOwnersMapper.fromResponse(value.body);
+        const owners = GetAllOwnersMapper.fromResponse(value.body.owners);
         this.ownerOptions = owners.map((item) => ({
           id: item.id,
           title: item.name,

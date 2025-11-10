@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Agreement } from '../entity/agreement';
 import { AgreementDetails } from '../entity/agreement-details';
+import { DataTypes } from '@models/data';
 
 @Injectable({ providedIn: 'root' })
 export class AgreeementMapper {
@@ -31,7 +32,10 @@ export class AgreeementMapper {
         id: item.id,
         matricule: item.matricule,
         status: new Date(item.expireDate) > new Date() ? 'ACTIVE' : 'EXPIRED',
-        paymentFrequency: item.paymentFrequency,
+        paymentFrequency:
+          DataTypes.paymentFrequencyTypeList.find(
+            (frequency) => frequency.id === item.paymentFrequency,
+          )?.title ?? '',
         rentAmount: item.rentAmount,
         startDate: item.startDate,
         expireDate: item.expireDate,

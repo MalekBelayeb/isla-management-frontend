@@ -18,6 +18,7 @@ import { conts, defaultSearchLimit } from 'src/app/variables/consts';
 import { Payment } from '@dashboard/payment/entity/payment';
 import { PaymentService } from '@dashboard/payment/service/payment.service';
 import { PaymentMapper } from '@dashboard/payment/mappers/payment-mapper';
+import { PageChangedEvent } from 'ngx-bootstrap/pagination';
 
 @Component({
   selector: 'app-tenant-details',
@@ -113,8 +114,14 @@ export class TenantDetailsComponent implements OnInit {
       mYear;
     document.getElementsByClassName('widget-calendar-day')[0].innerHTML = mDay;
     this.getTenantDetails();
-    this.getAllAgreementByTenant(0, 10);
-    this.getAllPaymentByTenant(0, 10);
+    this.getAllAgreementByTenant(
+      this.getAllAgreementByTenantPage,
+      this.getAllAgreementByTenantPageSize,
+    );
+    this.getAllPaymentByTenant(
+      this.getAllPaymentByTenantPage,
+      this.getAllPaymentByTenantPageSize,
+    );
   }
 
   getTenantId(): string {
@@ -138,6 +145,20 @@ export class TenantDetailsComponent implements OnInit {
 
   isLoadingFetchingAgreements: boolean = false;
   agreements: Agreement[] = [];
+
+  getAllAgreementByTenantTotalLength = 0;
+  getAllAgreementByTenantPage = 1;
+  getAllAgreementByTenantPageSize = 5;
+
+  getAllAgreementByTenantPageChange(event: PageChangedEvent) {
+    this.getAllAgreementByTenantPage = event.page;
+    this.getAllAgreementByTenant(
+      this.getAllAgreementByTenantPage,
+      this.getAllAgreementByTenantPageSize,
+      {},
+      false,
+    );
+  }
   async getAllAgreementByTenant(
     page: number,
     pageSize: number,
@@ -147,7 +168,8 @@ export class TenantDetailsComponent implements OnInit {
     this.isLoadingFetchingAgreements = true;
     const params = {
       tenantId: this.getTenantId(),
-      limit: `${defaultSearchLimit}`,
+      limit: `${pageSize}`,
+      page: `${page}`,
     };
 
     const queryString = new URLSearchParams(params).toString();
@@ -157,8 +179,11 @@ export class TenantDetailsComponent implements OnInit {
       .subscribe({
         next: (value) => {
           this.isLoadingFetchingAgreements = false;
+          this.getAllAgreementByTenantTotalLength = value.body.meta.total;
 
-          this.agreements = AgreeementMapper.mapAgreements(value.body);
+          this.agreements = AgreeementMapper.mapAgreements(
+            value.body.agreements,
+          );
           console.log(this.agreements);
         },
         error: (err) => {
@@ -171,6 +196,20 @@ export class TenantDetailsComponent implements OnInit {
 
   isLoadingFetchingPayments: boolean = false;
   payments: Payment[] = [];
+  getAllPaymentByTenantTotalLength = 0;
+  getAllPaymentByTenantPage = 1;
+  getAllPaymentByTenantPageSize = 5;
+
+  getAllPaymentByTenantPageChange(event: PageChangedEvent) {
+    this.getAllPaymentByTenantPage = event.page;
+    this.getAllPaymentByTenant(
+      this.getAllPaymentByTenantPage,
+      this.getAllPaymentByTenantPageSize,
+      {},
+      false,
+    );
+  }
+
   async getAllPaymentByTenant(
     page: number,
     pageSize: number,
@@ -180,7 +219,8 @@ export class TenantDetailsComponent implements OnInit {
     this.isLoadingFetchingPayments = true;
     const params = {
       tenantId: this.getTenantId(),
-      limit: `${defaultSearchLimit}`,
+      limit: `${pageSize}`,
+      page: `${page}`,
     };
 
     const queryString = new URLSearchParams(params).toString();
@@ -188,9 +228,9 @@ export class TenantDetailsComponent implements OnInit {
     this.paymentService.getAllPayments(`?${queryString}`, useCache).subscribe({
       next: (value) => {
         this.isLoadingFetchingPayments = false;
+        this.getAllPaymentByTenantTotalLength = value.body.meta.total;
 
-        this.payments = PaymentMapper.mapPayments(value.body);
-        console.log(this.agreements);
+        this.payments = PaymentMapper.mapPayments(value.body.payments);
       },
       error: (err) => {
         this.isLoadingFetchingPayments = false;

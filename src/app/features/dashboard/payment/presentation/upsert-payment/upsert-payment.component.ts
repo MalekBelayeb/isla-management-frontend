@@ -48,6 +48,9 @@ export class UpsertPaymentComponent implements OnInit {
   ) {
     this.formGroup = this.formBuilder.group({
       amount: new FormControl('', Validators.required),
+      label: new FormControl('', Validators.required),
+      rentStartDate: new FormControl(''),
+      rentEndDate: new FormControl(''),
       type: new FormControl(this.paymentTypeList[0].id, Validators.required),
       category: new FormControl(
         this.paymentCategoryList[0].id,
@@ -68,6 +71,9 @@ export class UpsertPaymentComponent implements OnInit {
 
   agreementOptions: SearchResult[] = [];
   searchAgreementValue: string = '';
+  searchTypeValue: string = this.paymentTypeList[0].title;
+  searchCategoryValue: string = this.paymentCategoryList[0].title;
+  searchMethodValue: string = this.paymentMethodTypeList[0].title;
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['paymentDetails'] && !changes['paymentDetails'].firstChange) {
@@ -75,6 +81,13 @@ export class UpsertPaymentComponent implements OnInit {
       if (this.paymentDetails) {
         this.formGroup.get('amount')?.setValue(this.paymentDetails?.amount);
         this.formGroup.get('method')?.setValue(this.paymentDetails?.method);
+        this.formGroup.get('label')?.setValue(this.paymentDetails?.label);
+        this.formGroup
+          .get('rentStartDate')
+          ?.setValue(this.paymentDetails?.rentStartDate);
+        this.formGroup
+          .get('rentEndDate')
+          ?.setValue(this.paymentDetails?.rentEndDate);
         this.formGroup.get('type')?.setValue(this.paymentDetails?.type);
         this.formGroup.get('category')?.setValue(this.paymentDetails?.category);
         this.formGroup
@@ -82,6 +95,20 @@ export class UpsertPaymentComponent implements OnInit {
           ?.setValue(this.paymentDetails?.agreementId);
 
         this.formGroup.get('notes')?.setValue(this.paymentDetails?.notes);
+        console.log(this.paymentDetails);
+        this.searchCategoryValue =
+          DataTypes.paymentCategoryList.find(
+            (item) => item.id === this.paymentDetails?.category,
+          )?.title ?? '';
+        this.searchTypeValue =
+          DataTypes.paymentTypeList.find(
+            (item) => item.id === this.paymentDetails?.type,
+          )?.title ?? '';
+
+        this.searchMethodValue =
+          DataTypes.paymentMethodTypeList.find(
+            (item) => item.id === this.paymentDetails?.method,
+          )?.title ?? '';
 
         this.searchAgreementValue = this.paymentDetails.agreement;
       }
@@ -103,7 +130,17 @@ export class UpsertPaymentComponent implements OnInit {
   get upsertPaymentForm() {
     return this.formGroup.controls;
   }
+  onStartDateChange($event: Date) {
+    this.formGroup
+      .get('rentStartDate')
+      ?.setValue($event.toISOString().split('T')[0]);
+  }
 
+  onEndDateChange($event: Date) {
+    this.formGroup
+      .get('rentEndDate')
+      ?.setValue($event.toISOString().split('T')[0]);
+  }
   onSearchAgreementValueChanged(searchValue?: string) {
     const params = {
       ...(searchValue && { searchTerm: searchValue }),
@@ -114,7 +151,9 @@ export class UpsertPaymentComponent implements OnInit {
 
     this.agreementService.getAllAgreement(`?${queryString}`).subscribe({
       next: (value) => {
-        const agreements = AgreeementMapper.mapAgreements(value.body);
+        const agreements = AgreeementMapper.mapAgreements(
+          value.body.agreements,
+        );
         this.agreementOptions = agreements.map((item) => ({
           id: item.id,
           title: `${item.matricule}`,
@@ -134,6 +173,9 @@ export class UpsertPaymentComponent implements OnInit {
     let body: any = {
       ...(this.paymentDetails && { id: this.paymentDetails.id }),
       amount: this.formGroup.get('amount')?.value,
+      label: this.formGroup.get('label')?.value,
+      rentStartDate: this.formGroup.get('rentStartDate')?.value,
+      rentEndDate: this.formGroup.get('rentEndDate')?.value,
       type: this.formGroup.get('type')?.value,
       category: this.formGroup.get('category')?.value,
       method: this.formGroup.get('method')?.value,

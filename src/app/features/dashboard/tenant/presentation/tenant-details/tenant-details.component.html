@@ -100,84 +100,119 @@
   <div class="card-header">
     <div class="row align-items-center">
       <div class="col-8">
-        <h3 class="mb-0">Historique des paiements</h3>
+        <h3 class="mb-0">
+          Historique des paiements ({{ getAllPaymentByTenantTotalLength }})
+        </h3>
       </div>
     </div>
   </div>
 
   <div class="card-body">
     <div class="row mb-3 mt-3">
-      <table class="table align-items-center table-flush table-hover">
-        <thead>
-          <tr>
-            <th scope="col">Matricule du contrat</th>
-            <th scope="col">Montant payé en DT</th>
-            <th scope="col">Méthode</th>
-            <th scope="col">Type</th>
-            <th scope="col">Catégorie</th>
-            <th scope="col">Local</th>
-            <th scope="col">Fréquence de paiement</th>
-            <th scope="col">Payé le</th>
-            <th scope="col"></th>
-          </tr>
-        </thead>
-        <div
-          *ngIf="isLoadingFetchingPayments"
-          class="spinner-border text-primary mt-4 ml-4"
-          role="status"
-        ></div>
-        <div
-          *ngIf="payments.length === 0 && !isLoadingFetchingPayments"
-          class=""
-        >
-          <p class="ml-4 mb-0">Liste vide, aucun element trouvé.</p>
-        </div>
-        <tbody>
-          <tr *ngFor="let payment of payments">
-            <td>
-              <h4>{{ payment.agreement }}</h4>
-            </td>
+      <div class="table-responsive">
+        <table class="table align-items-center table-flush table-hover">
+          <thead>
+            <tr>
+              <th scope="col">Matricule du contrat</th>
+              <th scope="col">Montant payé en DT</th>
+              <th scope="col">Méthode</th>
+              <th scope="col">Type</th>
+              <th scope="col">Catégorie</th>
+              <th scope="col">Local</th>
+              <th scope="col">Fréquence de paiement</th>
+              <th scope="col">Payé le</th>
+              <th scope="col"></th>
+            </tr>
+          </thead>
+          <div
+            *ngIf="isLoadingFetchingPayments"
+            class="spinner-border text-primary mt-4 ml-4"
+            role="status"
+          ></div>
+          <div
+            *ngIf="payments.length === 0 && !isLoadingFetchingPayments"
+            class=""
+          >
+            <p class="ml-4 mb-0">Liste vide, aucun element trouvé.</p>
+          </div>
+          <tbody>
+            <tr *ngFor="let payment of payments">
+              <td>
+                <h4>{{ payment.agreement }}</h4>
+              </td>
 
-            <td>
-              <h4>{{ payment.amount }} DT</h4>
-            </td>
-            <td>
-              <h4>{{ payment.method }}</h4>
-            </td>
+              <td>
+                <h4>{{ payment.amount }} DT</h4>
+              </td>
+              <td>
+                <h4>{{ payment.method }}</h4>
+              </td>
 
-            <td>
-              <div class="col-auto">
-                <span
-                  *ngIf="payment.type == 'income'"
-                  class="badge badge-lg badge-success"
-                >
-                  Recette
-                </span>
+              <td>
+                <div class="col-auto">
+                  <span
+                    *ngIf="payment.type == 'income'"
+                    class="badge badge-lg badge-success"
+                  >
+                    Recette
+                  </span>
 
-                <span
-                  *ngIf="payment.type == 'expense'"
-                  class="badge badge-lg badge-danger"
-                >
-                  Dépense
-                </span>
-              </div>
-            </td>
-            <td>
-              <h4>{{ payment.category }}</h4>
-            </td>
-            <td>
-              <h4>{{ payment.apartment }}</h4>
-            </td>
-            <td>
-              <h4>{{ payment.payementFrequency }}</h4>
-            </td>
-            <td>
-              <h4>{{ payment.createdAt | date: "dd/MM/yyyy" }}</h4>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+                  <span
+                    *ngIf="payment.type == 'expense'"
+                    class="badge badge-lg badge-danger"
+                  >
+                    Dépense
+                  </span>
+                </div>
+              </td>
+              <td>
+                <h4>{{ payment.category }}</h4>
+              </td>
+              <td>
+                <h4>{{ payment.apartment }}</h4>
+              </td>
+              <td>
+                <h4>{{ payment.payementFrequency }}</h4>
+              </td>
+              <td>
+                <h4>{{ payment.createdAt | date: "dd/MM/yyyy" }}</h4>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
+  </div>
+  <div class="card-footer py-4">
+    <nav aria-label="...">
+      <pagination
+        [totalItems]="getAllPaymentByTenantTotalLength"
+        [itemsPerPage]="getAllPaymentByTenantPageSize"
+        [rotate]="false"
+        [boundaryLinks]="true"
+        [(ngModel)]="getAllPaymentByTenantPage"
+        firstText="&laquo;"
+        lastText="&raquo;"
+        [maxSize]="5"
+        class="justify-content-end mb-0"
+        [customPreviousTemplate]="prevTemplate"
+        (pageChanged)="getAllPaymentByTenantPageChange($event)"
+        [customNextTemplate]="nextTemplate"
+      >
+      </pagination>
+
+      <ng-template #nextTemplate let-currentPage="currentPage">
+        <ng-container>
+          <i class="fas fa-angle-right"></i>
+        </ng-container>
+      </ng-template>
+
+      <ng-template #prevTemplate let-currentPage="currentPage">
+        <ng-container>
+          <i class="fas fa-angle-left"></i>
+        </ng-container>
+      </ng-template>
+    </nav>
   </div>
 </div>
 
@@ -185,7 +220,9 @@
   <div class="card-header">
     <div class="row align-items-center">
       <div class="col-8">
-        <h3 class="mb-0">Historique des contrats</h3>
+        <h3 class="mb-0">
+          Historique des contrats ({{ getAllAgreementByTenantTotalLength }})
+        </h3>
       </div>
     </div>
   </div>
@@ -233,6 +270,38 @@
         </tbody>
       </table>
     </div>
+  </div>
+
+  <div class="card-footer py-4">
+    <nav aria-label="...">
+      <pagination
+        [totalItems]="getAllAgreementByTenantTotalLength"
+        [itemsPerPage]="getAllAgreementByTenantPageSize"
+        [rotate]="false"
+        [boundaryLinks]="true"
+        [(ngModel)]="getAllAgreementByTenantPage"
+        firstText="&laquo;"
+        lastText="&raquo;"
+        [maxSize]="5"
+        class="justify-content-end mb-0"
+        [customPreviousTemplate]="prevTemplate"
+        (pageChanged)="getAllAgreementByTenantPageChange($event)"
+        [customNextTemplate]="nextTemplate"
+      >
+      </pagination>
+
+      <ng-template #nextTemplate let-currentPage="currentPage">
+        <ng-container>
+          <i class="fas fa-angle-right"></i>
+        </ng-container>
+      </ng-template>
+
+      <ng-template #prevTemplate let-currentPage="currentPage">
+        <ng-container>
+          <i class="fas fa-angle-left"></i>
+        </ng-container>
+      </ng-template>
+    </nav>
   </div>
 </div>
 

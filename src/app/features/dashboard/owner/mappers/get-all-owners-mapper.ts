@@ -17,8 +17,11 @@ export class GetAllOwnersMapper {
         phoneNumber: item.phoneNumber,
         type: item.type == 'natural' ? 'natural' : 'legal',
         createdAt: new Date(item.createdAt),
-        nbPremises: 0,
-        nbProperty: 0,
+        nbPremises:
+          item.properties.length > 0
+            ? (item.properties[0]._count.apartments ?? 0)
+            : 0,
+        nbProperty: item._count.properties ?? 0,
       };
     });
   }

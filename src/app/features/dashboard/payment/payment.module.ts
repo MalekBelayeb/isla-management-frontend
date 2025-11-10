@@ -9,6 +9,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { SearchAutocompleteInputModule } from '@shared/searchable-autocomplete-inputs/search-autocomple-input-module';
+import { DateRangePickerModule } from '@shared/form-inputs/date-range-picker/date-range-picker.module';
 
 @NgModule({
   declarations: [
@@ -24,6 +25,7 @@ import { SearchAutocompleteInputModule } from '@shared/searchable-autocomplete-i
     PaginationModule.forRoot(),
     BsDatepickerModule.forRoot(),
     SearchAutocompleteInputModule,
+    DateRangePickerModule,
   ],
 })
 export class PaymentModule {}
