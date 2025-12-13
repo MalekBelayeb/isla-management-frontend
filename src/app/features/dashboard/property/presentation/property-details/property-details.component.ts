@@ -79,7 +79,7 @@ export class PropertyDetailsComponent implements OnInit {
     this.getFinancialBalance();
   }
 
-  get editApartmentForm() {
+  get editApartmentForm() { 
     return this.formGroup.controls;
   }
 

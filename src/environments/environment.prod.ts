@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  url: 'https://api.isla-immobiliere.tn./api',
+  url: 'https://api.isla-immobiliere.tn/api',
 };
