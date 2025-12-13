@@ -8,7 +8,7 @@
   </div>
 
   <div class="px-4 pt-2 pb-4">
-    <div class="row justify-content-end px-3">
+    <div class="row justify-content-end px-3 pb-4">
       <a
         class="btn btn-sm btn-primary btn-round btn-icon"
         href="javascript:void(0)"
@@ -21,39 +21,73 @@
       </a>
     </div>
 
-    <div class="row justify-content-end my-4">
-      <div *ngIf="showClearFilterBtn" class="col-6 text-right">
-        <a
-          class="btn btn-sm btn-secondary btn-round btn-icon"
-          (click)="clearFilter()"
-          href="javascript:void(0)"
-          tooltip="Edit product"
-          placement="top"
-        >
-          <span class="btn-inner--icon">
-            <i class="fas fa-times"> </i>
-          </span>
-
-          <span class="btn-inner--text"> Effacer les filtres</span>
-        </a>
-      </div>
-    </div>
-
     <form [formGroup]="filtersFormGroup" (ngSubmit)="filterEmployees()">
       <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-4">
           <div class="form-group">
             <input
               class="form-control"
               id="example2cols1Input"
               formControlName="searchTerm"
-              placeholder="Matricule, adresse ..."
+              placeholder="Chercher par adresse"
             />
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div
+            class="form-group"
+            [ngClass]="{
+              focused: focus2 === true,
+            }"
+          >
+            <div class="input-group input-group-merge">
+              <div class="input-group-prepend">
+                <span class="input-group-text text-sm"> Prop- </span>
+              </div>
+              <input
+                class="form-control"
+                [ngClass]="{
+                  focused: focus2 === true,
+                }"
+                type="number"
+                min="1"
+                formControlName="propertyMatricule"
+                placeholder="Chercher par num dossier"
+                (focus)="focus2 = true"
+                (blur)="focus2 = false"
+              />
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div
+            class="form-group"
+            [ngClass]="{
+              focused: focus1 === true,
+            }"
+          >
+            <div class="input-group input-group-merge">
+              <div class="input-group-prepend">
+                <span class="input-group-text text-sm"> Apt- </span>
+              </div>
+              <input
+                class="form-control"
+                [ngClass]="{
+                  focused: focus1 === true,
+                }"
+                type="number"
+                min="1"
+                formControlName="matricule"
+                placeholder="Chercher par num apartement"
+                (focus)="focus1 = true"
+                (blur)="focus1 = false"
+              />
+            </div>
           </div>
         </div>
       </div>
       <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-4">
           <div class="form-group">
             <app-search-input
               [clearInput]="false"
@@ -68,7 +102,23 @@
             ></app-search-input>
           </div>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-4">
+          <div class="form-group">
+            <app-search-input
+              [clearInput]="false"
+              [prefixIcon]="'fas fa-search'"
+              [searchPlaceholder]="'Filtrer par propriétaire'"
+              [searchLabel]="'Résultats'"
+              [maxSize]="5"
+              [triggerSearchOnOpen]="true"
+              (searchValue)="onSearchOwnerValueChanged($event)"
+              [searchInputValue]="searchOwnerValue"
+              (selectedResultItem)="onSelectedOwnerSearchItem($event)"
+              [searchResult]="ownerOptions"
+            ></app-search-input>
+          </div>
+        </div>
+        <div class="col-md-4">
           <div class="form-group">
             <app-search-input
               [clearInput]="false"
@@ -78,7 +128,9 @@
               [searchLabel]="'Résultats'"
               [maxSize]="4"
               [searchInputValue]="apartmentStatusSearchValue.title"
-              (selectedResultItem)="onSelectedApartmentTypeSearchItem($event)"
+              (selectedResultItem)="
+                onSelectedApartmentRentStatusSearchItem($event)
+              "
               [searchResult]="apartementStatus"
             ></app-search-input>
           </div>
@@ -94,12 +146,14 @@
     <table class="table align-items-center table-flush table-hover">
       <thead class="thead-light">
         <tr>
-          <th>Identifiant</th>
+          <th>Numéro apartement</th>
           <th>Adresse</th>
           <th>Type</th>
           <th>Pieces</th>
+          <th>Status</th>
           <th>Propriété</th>
           <th>Propriètaire</th>
+          <th>Ajouté le</th>
 
           <th></th>
         </tr>
@@ -123,14 +177,14 @@
             (click)="redirectToDetails(apartment.id)"
             class="table-user"
           >
-            <b> {{ apartment.matricule }} </b>
+            <span> {{ apartment.idNumber }} </span>
           </td>
           <td
             style="cursor: pointer"
             (click)="redirectToDetails(apartment.id)"
             class="table-user"
           >
-            <b> {{ apartment.address }} </b>
+            <span> {{ apartment.address }} </span>
           </td>
 
           <td
@@ -138,31 +192,57 @@
             (click)="redirectToDetails(apartment.id)"
             class="table-user"
           >
-            <b> {{ apartment.type }} </b>
+            <span> {{ apartment.type }} </span>
           </td>
           <td
             style="cursor: pointer"
             (click)="redirectToDetails(apartment.id)"
             class="table-user"
           >
-            <b> S+{{ apartment.rooms }} </b>
+            <span> S+{{ apartment.rooms }} </span>
+          </td>
+
+          <td
+            style="cursor: pointer"
+            (click)="redirectToDetails(apartment.id)"
+            class="table-user"
+          >
+            <span
+              *ngIf="apartment.rentStatus == 'notRented'"
+              class="badge badge-lg badge-secondary"
+            >
+              Non loué
+            </span>
+            <span
+              *ngIf="apartment.rentStatus == 'rented'"
+              class="badge badge-lg badge-success"
+            >
+              Loué
+            </span>
           </td>
           <td
             style="cursor: pointer"
             (click)="redirectToDetails(apartment.id)"
             class="table-user"
           >
-            <b> {{ apartment.property }} </b>
+            <span> {{ apartment.property }} </span>
           </td>
           <td
             style="cursor: pointer"
             (click)="redirectToDetails(apartment.id)"
             class="table-user"
           >
-            <b> {{ apartment.owner }} </b>
+            <span> {{ apartment.owner }} </span>
+          </td>
+          <td
+            style="cursor: pointer"
+            (click)="redirectToDetails(apartment.id)"
+            class="table-user"
+          >
+            <span> {{ apartment.createdAt | date }} </span>
           </td>
           <td class="table-actions">
-            <a
+            <!-- <a
               class="table-action"
               routerLink="../create-apartment"
               href="javascript:void(0)"
@@ -170,7 +250,7 @@
               placement="top"
             >
               <i class="fas fa-user-edit"> </i>
-            </a>
+            </a> -->
 
             <a
               class="table-action table-action-delete"

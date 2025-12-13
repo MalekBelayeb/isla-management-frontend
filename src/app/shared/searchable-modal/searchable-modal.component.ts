@@ -12,6 +12,9 @@ import { Employee } from '@models/old/employe';
 //import { EmployeeService } from 'src/app/features/dashboard/employee/service/employee.service';
 import { GetAllEmployeeDTO } from '@models/dto/employee/get-all-employees-dto';
 import { QueryStringBuilder } from '@core/query-string-builder/query-string-builder';
+import { TenantService } from '@dashboard/tenant/service/tenant.service';
+import { TenantMapper } from '@dashboard/tenant/mappers/tenant-mapper';
+import { Tenant } from '@dashboard/tenant/entity/tenant';
 
 @Component({
   selector: 'app-searchable-modal',
@@ -28,9 +31,10 @@ export class SearchableModalComponent implements OnInit, OnChanges {
   @Input() suffixIcon?: string;
   @Input() searchResult: SearchResult[] = [];
   @Output() cancelClicked = new EventEmitter<void>();
-  @Output() employeeClicked = new EventEmitter<string>();
+  @Output() tenantClicked = new EventEmitter<string>();
 
-  @Input() searchPlaceholder = 'Search...';
+  @Input() searchPlaceholder =
+    'Chercher par tél, cin, prénom et nom, email, address...';
   searchResultIsLoading = false;
 
   debounceDelay = 500;
@@ -40,20 +44,18 @@ export class SearchableModalComponent implements OnInit, OnChanges {
 
   totalLength = 0;
   page = 1;
-  pageSize = 50;
+  pageSize = 20;
 
-  employees: Employee[] = [];
-  isLoading = false;
-  isFetched = false;
+  tenants: Tenant[] = [];
 
   constructor(
-    //private employeeService: EmployeeService,
-    private getAllEmployeeDto: GetAllEmployeeDTO,
-    private queryStringBuilder: QueryStringBuilder,
+    private tenantService: TenantService,
+    private tenantMapper: TenantMapper,
   ) {}
+  isLoadingFetchingTenants = false;
 
   ngOnInit(): void {
-    this.getAllEmployee(0, 10);
+    this.getAllTenants(this.page, this.pageSize);
   }
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['searchResult'] && !changes['searchResult'].firstChange) {
@@ -68,7 +70,7 @@ export class SearchableModalComponent implements OnInit, OnChanges {
   }
 
   moveToDetails(id: string) {
-    this.employeeClicked.emit(id);
+    this.tenantClicked.emit(id);
   }
 
   debounceValueChange(newValue: any) {
@@ -88,34 +90,34 @@ export class SearchableModalComponent implements OnInit, OnChanges {
   }
 
   searchValueChanged(searchValue: string) {
-    //this.getAllEmployee(this.page - 1, this.pageSize, searchValue);
+    console.log(searchValue);
+    this.getAllTenants(this.page, this.pageSize, searchValue, false);
   }
 
-  getAllEmployee(page: number, pageSize: number, name?: string) {
-    this.isLoading = true;
+  async getAllTenants(
+    page: number,
+    pageSize: number,
+    searchTerm?: string,
+    useCache = true,
+  ) {
+    this.isLoadingFetchingTenants = true;
 
-    const urlParameters = this.queryStringBuilder.create({
-      page,
-      pageSize,
-      name,
-    });
+    const urlParameters = new URLSearchParams({
+      limit: `${pageSize}`,
+      page: `${page}`,
+      ...(searchTerm && { searchTerm: `${searchTerm}` }),
+    }).toString();
 
-    /*this.employeeService.getEmployeeBySociety(urlParameters).subscribe({
+    this.tenantService.getAllTenant(`?${urlParameters}`, useCache).subscribe({
       next: (value) => {
-        console.log(value.body);
-
-        this.totalLength = value.body.data.totalElements;
-        this.employees = this.getAllEmployeeDto.fromResponse(
-          value.body.data.content,
-        );
-
-        this.isLoading = false;
-        this.isFetched = true;
+        this.isLoadingFetchingTenants = false;
+        this.totalLength = value.body.meta.total ?? 0;
+        this.tenants = this.tenantMapper.mapTenants(value.body.tenants);
       },
       error: (err) => {
-        this.isFetched = true;
-        this.isLoading = false;
+        console.log(err);
+        this.isLoadingFetchingTenants = false;
       },
-    });*/
+    });
   }
 }

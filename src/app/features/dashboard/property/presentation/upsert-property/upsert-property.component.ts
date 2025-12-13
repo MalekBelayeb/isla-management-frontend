@@ -13,6 +13,9 @@ import { DataTypes } from '@models/data';
 import { ToastAlertService } from '@shared/toast-alert/toast-alert.service';
 import { PropertyDetails } from '../../entity/property-details';
 import { defaultSearchLimit } from 'src/app/variables/consts';
+import { ActivatedRoute } from '@angular/router';
+import { GetOwnerDetailsMapper } from '@dashboard/owner/mappers/get-owner-details';
+import { OwnerDetails } from '@dashboard/owner/entity/owner-details';
 
 @Component({
   selector: 'app-upsert-property',
@@ -24,6 +27,7 @@ export class UpsertPropertyComponent implements OnInit {
   submitted = false;
   isLoading = false;
   focus1 = false;
+  ownerDetails?: OwnerDetails;
 
   @Input() propertyDetails?: PropertyDetails;
 
@@ -32,6 +36,7 @@ export class UpsertPropertyComponent implements OnInit {
     private ownerService: OwnerService,
     private propertyService: PropertyService,
     private toastAlertService: ToastAlertService,
+    private route: ActivatedRoute,
   ) {
     this.formGroup = this.formBuilder.group({
       ownerId: new FormControl('', Validators.required),
@@ -56,7 +61,13 @@ export class UpsertPropertyComponent implements OnInit {
     }
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    const ownerId = this.getOwnerId();
+    if (ownerId) {
+      // case coming from owner details
+      this.getOwnerDetails();
+    }
+  }
 
   get createPropertyForm() {
     return this.formGroup.controls;
@@ -89,6 +100,27 @@ export class UpsertPropertyComponent implements OnInit {
     console.log(searchResult);
     this.formGroup.get('type')?.setValue(searchResult.id);
   }
+
+  getOwnerId(): string {
+    return this.route.snapshot.paramMap.get('idOwner') ?? '';
+  }
+
+  getOwnerDetails() {
+    console.log(this.getOwnerId());
+
+    this.ownerService.getOwner(this.getOwnerId()).subscribe({
+      next: (value) => {
+        const result = value.body;
+        this.ownerDetails = GetOwnerDetailsMapper.fromResponse(result);
+        this.formGroup.get('ownerId')?.setValue(this.ownerDetails.id);
+        this.searchOwnerValue = this.ownerDetails.fullname ?? '';
+      },
+      error: (err) => {
+        console.log(err);
+      },
+    });
+  }
+
   upsertProperty() {
     this.submitted = true;
     console.log(this.formGroup.controls);

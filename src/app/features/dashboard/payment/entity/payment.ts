@@ -4,6 +4,8 @@ export interface Payment {
   paymentDate: string;
   method: string;
   label: string;
+  account: string;
+  reason: string;
   rentStartDate: Date;
   rentEndDate: Date;
   type: string;

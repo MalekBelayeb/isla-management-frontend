@@ -41,47 +41,74 @@
 
     <form [formGroup]="filtersFormGroup" (ngSubmit)="filterAgreements()">
       <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-3">
           <div class="form-group">
             <input
               class="form-control"
               id="example2cols1Input"
-              formControlName="name"
-              placeholder="Nom, prénom, tél & mail"
+              formControlName="searchTerm"
+              placeholder="Chercher par libellé"
             />
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-group">
+            <app-search-input
+              [clearInput]="false"
+              [prefixIcon]="'fas fa-search'"
+              [searchPlaceholder]="'Filtrer par locataire'"
+              [searchLabel]="'Résultats'"
+              [triggerSearchOnOpen]="true"
+              (searchValue)="onSearchTenantValueChanged($event)"
+              [searchInputValue]="searchTenantValue"
+              (selectedResultItem)="onSelectedTenantSearchItem($event)"
+              [searchResult]="tenantOptions"
+            ></app-search-input>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="form-group">
+            <app-search-input
+              [clearInput]="false"
+              [prefixIcon]="'fas fa-search'"
+              [searchPlaceholder]="'Filtrer par local'"
+              [searchLabel]="'Résultats'"
+              [maxSize]="5"
+              [triggerSearchOnOpen]="true"
+              (searchValue)="onSearchApartmentValueChanged($event)"
+              [searchInputValue]="searchApartmentValue"
+              (selectedResultItem)="onSelectedApartmentSearchItem($event)"
+              [searchResult]="apartmentOptions"
+            ></app-search-input>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="form-group">
+            <app-search-input
+              [clearInput]="false"
+              [prefixIcon]="'fas fa-search'"
+              [searchPlaceholder]="'Filtrer par status contrat'"
+              [searchLabel]="'Résultats'"
+              [prefixText]="'Status contrat'"
+              [maxSize]="4"
+              [searchInputValue]="agreementStatusTypeSearchValue.title"
+              (selectedResultItem)="
+                onSelectedAgreementStatusTypeSearchItem($event)
+              "
+              [searchResult]="agreementStatusOptions"
+            ></app-search-input>
           </div>
         </div>
       </div>
 
-      <div class="row">
-        <div class="col-md-6">
-          <div class="form-group">
-            <app-search-site-input
-              [placeholder]="'Chercher par local'"
-              (selectedSite)="onSelectedSiteSearchItem($event)"
-            />
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="form-group">
-            <input
-              class="form-control"
-              id="example-datetime-local-input"
-              type="date"
-              value=""
-            />
-          </div>
-        </div>
-
-        <div class="col-md-3">
-          <div class="form-group">
-            <input
-              class="form-control"
-              id="example-datetime-local-input"
-              type="date"
-              value=""
-            />
-          </div>
+      <div class="row mb-4">
+        <div class="col-md-12">
+          <app-date-range-picker
+            (startDate)="onStartDateChange($event)"
+            (endDate)="onEndDateChange($event)"
+          ></app-date-range-picker>
         </div>
       </div>
 
@@ -101,7 +128,6 @@
           <th>Montant du loyer</th>
           <th>Fréquence de paiement</th>
           <th>Status</th>
-          <th>Signé le:</th>
           <th>Crée le:</th>
 
           <th></th>
@@ -133,11 +159,11 @@
             (click)="redirectToDetails(agreement.id)"
             class="table-user"
           >
-            <b> {{ agreement.tenant }} </b>
+            <span> {{ agreement.tenant }} </span>
           </td>
 
           <td style="cursor: pointer" (click)="redirectToDetails(agreement.id)">
-            <b class=""> {{ agreement.apartment }} </b>
+            <span class=""> {{ agreement.apartment }} </span>
           </td>
           <td style="cursor: pointer" (click)="redirectToDetails(agreement.id)">
             <span class="status">
@@ -170,20 +196,15 @@
               </span>
             </div>
           </td>
-          <td style="cursor: pointer" (click)="redirectToDetails(agreement.id)">
-            <span class="status">
-              {{ agreement.signedAt | date: "dd/MM/yyyy" }}
-            </span>
-          </td>
 
           <td style="cursor: pointer" (click)="redirectToDetails(agreement.id)">
             <span class="status">
-              {{ agreement.createdAt | date: "dd/MM/yyyy" }}
+              {{ agreement.createdAt | date }}
             </span>
           </td>
 
           <td class="table-actions">
-            <a
+            <!-- <a
               class="table-action"
               routerLink="../create-aggrement"
               href="javascript:void(0)"
@@ -191,7 +212,7 @@
               placement="top"
             >
               <i class="fas fa-user-edit"> </i>
-            </a>
+            </a> -->
 
             <a
               (click)="deleteAgreement(agreement.id, '')"

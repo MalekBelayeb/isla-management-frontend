@@ -5,11 +5,11 @@ import { AggrementRoutingModule } from './agreement-routing.module';
 import { AgreementComponent } from './agreement.component';
 import { AgreementsListComponent } from './presentation/agreements-list/agreements-list.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { SearchAutocompleteInputModule } from '@shared/searchable-autocomplete-inputs/search-autocomple-input-module';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { UpsertAgreementComponent } from './presentation/upsert-agreement/upsert-agreement.component';
 import { AgreementDetailsComponent } from './presentation/agreement-details/Agreement-details.component';
 import { DateRangePickerModule } from '@shared/form-inputs/date-range-picker/date-range-picker.module';
+import { SearchInputModule } from '@shared/search-input/search-input.module';
 
 @NgModule({
   declarations: [
@@ -23,7 +23,7 @@ import { DateRangePickerModule } from '@shared/form-inputs/date-range-picker/dat
     AggrementRoutingModule,
     FormsModule,
     ReactiveFormsModule,
-    SearchAutocompleteInputModule,
+    SearchInputModule,
     DateRangePickerModule,
     PaginationModule.forRoot(),
   ],

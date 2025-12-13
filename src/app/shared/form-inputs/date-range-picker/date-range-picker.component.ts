@@ -24,7 +24,10 @@ export class DateRangePickerComponent implements OnInit, AfterViewInit {
   @Input() startDateErrorMessage: string = '';
   @Input() endDateInvalid: boolean = false;
   @Input() endDateErrorMessage: string = '';
-
+  
+  @Input() startDateValue?: Date
+  @Input() endDateValue?: Date
+  
   @Output() startDate = new EventEmitter<Date>();
   @Output() endDate = new EventEmitter<Date>();
 
@@ -41,6 +44,7 @@ export class DateRangePickerComponent implements OnInit, AfterViewInit {
       'endDateInput',
     ) as HTMLInputElement;
     endDateElem.value = '';
+    this.endDate.emit(undefined);
   }
 
   setTodayMinDate() {

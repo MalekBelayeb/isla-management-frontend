@@ -12,10 +12,14 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
+import { Agreement } from '@dashboard/agreement/entity/agreement';
 import { AgreeementMapper } from '@dashboard/agreement/mappers/agreement.mapper';
 import { AgreementService } from '@dashboard/agreement/service/agreement.service';
 import { PaymentDetails } from '@dashboard/payment/entity/payment-details';
 import { PaymentService } from '@dashboard/payment/service/payment.service';
+import { TenantMapper } from '@dashboard/tenant/mappers/tenant-mapper';
+import { TenantService } from '@dashboard/tenant/service/tenant.service';
 import { DataTypes } from '@models/data';
 import { SearchResult } from '@shared/search-input/search-input.component';
 import { ToastAlertService } from '@shared/toast-alert/toast-alert.service';
@@ -40,15 +44,20 @@ export class UpsertPaymentComponent implements OnInit {
 
   @Input() paymentDetails?: PaymentDetails;
 
+  agreement?: Agreement;
+
   constructor(
     private formBuilder: FormBuilder,
+    private route: ActivatedRoute,
     private agreementService: AgreementService,
     private paymentService: PaymentService,
+    private tenantService: TenantService,
     private toastAlertService: ToastAlertService,
+    private tenantMapper: TenantMapper,
   ) {
     this.formGroup = this.formBuilder.group({
       amount: new FormControl('', Validators.required),
-      label: new FormControl('', Validators.required),
+      label: new FormControl(''),
       rentStartDate: new FormControl(''),
       rentEndDate: new FormControl(''),
       type: new FormControl(this.paymentTypeList[0].id, Validators.required),
@@ -125,7 +134,50 @@ export class UpsertPaymentComponent implements OnInit {
   selectedPaymentMethod(resultItem: SearchResult) {
     this.formGroup.get('method')?.setValue(resultItem.id);
   }
-  ngOnInit(): void {}
+
+  setDefaultStartDateAndEndDate() {
+    const now = new Date();
+
+    const startDate = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      1,
+    ).toLocaleDateString('en-CA', {
+      timeZone: 'Africa/Tunis',
+    });
+
+    const endDate = new Date(
+      now.getFullYear(),
+      now.getMonth() + 1,
+      0,
+      23,
+      59,
+      59,
+    ).toLocaleDateString('en-CA', {
+      timeZone: 'Africa/Tunis',
+    });
+
+    this.formGroup.get('rentStartDate')?.setValue(startDate.split('T')[0]);
+
+    this.formGroup.get('rentEndDate')?.setValue(endDate.split('T')[0]);
+  }
+
+  ngOnInit(): void {
+    this.setDefaultStartDateAndEndDate();
+
+    const idTenant = this.route.snapshot.paramMap.get('idTenant') ?? '';
+    if (idTenant) {
+      this.tenantService.getTenant(idTenant).subscribe({
+        next: (value) => {
+          this.agreement = this.tenantMapper.mapTenantDetails(
+            value.body,
+          ).agreement;
+          this.searchAgreementValue = this.agreement?.matricule ?? '';
+          this.formGroup.get('agreementId')?.setValue(this.agreement?.id ?? '');
+        },
+      });
+    }
+  }
 
   get upsertPaymentForm() {
     return this.formGroup.controls;
@@ -139,7 +191,7 @@ export class UpsertPaymentComponent implements OnInit {
   onEndDateChange($event: Date) {
     this.formGroup
       .get('rentEndDate')
-      ?.setValue($event.toISOString().split('T')[0]);
+      ?.setValue($event?.toISOString().split('T')[0]);
   }
   onSearchAgreementValueChanged(searchValue?: string) {
     const params = {

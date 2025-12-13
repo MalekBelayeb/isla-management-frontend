@@ -74,14 +74,14 @@ export class DataTypes {
   static apartmentStatusType = [
     {
       id: 'all',
-      title: 'Tous',
+      title: 'Tous (Loué et non loué)',
     },
     {
       id: 'rented',
       title: 'Loué',
     },
     {
-      id: 'not_rented',
+      id: 'notRented',
       title: 'Non loué',
     },
   ];
@@ -104,8 +104,8 @@ export class DataTypes {
   ];
 
   static paymentFrequencyTypeList: SearchResult[] = [
-    { id: 'DAILY', title: 'Quotidien' },
     { id: 'MONTHLY', title: 'Mensuel' },
+    { id: 'DAILY', title: 'Quotidien' },
     { id: 'QUARTERLY', title: 'Trimestriel' },
     { id: 'YEARLY', title: 'Annuel' },
   ];
@@ -130,5 +130,17 @@ export class DataTypes {
   static paymentTypeList: SearchResult[] = [
     { id: 'income', title: 'Recette' },
     { id: 'expense', title: 'Dépense' },
+  ];
+
+  static statusTenantList: SearchResult[] = [
+    { id: 'all', title: 'Tous' },
+    { id: 'latePayers', title: 'Liste des retardataires' },
+  ];
+
+  static agreementStatusTypeList: SearchResult[] = [
+    { id: 'all', title: 'Tous' },
+    { id: 'active', title: 'Valide' },
+    { id: 'expired', title: 'Expiré' },
+    { id: 'suspended', title: 'Suspendu' },
   ];
 }

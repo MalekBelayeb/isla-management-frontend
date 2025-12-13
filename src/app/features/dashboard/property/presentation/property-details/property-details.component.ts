@@ -19,6 +19,8 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
+import { PageChangedEvent } from 'ngx-bootstrap/pagination';
+import { Apartment } from '@dashboard/apartment/entity/Apartment';
 
 @Component({
   selector: 'app-property-details',
@@ -38,6 +40,7 @@ export class PropertyDetailsComponent implements OnInit {
   propertyDetails?: PropertyDetails;
   financialBalance?: FinancialBalance;
   formGroup: FormGroup;
+  isLoadingFetchingApartments = false;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -60,63 +63,24 @@ export class PropertyDetailsComponent implements OnInit {
   submitted = false;
   isLoading = false;
 
+  totalLength = 0;
+  page = 1;
+  pageSize = 10;
+  apartments: Apartment[] = [];
+
   ngOnInit(): void {
     this.getPropertyDetails();
-
+    this.getAllApartmentsByProperty(
+      this.page,
+      this.pageSize,
+      { propertyId: this.getPropertyId() },
+      false,
+    );
     this.getFinancialBalance();
   }
 
-  apartmentOptions: SearchResult[] = [];
-
-  onSearchApartmentValueChanged(searchValue?: string) {
-    const params = {
-      ...(searchValue && { searchValue }),
-      limit: `${defaultSearchLimit}`,
-    };
-
-    const queryString = new URLSearchParams(params).toString();
-
-    this.apartmentService.getAllApartments(`?${queryString}`).subscribe({
-      next: (value) => {
-        const apartments = ApartmentMapper.mapApartments(value.body);
-        this.apartmentOptions = apartments.map((item) => ({
-          id: item.id,
-          title: `${item.matricule} - ${item.address}`,
-        }));
-      },
-    });
-  }
-  onSelectedApartmentSearchItem(searchResult: SearchResult) {
-    this.formGroup.get('apartmentId')?.setValue(searchResult.id);
-  }
-  searchApartmentValue: string = '';
-
   get editApartmentForm() {
     return this.formGroup.controls;
-  }
-  setApartmentToProperty() {
-    this.submitted = true;
-    console.log(this.formGroup.controls);
-    if (this.formGroup.invalid) return;
-    this.isLoading = true;
-
-    let body: any = {
-      propertyId: this.getPropertyId(),
-    };
-    this.apartmentService
-      .updateApartment(this.formGroup.get('apartmentId')?.value, body)
-      .subscribe({
-        next: (value) => {
-          this.toastAlertService.showSuccessNotification(
-            'Propriété modifié avec succés',
-            'Propriété a été modifier avec succés',
-          );
-          this.isLoading = false;
-        },
-        error: (err) => {
-          this.isLoading = false;
-        },
-      });
   }
 
   getPropertyId(): string {
@@ -144,5 +108,45 @@ export class PropertyDetailsComponent implements OnInit {
         this.propertyDetails = propertyDetails;
       },
     });
+  }
+
+  pageChange(event: PageChangedEvent) {
+    this.page = event.page;
+
+    this.getAllApartmentsByProperty(
+      this.page,
+      this.pageSize,
+      { propertyId: this.getPropertyId() },
+      false,
+    );
+  }
+
+  async getAllApartmentsByProperty(
+    page: number,
+    pageSize: number,
+    filters?: Record<string, string>,
+    useCache = true,
+  ) {
+    this.isLoadingFetchingApartments = true;
+    const urlParameters = new URLSearchParams({
+      page: `${page}`,
+      limit: `${pageSize}`,
+      ...filters,
+    }).toString();
+    this.apartmentService
+      .getAllApartments(`?${urlParameters}`, useCache)
+      .subscribe({
+        next: (value) => {
+          console.log(value.body);
+          this.isLoadingFetchingApartments = false;
+          this.totalLength = value.body.meta.total ?? 0;
+          this.apartments = ApartmentMapper.mapApartments(
+            value.body.apartments,
+          );
+        },
+        error: (err) => {
+          this.isLoadingFetchingApartments = false;
+        },
+      });
   }
 }

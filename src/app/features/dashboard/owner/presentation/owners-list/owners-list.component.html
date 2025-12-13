@@ -8,7 +8,7 @@
   </div>
 
   <div class="px-4 pt-2 pb-4">
-    <div class="row justify-content-end px-3">
+    <div class="row justify-content-end px-3 pb-4">
       <a
         class="btn btn-sm btn-primary btn-round btn-icon"
         href="javascript:void(0)"
@@ -21,24 +21,6 @@
       </a>
     </div>
 
-    <div class="row justify-content-end my-4">
-      <div *ngIf="showClearFilterBtn" class="col-6 text-right">
-        <a
-          class="btn btn-sm btn-secondary btn-round btn-icon"
-          (click)="clearFilter()"
-          href="javascript:void(0)"
-          tooltip="Edit product"
-          placement="top"
-        >
-          <span class="btn-inner--icon">
-            <i class="fas fa-times"> </i>
-          </span>
-
-          <span class="btn-inner--text"> Effacer les filtres</span>
-        </a>
-      </div>
-    </div>
-
     <form [formGroup]="filtersFormGroup" (ngSubmit)="filterEmployees()">
       <div class="row">
         <div class="col-md-12">
@@ -47,32 +29,12 @@
               class="form-control"
               id="example2cols1Input"
               formControlName="searchTerm"
-              placeholder="Nom, prénom, tél & mail"
+              placeholder="Nom, prénom, tél, cin & mail"
             />
           </div>
         </div>
       </div>
 
-      <div class="row">
-        <div class="col-md-6">
-          <div class="form-group">
-            <app-search-site-input
-              [placeholder]="'Chercher par bien'"
-              [initialList]="propertiesOptions"
-              (selectedSite)="onSelectedSiteSearchItem($event)"
-            />
-          </div>
-        </div>
-        <div class="col-md-6">
-          <div class="form-group">
-            <app-search-site-input
-              [placeholder]="'Chercher par local'"
-              [initialList]="premisesOptions"
-              (selectedSite)="onSelectedSiteSearchItem($event)"
-            />
-          </div>
-        </div>
-      </div>
       <div class="d-flex w-100 justify-content-end">
         <button class="btn btn-secondary" type="submit">Filtrer</button>
       </div>
@@ -153,11 +115,13 @@
           </td>
           <td style="cursor: pointer" (click)="showModal()">
             <div class="col-auto">
-              <span class="badge badge-lg badge-secondary"> {{ owner.nbPremises }} </span>
+              <span class="badge badge-lg badge-secondary">
+                {{ owner.nbPremises }}
+              </span>
             </div>
           </td>
           <td class="table-actions">
-            <a
+            <!-- <a
               class="table-action"
               routerLink="../create-owner"
               href="javascript:void(0)"
@@ -165,7 +129,7 @@
               placement="top"
             >
               <i class="fas fa-user-edit"> </i>
-            </a>
+            </a> -->
 
             <a
               (click)="deleteEmployee(owner.id, owner.name)"

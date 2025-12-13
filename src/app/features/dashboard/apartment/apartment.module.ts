@@ -7,9 +7,9 @@ import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { UpsertApartmentComponent } from './presentation/upsert-apartment/upsert-apartment.component';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { ApartmentListComponent } from './presentation/apartment-list/apartment-list.component';
-import { SearchAutocompleteInputModule } from '@shared/searchable-autocomplete-inputs/search-autocomple-input-module';
 import { ApartmentDetailsComponent } from './presentation/apartment-details/apartment-details.component';
 import { ApartmentComponent } from './apartment.component';
+import { SearchInputModule } from '@shared/search-input/search-input.module';
 
 @NgModule({
   declarations: [
@@ -25,7 +25,7 @@ import { ApartmentComponent } from './apartment.component';
     FormsModule,
     PaginationModule.forRoot(),
     BsDatepickerModule.forRoot(),
-    SearchAutocompleteInputModule,
+    SearchInputModule,
   ],
 })
 export class ApartmentModule {}

@@ -15,12 +15,10 @@
             <h5 class="card-title text-uppercase text-muted mb-0">Matricule</h5>
 
             <h5 class="h2 font-weight-bold mb-0 mt-1">
-              {{ apartmentDetails?.matricule }}
+              {{ apartmentDetails?.idNumber }}
             </h5>
           </div>
         </div>
-      </div>
-      <div class="row">
         <div class="col-lg-3">
           <div class="form-group">
             <h5 class="card-title text-uppercase text-muted mb-0">Adresse</h5>
@@ -30,9 +28,6 @@
             </h5>
           </div>
         </div>
-      </div>
-
-      <div class="row">
         <div class="col-lg-3">
           <div class="form-group">
             <h5 class="card-title text-uppercase text-muted mb-0">Type</h5>
@@ -42,9 +37,6 @@
             </h5>
           </div>
         </div>
-      </div>
-
-      <div class="row">
         <div class="col-lg-3">
           <div class="form-group">
             <h5 class="card-title text-uppercase text-muted mb-0">Nb piéces</h5>
@@ -55,6 +47,7 @@
           </div>
         </div>
       </div>
+
       <div class="row">
         <div class="col-lg-3">
           <div class="form-group">
@@ -65,8 +58,6 @@
             </h5>
           </div>
         </div>
-      </div>
-      <div class="row">
         <div class="col-lg-3">
           <div class="form-group">
             <h5 class="card-title text-uppercase text-muted mb-0">
@@ -75,6 +66,15 @@
 
             <h5 class="h2 font-weight-bold mb-0 mt-1">
               {{ apartmentDetails?.owner }}
+            </h5>
+          </div>
+        </div>
+        <div class="col-lg-3">
+          <div class="form-group">
+            <h5 class="card-title text-uppercase text-muted mb-0">Ajouté le</h5>
+
+            <h5 class="h2 font-weight-bold mb-0 mt-1">
+              {{ apartmentDetails?.createdAt | date }}
             </h5>
           </div>
         </div>
@@ -305,7 +305,7 @@
   </div>
 
   <div class="card-body">
-    <div class="row mb-5 mt-3">
+    <!-- <div class="row mb-5 mt-3">
       <div class="col">
         <div class="form-group">
           <label class="form-control-label">
@@ -326,7 +326,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
     <div class="table-responsive">
       <div class="my-3 pr-2 d-flex w-100 flex-row justify-content-end">
         <button class="btn btn-icon btn-secondary" type="button">
@@ -351,7 +351,7 @@
           <tr *ngFor="let payment of financialBalance?.payments">
             <th scope="row">{{ payment.createdAt | date: "dd/MM/yyyy" }}</th>
             <td>
-              <h4>{{ payment.agreement }}</h4>
+              <h4>{{ payment.account }}</h4>
             </td>
             <td>
               <div class="row">
@@ -359,7 +359,7 @@
                   <h4>{{ payment.tenant }}</h4>
                 </div>
                 <div class="col-6">
-                  <h4>{{ payment.category }}</h4>
+                  <h4>{{ payment.reason }}</h4>
                 </div>
               </div>
             </td>
@@ -376,80 +376,6 @@
               </h4>
             </td>
           </tr>
-          <!-- <tr>
-            <th scope="row">20/08/2024</th>
-            <td>
-              <h4>MAG 3</h4>
-            </td>
-            <td>
-              <div class="row">
-                <div class="col-6"><h4>Monsieur Sahbi Ben Amor</h4></div>
-                <div class="col-6"><h4>Loyer aout 2024</h4></div>
-              </div>
-            </td>
-            <td>
-              <h4></h4>
-            </td>
-            <td>
-              <h4>750 DT</h4>
-            </td>
-          </tr>
-          <tr>
-            <th scope="row">27/08/2024</th>
-            <td>
-              <h4>MAG 3</h4>
-            </td>
-            <td>
-              <div class="row">
-                <div class="col-6"><h4>Monsieur Sahbi Ben Amor</h4></div>
-                <div class="col-6"><h4>Loyer Septembre 2024</h4></div>
-              </div>
-            </td>
-            <td>
-              <h4></h4>
-            </td>
-            <td>
-              <h4>750 DT</h4>
-            </td>
-          </tr>
-          <tr>
-            <th scope="row">27/08/2024</th>
-            <td>
-              <h4>Apt N3</h4>
-            </td>
-            <td>
-              <div class="row">
-                <div class="col-6"><h4>MR Mongi JMILI</h4></div>
-                <div class="col-6"><h4>Avance sur travaux peinture</h4></div>
-              </div>
-            </td>
-            <td>
-              <h4>200 DT</h4>
-            </td>
-            <td>
-              <h4></h4>
-            </td>
-          </tr>
-          <tr>
-            <th scope="row">15/09/2024</th>
-            <td>
-              <h4>Apt N3</h4>
-            </td>
-            <td>
-              <div class="row">
-                <div class="col-6"><h4>MR FARHAT HAJAM</h4></div>
-                <div class="col-6">
-                  <h4>Solde Sur divers travaux de plomberie</h4>
-                </div>
-              </div>
-            </td>
-            <td>
-              <h4>200 DT</h4>
-            </td>
-            <td>
-              <h4></h4>
-            </td>
-          </tr> -->
 
           <tr>
             <td colspan="3">

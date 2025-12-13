@@ -8,8 +8,8 @@ import { PaymentListComponent } from './presentation/payment-list/payment-list.c
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
-import { SearchAutocompleteInputModule } from '@shared/searchable-autocomplete-inputs/search-autocomple-input-module';
 import { DateRangePickerModule } from '@shared/form-inputs/date-range-picker/date-range-picker.module';
+import { SearchInputModule } from '@shared/search-input/search-input.module';
 
 @NgModule({
   declarations: [
@@ -24,7 +24,7 @@ import { DateRangePickerModule } from '@shared/form-inputs/date-range-picker/dat
     FormsModule,
     PaginationModule.forRoot(),
     BsDatepickerModule.forRoot(),
-    SearchAutocompleteInputModule,
+    SearchInputModule,
     DateRangePickerModule,
   ],
 })

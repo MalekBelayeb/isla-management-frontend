@@ -24,6 +24,10 @@ const routes: Routes = [
         component: UpsertPaymentComponent,
       },
       {
+        path: 'create-payment/:idTenant',
+        component: UpsertPaymentComponent,
+      },
+      {
         path: 'payment-details/:id',
         component: PaymentDetailsComponent,
       },

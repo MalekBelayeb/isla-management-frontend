@@ -133,9 +133,9 @@
         [ngClass]="{
           focused: focus4 === true,
           'has-danger':
-            (submitted &&
-              upsertTenantForm['phoneNumber'].errors?.['required']) ||
-            formGroup.errors?.['phoneNumberIncorrect'],
+            submitted &&
+            (upsertTenantForm['phoneNumber'].errors?.['required'] ||
+              formGroup.errors?.['phoneNumberIncorrect']),
         }"
       >
         <label
@@ -152,7 +152,7 @@
             </div>
             <input
               [ngClass]="{
-                focused: focus1 === true,
+                focused: focus4 === true,
                 'is-invalid':
                   submitted &&
                   (upsertTenantForm['phoneNumber'].errors?.['required'] ||

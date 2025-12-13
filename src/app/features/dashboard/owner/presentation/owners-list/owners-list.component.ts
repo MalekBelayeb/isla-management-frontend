@@ -63,22 +63,8 @@ export class OwnersListComponent {
   ) {
     this.filtersFormGroup = this.formBuilder.group({
       searchTerm: new FormControl(''),
-      employeeId: new FormControl(''),
-      tripType: new FormControl(''),
-      attachment: new FormControl(''),
-      postId: new FormControl(''),
-      siteId: new FormControl(''),
-      activityId: new FormControl(''),
-      packetId: new FormControl(''),
     });
   }
-
-  selectedUsers: string[] = [];
-  showCheckboxSelection = false;
-
-  affectGroupModal?: BsModalRef;
-
-  @ViewChild('modalAffectGroup') modalAffectGroup?: TemplateRef<void>;
 
   ngOnInit(): void {
     this.getAllOwners(this.page, this.pageSize);
@@ -100,40 +86,8 @@ export class OwnersListComponent {
   clearFilter() {
     this.filtersFormGroup.reset();
     this.filtersFormGroup.get('');
-    this.clearInputValue = !this.clearInputValue;
     this.getAllOwners(this.page, this.pageSize);
     this.showClearFilterBtn = false;
-  }
-
-  exportAllEmployeeIsLoading = false;
-
-  exportAllEmployees() {
-    this.exportAllEmployeeIsLoading = true;
-    /*this.employeeService.exportUsers().subscribe({
-      next: (value) => {
-        const link = document.createElement('a');
-        link.href = window.URL.createObjectURL(value);
-        link.download = 'liste_des_bénéficiaires.xlsx';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        this.exportAllEmployeeIsLoading = false;
-      },
-      error: (err) => {
-        console.log(err);
-        this.exportAllEmployeeIsLoading = false;
-      },
-    });*/
-  }
-
-  clearInputValue = false;
-
-  onSelectedShiftSearchItem(event: SearchResult) {
-    this.filtersFormGroup.get('postId')?.setValue(event.id);
-  }
-
-  onSelectedPackageSearchItem(event: SearchResult) {
-    this.filtersFormGroup.get('packetId')?.setValue(event.id);
   }
 
   filterEmployees() {
@@ -172,14 +126,6 @@ export class OwnersListComponent {
     });
   }
 
-  onSelectedSiteSearchItem(event: SearchResult) {
-    this.filtersFormGroup.get('siteId')?.setValue(event.id);
-  }
-
-  onSelectedActivitySearchItem(event: SearchResult) {
-    this.filtersFormGroup.get('activityId')?.setValue(event.title);
-  }
-
   deleteEmployee(id: string, fullName: string) {
     this.confirmDialogService.showDialog({
       title: `Êtes-vous sûr de vouloir supprimer ce bénéficiaire: ${fullName} ?`,
@@ -206,17 +152,5 @@ export class OwnersListComponent {
 
   redirectToDetails(id: string) {
     this.router.navigate([`./dashboard/owner/owner-details/${id}`]);
-  }
-
-  verifyEmployee(id: string, fullName: string) {
-    this.confirmDialogService.showDialog({
-      title: `Êtes-vous sûr de vouloir vérifier ce bénéficiaire: ${fullName} ?`,
-      message: ``,
-      cancelBtnTitle: 'Annuler',
-      confirmBtnTitle: 'Confirmer',
-      onConfirmClick: () => {
-        this.isLoadingArchiveOwner = true;
-      },
-    });
   }
 }

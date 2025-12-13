@@ -1,3 +1,5 @@
+import { Agreement } from '@dashboard/agreement/entity/agreement';
+
 export interface TenantDetails {
   id: string;
   matricule: string;
@@ -13,4 +15,5 @@ export interface TenantDetails {
   address: string;
   createdAt: Date;
   job: string;
+  agreement?: Agreement;
 }

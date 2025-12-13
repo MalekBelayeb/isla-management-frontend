@@ -25,7 +25,7 @@
             focused: focus1 === true,
             'is-invalid': startDateInvalid,
           }"
-          value=""
+          value="{{ startDateValue ?? '' }}"
           (change)="onChangeStartDate(); onChangeDatepicker()"
           (focus)="focus1 = true"
           (blur)="focus1 = false"
@@ -63,6 +63,7 @@
             'is-invalid': endDateInvalid,
           }"
           style="cursor: pointer"
+          value="{{ endDateValue ?? '' }}"
           (change)="onChangeDatepicker()"
           (focus)="focus2 = true"
           (blur)="focus2 = false"

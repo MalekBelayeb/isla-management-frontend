@@ -31,10 +31,12 @@ export class PaymentMapper {
       return {
         id: item.id,
         agreement: `${item.agreement.matricule}`,
-        apartment: `${item.agreement.apartment.matricule} - ${item.agreement.apartment.type} - ${item.agreement.apartment.address}`,
+        apartment: `Apt-${item.agreement.apartment.matricule} - ${item.agreement.apartment.type} - ${item.agreement.apartment.address}`,
         amount: item.amount,
         label: item.label,
+        account: `Prop-${item.agreement?.apartment?.property?.matricule ?? ''}`,
         rentStartDate: item.rentStartDate,
+        reason: `${this.getReason(item)} `,
         rentEndDate: item.rentEndDate,
         method:
           DataTypes.paymentMethodTypeList.find(
@@ -54,6 +56,17 @@ export class PaymentMapper {
         createdAt: item.createdAt,
       };
     });
+  }
+  static getReason(item: any) {
+    if (item.label) {
+      return item.label;
+    }
+
+    return (
+      `${DataTypes.paymentCategoryList.find(
+        (category) => category.id === item.category,
+      )?.title ?? ''} pour Apt-${item.agreement?.apartment?.matricule ?? ''}` ?? ''
+    );
   }
 
   static mapFinancialBalance(data: any): FinancialBalance {

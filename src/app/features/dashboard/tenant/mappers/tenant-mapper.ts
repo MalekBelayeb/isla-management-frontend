@@ -1,12 +1,23 @@
 import { Injectable } from '@angular/core';
-
-import { DataTypes } from '@models/data';
 import { TenantDetails } from '../entity/tenant-details';
-import { Tenant } from '../entity/tenant';
+import { Tenant, TenantStatusType } from '../entity/tenant';
+import { AgreeementMapper } from '@dashboard/agreement/mappers/agreement.mapper';
 
 @Injectable({ providedIn: 'root' })
 export class TenantMapper {
-  static mapTenantDetails(data: any): TenantDetails {
+  private getAgreement(item: any) {
+    return item.agreements.length > 0 ? item.agreements[0] : undefined;
+  }
+
+  private getPayment(item: any) {
+    return item.agreements.length > 0
+      ? item.agreements[0].payments.length > 0
+        ? item.agreements[0].payments[0]
+        : undefined
+      : undefined;
+  }
+
+  mapTenantDetails(data: any): TenantDetails {
     return {
       id: data.id,
       matricule: data.matricule,
@@ -21,10 +32,16 @@ export class TenantMapper {
       nationality: data.nationality,
       phoneNumber: data.phoneNumber,
       createdAt: data.createdAt,
+      agreement:
+        data.agreements?.length > 0
+          ? AgreeementMapper.mapAgreementDetails(data.agreements[0])
+          : undefined,
     };
   }
-  static mapTenants(data: any[]): Tenant[] {
+  mapTenants(data: any[]): Tenant[] {
     return data.map((item): Tenant => {
+      const agreement = this.getAgreement(item);
+      const payment = this.getPayment(item);
       return {
         id: item.id,
         matricule: item.matricule,
@@ -37,12 +54,19 @@ export class TenantMapper {
         nationality: item.nationality,
         phoneNumber: item.phoneNumber,
         createdAt: item.createdAt,
-        apartment:
-          item.agreements.length > 0
-            ? `${item.agreements[0].apartment.matricule} - ${item.agreements[0].apartment.type} - ${item.agreements[0].apartment.address}`
-            : '',
-        agreement:
-          item.agreements.length > 0 ? `${item.agreements[0].matricule}` : '',
+        lastPaymentDate: payment ? payment.createdAt : '',
+        agreementExpireDate: agreement
+          ? new Date(agreement.expireDate)
+          : undefined,
+        agreementStartDate: agreement
+          ? new Date(agreement.startDate)
+          : undefined,
+        apartment: agreement
+          ? `${agreement.apartment.matricule} - ${agreement.apartment.type} - ${agreement.apartment.address}`
+          : '',
+        agreement: agreement ? `${agreement.matricule}` : '',
+
+        status: item.status ?? '',
       };
     });
   }

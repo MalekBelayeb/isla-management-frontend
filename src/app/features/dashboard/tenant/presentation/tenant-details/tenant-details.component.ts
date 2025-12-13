@@ -34,12 +34,15 @@ export class TenantDetailsComponent implements OnInit {
     private confirmDialogService: ConfirmDialogService,
     private modalService: BsModalService,
     private toastAlertService: ToastAlertService,
+    private tenantMapper: TenantMapper,
   ) {}
 
   tenantDetails?: TenantDetails;
 
   ngOnInit() {
-    var calendarEl = document.getElementById('widget-calendar');
+    this.getTenantDetails();
+
+    /*var calendarEl = document.getElementById('widget-calendar');
     if (!calendarEl) return;
     var calendar = new Calendar(calendarEl, {
       plugins: [interactionPlugin, dayGridPlugin, multiMonthPlugin],
@@ -76,7 +79,6 @@ export class TenantDetailsComponent implements OnInit {
           editable: true,
           durationEditable: true,
         },
-
         {
           title: 'Paiement Loyer Ma',
           start: '2025-04-01',
@@ -107,20 +109,23 @@ export class TenantDetailsComponent implements OnInit {
 
     calendar.render();
 
-    //Display Current Date as Calendar widget header
+
     var mYear = moment().format('YYYY');
     var mDay = moment().format('dddd, MMM D');
     document.getElementsByClassName('widget-calendar-year')[0].innerHTML =
       mYear;
-    document.getElementsByClassName('widget-calendar-day')[0].innerHTML = mDay;
-    this.getTenantDetails();
+    document.getElementsByClassName('widget-calendar-day')[0].innerHTML = mDay;*/
     this.getAllAgreementByTenant(
       this.getAllAgreementByTenantPage,
       this.getAllAgreementByTenantPageSize,
+      {},
+      false,
     );
     this.getAllPaymentByTenant(
       this.getAllPaymentByTenantPage,
       this.getAllPaymentByTenantPageSize,
+      {},
+      false,
     );
   }
 
@@ -134,8 +139,7 @@ export class TenantDetailsComponent implements OnInit {
     this.tenantService.getTenant(this.getTenantId()).subscribe({
       next: (value) => {
         const result = value.body;
-        //this.apartmentDetails = ApartmentMapper.mapApartmentDetails(result);
-        this.tenantDetails = TenantMapper.mapTenantDetails(result);
+        this.tenantDetails = this.tenantMapper.mapTenantDetails(result);
       },
       error: (err) => {
         console.log(err);

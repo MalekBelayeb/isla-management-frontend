@@ -6,6 +6,7 @@ import { DataTypes } from '@models/data';
 @Injectable({ providedIn: 'root' })
 export class AgreeementMapper {
   static mapAgreementDetails(data: any): AgreementDetails {
+    console.log('---->', data);
     return {
       id: data.id,
       matricule: data.matricule,
@@ -16,14 +17,15 @@ export class AgreeementMapper {
       expireDate: data.expireDate,
       createdAt: data.createdAt,
       signedAt: data.signedAt,
-      apartment: `${data.apartment.matricule} - ${data.apartment.type} - ${data.apartment.address}`,
-      apartmentId: data.apartment.id,
+      apartment: `${data.apartment?.matricule} - ${data.apartment?.type} - ${data.apartment?.address}`,
+      apartmentId: data.apartment?.id,
+      nbDaysOfTolerance: data.nbDaysOfTolerance,
       deposit: data.deposit,
       documentUrl: data.documentUrl,
       firstDayOfPayment: data.firstDayOfPayment,
       notes: data.notes,
-      tenant: `${data.tenant.gender == 'M' ? 'Mr' : 'Mme'} ${data.tenant.fullname}`,
-      tenantId: data.tenant.id,
+      tenant: `${data.tenant?.gender == 'M' ? 'Mr' : 'Mme'} ${data.tenant?.fullname}`,
+      tenantId: data.tenant?.id,
     };
   }
   static mapAgreements(data: any[]): Agreement[] {
@@ -41,6 +43,7 @@ export class AgreeementMapper {
         expireDate: item.expireDate,
         createdAt: item.createdAt,
         signedAt: item.signedAt,
+        nbDaysOfTolerance: item.nbDaysOfTolerance,
         apartment: `${item.apartment.matricule} - ${item.apartment.type} - ${item.apartment.address}`,
         tenant: `${item.tenant.gender == 'M' ? 'Mr' : 'Mme'} ${item.tenant.fullname}`,
       };

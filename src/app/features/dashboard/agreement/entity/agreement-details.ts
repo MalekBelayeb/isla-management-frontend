@@ -9,6 +9,7 @@ export interface AgreementDetails {
   status: string;
   paymentFrequency: string;
   tenantId: string;
+  nbDaysOfTolerance: number;
   apartmentId: string;
   deposit: string;
   firstDayOfPayment: string;

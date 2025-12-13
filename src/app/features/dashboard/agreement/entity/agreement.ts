@@ -10,4 +10,5 @@ export interface Agreement {
   paymentFrequency: string;
   apartment: string;
   tenant: string;
+  nbDaysOfTolerance: number;
 }

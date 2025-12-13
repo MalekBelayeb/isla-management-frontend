@@ -53,6 +53,8 @@
 
         <div class="col-md-10">
           <app-date-range-picker
+            [startDateValue]="upsertAgreementForm['startDate'].value"
+            [endDateValue]="upsertAgreementForm['expireDate'].value"
             (startDate)="onStartDateChange($event)"
             (endDate)="onEndDateChange($event)"
             [endDatePrefix]="'Date d\'expiration'"
@@ -69,7 +71,7 @@
             [endDateErrorMessage]="
               'Champs incorrect, Date de fin est obligatoire'
             "
-            [isTodayMinDate]="true"
+            [isTodayMinDate]="false"
           ></app-date-range-picker>
         </div>
       </div>
@@ -118,7 +120,7 @@
         <div class="col-md-10">
           <app-search-input
             [clearInput]="false"
-            [searchInputValue]="frequencyPaymentsTypeList[0].title"
+            [searchInputValue]="paymentFrequencySearchValue"
             [prefixIcon]="'fas fa-search'"
             [searchPlaceholder]="'Fréquence De Paiement'"
             [searchLabel]="'Résultats'"
@@ -187,7 +189,34 @@
           ></app-search-input>
         </div>
       </div>
+      <div class="form-group row">
+        <label
+          class="col-md-2 col-form-label form-control-label"
+          for="example-text-input"
+        >
+          Nombre de jour de tolérance (en jr) <span class="text-danger">*</span>
+        </label>
 
+        <div class="col-md-10">
+          <div class="input-group input-group-merge">
+            <input
+              formControlName="nbDaysOfTolerance"
+              class="form-control"
+              placeholder=""
+              type="number"
+              value="10"
+              min="0"
+              max="31"
+              (focus)="focus8 = true"
+              (blur)="focus8 = false"
+            />
+          </div>
+          <small class="text-muted font-weight-light">
+            Nombre de jours à partir du début du mois, au-delà, le locataire est
+            considéré comme retardataire
+          </small>
+        </div>
+      </div>
       <div class="form-group row">
         <label
           class="col-md-2 col-form-label form-control-label"
@@ -198,14 +227,6 @@
 
         <div class="col-md-10">
           <div class="input-group input-group-merge">
-            <div
-              class="input-group-prepend"
-              [ngClass]="{ focused: focus4 === true }"
-            >
-              <span class="input-group-text">
-                <i class="fas fa-userss"> </i>
-              </span>
-            </div>
             <input
               formControlName="deposit"
               class="form-control"

@@ -5,11 +5,17 @@ import { QueryStringBuilder } from '@core/query-string-builder/query-string-buil
 import { Agreement } from '@dashboard/agreement/entity/agreement';
 import { AgreeementMapper } from '@dashboard/agreement/mappers/agreement.mapper';
 import { AgreementService } from '@dashboard/agreement/service/agreement.service';
+import { ApartmentMapper } from '@dashboard/apartment/mappers/apartment-mapper';
+import { ApartmentService } from '@dashboard/apartment/service/apartment.service';
+import { TenantMapper } from '@dashboard/tenant/mappers/tenant-mapper';
+import { TenantService } from '@dashboard/tenant/service/tenant.service';
+import { DataTypes } from '@models/data';
 import { ConfirmDialogService } from '@shared/confirm-dialog/confirm-dialog.service';
 import { SearchResult } from '@shared/search-input/search-input.component';
 import { ToastAlertService } from '@shared/toast-alert/toast-alert.service';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { PageChangedEvent } from 'ngx-bootstrap/pagination';
+import { defaultSearchLimit } from 'src/app/variables/consts';
 
 @Component({
   selector: 'app-agreements-list',
@@ -28,12 +34,24 @@ export class AgreementsListComponent implements OnInit {
   groupSearchResult: SearchResult[] = [];
   activitySearchResult: SearchResult[] = [];
   siteSearchResult: SearchResult[] = [];
+  tenantOptions: SearchResult[] = [];
+  apartmentOptions: SearchResult[] = [];
+
+  agreementStatusOptions: SearchResult[] = DataTypes.agreementStatusTypeList;
+
+  agreementStatusTypeSearchValue: SearchResult =
+    DataTypes.agreementStatusTypeList[0];
 
   filtersFormGroup: FormGroup;
 
+  searchTenantValue: string = '';
+  searchApartmentValue: string = '';
+
   constructor(
     private agreementService: AgreementService,
-    //private getAllEmployeeDto: GetAllEmployeeDTO,
+    private apartmentService: ApartmentService,
+    private tenantService: TenantService,
+    private tenantMapper: TenantMapper,
     private formBuilder: FormBuilder,
     private toastAlertService: ToastAlertService,
     private modalService: BsModalService,
@@ -42,14 +60,12 @@ export class AgreementsListComponent implements OnInit {
     private router: Router,
   ) {
     this.filtersFormGroup = this.formBuilder.group({
-      name: new FormControl(''),
-      employeeId: new FormControl(''),
-      tripType: new FormControl(''),
-      attachment: new FormControl(''),
-      postId: new FormControl(''),
-      siteId: new FormControl(''),
-      activityId: new FormControl(''),
-      packetId: new FormControl(''),
+      searchTerm: new FormControl(''),
+      tenantId: new FormControl(''),
+      apartmentId: new FormControl(''),
+      agreementStatus: new FormControl(DataTypes.agreementStatusTypeList[0].id),
+      startDate: new FormControl(''),
+      endDate: new FormControl(''),
     });
   }
 
@@ -85,21 +101,52 @@ export class AgreementsListComponent implements OnInit {
     this.showClearFilterBtn = false;
   }
 
-  exportAllEmployeeIsLoading = false;
+  onSearchTenantValueChanged(searchValue?: string) {
+    const params = {
+      ...(searchValue && { searchValue }),
+      limit: `${defaultSearchLimit}`,
+    };
 
-  exportAllEmployees() {
-    this.exportAllEmployeeIsLoading = true;
+    const queryString = new URLSearchParams(params).toString();
+
+    this.tenantService.getAllTenant(`?${queryString}`).subscribe({
+      next: (value) => {
+        const tenants = this.tenantMapper.mapTenants(value.body.tenants);
+        this.tenantOptions = tenants.map((item) => ({
+          id: item.id,
+          title: `${item.matricule} - ${item.fullname}`,
+        }));
+      },
+    });
+  }
+  onSelectedTenantSearchItem(searchResult: SearchResult) {
+    this.filtersFormGroup.get('tenantId')?.setValue(searchResult.id);
+  }
+
+  onSearchApartmentValueChanged(searchValue?: string) {
+    const params = {
+      ...(searchValue && { searchValue }),
+      limit: `${defaultSearchLimit}`,
+    };
+
+    const queryString = new URLSearchParams(params).toString();
+
+    this.apartmentService.getAllApartments(`?${queryString}`).subscribe({
+      next: (value) => {
+        const apartments = ApartmentMapper.mapApartments(value.body.apartments);
+        this.apartmentOptions = apartments.map((item) => ({
+          id: item.id,
+          title: `${item.matricule} - ${item.address}`,
+        }));
+      },
+    });
+  }
+
+  onSelectedApartmentSearchItem(searchResult: SearchResult) {
+    this.filtersFormGroup.get('apartmentId')?.setValue(searchResult.id);
   }
 
   clearInputValue = false;
-
-  onSelectedShiftSearchItem(event: SearchResult) {
-    this.filtersFormGroup.get('postId')?.setValue(event.id);
-  }
-
-  onSelectedPackageSearchItem(event: SearchResult) {
-    this.filtersFormGroup.get('packetId')?.setValue(event.id);
-  }
 
   filterAgreements() {
     this.showClearFilterBtn = true;
@@ -111,6 +158,22 @@ export class AgreementsListComponent implements OnInit {
     );
   }
 
+  onSelectedAgreementStatusTypeSearchItem(event: SearchResult) {
+    this.filtersFormGroup.get('agreementStatus')?.setValue(event.id);
+  }
+
+  onStartDateChange($event: Date) {
+    this.filtersFormGroup
+      .get('startDate')
+      ?.setValue($event.toISOString().split('T')[0]);
+  }
+
+  onEndDateChange($event: Date) {
+    this.filtersFormGroup
+      .get('endDate')
+      ?.setValue($event?.toISOString().split('T')[0]);
+  }
+
   async getAllAgreement(
     page: number,
     pageSize: number,
@@ -118,7 +181,9 @@ export class AgreementsListComponent implements OnInit {
     useCache = true,
   ) {
     this.isLoadingFetchingAgreements = true;
-
+    if (this.filtersFormGroup.get('agreementStatus')?.value === 'all') {
+      this.filtersFormGroup.get('agreementStatus')?.setValue('');
+    }
     const urlParameters = this.queryStringBuilder.create(
       { page, limit: pageSize },
       this.filtersFormGroup,
@@ -141,14 +206,6 @@ export class AgreementsListComponent implements OnInit {
           console.log(err);
         },
       });
-  }
-
-  onSelectedSiteSearchItem(event: SearchResult) {
-    this.filtersFormGroup.get('siteId')?.setValue(event.id);
-  }
-
-  onSelectedActivitySearchItem(event: SearchResult) {
-    this.filtersFormGroup.get('activityId')?.setValue(event.title);
   }
 
   deleteAgreement(id: string, fullName: string) {

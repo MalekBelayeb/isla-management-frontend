@@ -41,14 +41,28 @@
 
     <form [formGroup]="filtersFormGroup" (ngSubmit)="filterTenants()">
       <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-6">
           <div class="form-group">
             <input
               class="form-control"
-              id="example2cols1Input"
-              formControlName="name"
-              placeholder="Chercher par nom, prénom, tél, matricule, cin..."
+              formControlName="searchTerm"
+              placeholder="Chercher par tél, cin, prénom et nom, email, address..."
             />
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <app-search-input
+              [clearInput]="false"
+              [prefixIcon]="'fas fa-search'"
+              [searchPlaceholder]="'Filtrer par status'"
+              [searchLabel]="'Résultats'"
+              [prefixText]="'Status:'"
+              [maxSize]="4"
+              [searchInputValue]="statusTenantSearchValue.title"
+              (selectedResultItem)="onSelectedStatusTenantSearchItem($event)"
+              [searchResult]="statusTenantOptions"
+            ></app-search-input>
           </div>
         </div>
       </div>
@@ -56,20 +70,34 @@
       <div class="row">
         <div class="col-md-6">
           <div class="form-group">
-            <app-search-site-input
-              [placeholder]="'Chercher par matricule local'"
-              [initialList]="premisesOptions"
-              (selectedSite)="onSelectedSiteSearchItem($event)"
-            />
+            <app-search-input
+              [clearInput]="false"
+              [prefixIcon]="'fas fa-search'"
+              [searchPlaceholder]="'Filtrer par local'"
+              [searchLabel]="'Résultats'"
+              [maxSize]="5"
+              [triggerSearchOnOpen]="true"
+              (searchValue)="onSearchApartmentValueChanged($event)"
+              [searchInputValue]="searchApartmentValue"
+              (selectedResultItem)="onSelectedApartmentSearchItem($event)"
+              [searchResult]="apartmentOptions"
+            ></app-search-input>
           </div>
         </div>
         <div class="col-md-6">
           <div class="form-group">
-            <app-search-site-input
-              [placeholder]="'Chercher par matricule contrat'"
-              [initialList]="premisesOptions"
-              (selectedSite)="onSelectedSiteSearchItem($event)"
-            />
+            <app-search-input
+              [clearInput]="false"
+              [prefixIcon]="'fas fa-search'"
+              [searchPlaceholder]="'Filtrer par contrat'"
+              [searchLabel]="'Résultats'"
+              [maxSize]="5"
+              [triggerSearchOnOpen]="true"
+              (searchValue)="onSearchAgreementValueChanged($event)"
+              [searchInputValue]="searchAgreementValue"
+              (selectedResultItem)="onSelectedAgreementSearchItem($event)"
+              [searchResult]="agreementOptions"
+            ></app-search-input>
           </div>
         </div>
       </div>
@@ -90,9 +118,13 @@
           <th>Nationalité</th>
           <th>CIN</th>
           <th>Emploi</th>
-          <th>Dernier Contrat</th>
-          <th>Dernier Local</th>
+          <th>Status du contrat</th>
+          <th>Matricule du dernier contrat signé</th>
+          <th>Période de validité du contrat</th>
+          <th>Dernier local loué</th>
+          <th>Dernier loyer payé le</th>
           <th>Ajouté le:</th>
+          <th></th>
 
           <th></th>
         </tr>
@@ -120,7 +152,7 @@
             (click)="redirectToDetails(tenant.id)"
             class="table-user"
           >
-            <b> {{ tenant.fullname }} </b>
+            <span> {{ tenant.fullname }} </span>
           </td>
 
           <td style="cursor: pointer" (click)="redirectToDetails(tenant.id)">
@@ -142,25 +174,101 @@
               <span>{{ tenant.job }}</span>
             </div>
           </td>
-
-          <td style="cursor: pointer" (click)="redirectToDetails(tenant.id)">
+          <td
+            style="cursor: pointer"
+            (click)="redirectToDetails(tenant.id)"
+            class="table-user"
+          >
             <div class="col-auto">
-              <b> {{ tenant.agreement }} </b>
+              <span
+                *ngIf="tenant.status == 'NO_AGREEMENT'"
+                class="badge badge-lg badge-warning"
+              >
+                PAS DE CONTRAT
+              </span>
+
+              <span
+                *ngIf="tenant.status == 'NO_PAYMENT'"
+                class="badge badge-lg badge-warning"
+              >
+                AUCUN PAIEMENT
+              </span>
+
+              <span
+                *ngIf="tenant.status == 'AGREEMENT_EXPIRED'"
+                class="badge badge-lg badge-warning"
+              >
+                CONTRAT EXPIRÉ
+              </span>
+
+              <span
+                *ngIf="tenant.status == 'TERMINATED'"
+                class="badge badge-lg badge-warning"
+              >
+                CONTRAT SUSPENDU
+              </span>
+              <span
+                *ngIf="tenant.status == 'PAYMENT_DEFAULT'"
+                class="badge badge-lg badge-warning"
+              >
+                RETARD DE PAIEMENT
+              </span>
+
+              <span
+                *ngIf="tenant.status == 'IN_GOOD_STANDING'"
+                class="badge badge-lg badge-success"
+              >
+                EN RÉGLE
+              </span>
             </div>
           </td>
 
           <td style="cursor: pointer" (click)="redirectToDetails(tenant.id)">
             <div class="col-auto">
-              <b> {{ tenant.apartment }} </b>
+              <span> {{ tenant.agreement }} </span>
+            </div>
+          </td>
+          <td style="cursor: pointer" (click)="redirectToDetails(tenant.id)">
+            <span class="status">
+              {{ tenant.agreementStartDate | date }} -
+              {{ tenant.agreementExpireDate | date }}
+            </span>
+          </td>
+          <td style="cursor: pointer" (click)="redirectToDetails(tenant.id)">
+            <div class="col-auto">
+              <span> {{ tenant.apartment }} </span>
             </div>
           </td>
           <td style="cursor: pointer" (click)="redirectToDetails(tenant.id)">
             <div class="col-auto">
-              <span>{{ tenant.createdAt | date: "dd/MM/yyyy" }}</span>
+              <span> {{ tenant.lastPaymentDate | date }} </span>
             </div>
+          </td>
+          <td style="cursor: pointer" (click)="redirectToDetails(tenant.id)">
+            <div class="col-auto">
+              <span>{{ tenant.createdAt | date }}</span>
+            </div>
+          </td>
+
+          <td>
+            <a
+              *ngIf="
+                tenant.agreement &&
+                (tenant.status == 'IN_GOOD_STANDING' ||
+                  tenant.status == 'PAYMENT_DEFAULT')
+              "
+              href="dashboard/payment/create-payment/{{ tenant.id }}"
+              class="nav-link"
+              target="_blank"
+            >
+              <div class="flex gap-2">
+                <i class="ni ni-money-coins"> </i
+                ><span class="ml-2">Ajouter un loyer</span>
+              </div></a
+            >
           </td>
           <td class="table-actions">
-            <a
+            <!-- <a
               class="table-action"
               routerLink="../create-tenant"
               href="javascript:void(0)"
@@ -168,7 +276,7 @@
               placement="top"
             >
               <i class="fas fa-user-edit"> </i>
-            </a>
+            </a> -->
 
             <a
               (click)="deleteTenant(tenant.id, tenant.fullname)"

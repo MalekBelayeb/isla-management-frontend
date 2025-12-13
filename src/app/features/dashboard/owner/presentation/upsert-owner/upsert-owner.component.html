@@ -6,7 +6,7 @@
 
   <div class="card-body">
     <form [formGroup]="formGroup" (ngSubmit)="addNewEmployee()">
-      <div class="form-group row">
+      <div *ngIf="canChangeType" class="form-group row">
         <label
           class="col-md-2 col-form-label form-control-label"
           for="example-text-input"

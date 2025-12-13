@@ -7,24 +7,16 @@ import {
   TemplateRef,
   ViewChild,
 } from '@angular/core';
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  Validators,
-} from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import {
   cinValidator,
-  emailValidator,
   phoneNumberTnValidator,
 } from '@core/form-validators/form-validators';
 import { OwnerDetails } from '@dashboard/owner/entity/owner-details';
 import { OwnerService } from '@dashboard/owner/service/owner.service';
 import { DataTypes } from '@models/data';
 import { SearchResult } from '@shared/search-input/search-input.component';
-import { SearchableMapsResult } from '@shared/searchable-maps/searchable-maps.component';
 import { ToastAlertService } from '@shared/toast-alert/toast-alert.service';
-import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 
 @Component({
   selector: 'app-upsert-owner',
@@ -44,7 +36,7 @@ export class UpsertOwnerComponent implements OnInit, OnChanges {
   focus7 = false;
   focus8 = false;
   focus9 = false;
-
+  canChangeType: boolean = true;
   default = {
     keyboard: true,
     class: 'modal-dialog-centered modal-secondary',
@@ -77,6 +69,7 @@ export class UpsertOwnerComponent implements OnInit, OnChanges {
     if (changes['ownerDetails'] && !changes['ownerDetails'].firstChange) {
       this.ownerDetails = changes['ownerDetails'].currentValue;
       if (this.ownerDetails) {
+        this.canChangeType = false;
         this.formGroup.get('firstname')?.setValue(this.ownerDetails?.firstname);
         this.formGroup.get('lastname')?.setValue(this.ownerDetails?.lastname);
         this.formGroup.get('email')?.setValue(this.ownerDetails?.email);
@@ -89,6 +82,8 @@ export class UpsertOwnerComponent implements OnInit, OnChanges {
         this.formGroup.get('type')?.setValue(this.ownerDetails?.type);
         this.formGroup.get('society')?.setValue(this.ownerDetails?.society);
         this.formGroup.get('taxId')?.setValue(this.ownerDetails?.taxId);
+      } else {
+        this.canChangeType = true;
       }
     }
   }

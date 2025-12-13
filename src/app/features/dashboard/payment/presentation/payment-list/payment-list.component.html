@@ -41,43 +41,78 @@
 
     <form [formGroup]="filtersFormGroup" (ngSubmit)="filterPayments()">
       <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-3">
           <div class="form-group">
-            <input
-              class="form-control"
-              id="example2cols1Input"
-              formControlName="name"
-              placeholder="Nom, prénom, tél & mail"
-            />
+            <app-search-input
+              [clearInput]="false"
+              [prefixIcon]="'fas fa-search'"
+              [searchPlaceholder]="'Filtrer par local'"
+              [searchLabel]="'Résultats'"
+              [maxSize]="5"
+              [triggerSearchOnOpen]="true"
+              (searchValue)="onSearchApartmentValueChanged($event)"
+              [searchInputValue]="searchApartmentValue"
+              (selectedResultItem)="onSelectedApartmentSearchItem($event)"
+              [searchResult]="apartmentOptions"
+            ></app-search-input>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-group">
+            <app-search-input
+              [clearInput]="false"
+              [prefixIcon]="'fas fa-search'"
+              [searchPlaceholder]="'Filtrer par contrat'"
+              [searchLabel]="'Résultats'"
+              [maxSize]="5"
+              [triggerSearchOnOpen]="true"
+              (searchValue)="onSearchAgreementValueChanged($event)"
+              [searchInputValue]="searchAgreementValue"
+              (selectedResultItem)="onSelectedAgreementSearchItem($event)"
+              [searchResult]="agreementOptions"
+            ></app-search-input>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-group">
+            <app-search-input
+              [clearInput]="false"
+              [prefixIcon]="'fas fa-search'"
+              [searchPlaceholder]="'Filtrer par locataire'"
+              [searchLabel]="'Résultats'"
+              [triggerSearchOnOpen]="true"
+              (searchValue)="onSearchTenantValueChanged($event)"
+              [searchInputValue]="searchTenantValue"
+              (selectedResultItem)="onSelectedTenantSearchItem($event)"
+              [searchResult]="tenantOptions"
+            ></app-search-input>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-group">
+            <app-search-input
+              [clearInput]="false"
+              [prefixIcon]="'fas fa-search'"
+              [searchPlaceholder]="'Filtrer par type de paiement'"
+              [searchLabel]="'Résultats'"
+              [prefixText]="'Méthode:'"
+              [maxSize]="4"
+              [searchInputValue]="paymentMethodTypeSearchValue.title"
+              (selectedResultItem)="
+                onSelectedPaymentMethodTypeSearchItem($event)
+              "
+              [searchResult]="paymentMethodsType"
+            ></app-search-input>
           </div>
         </div>
       </div>
 
-      <div class="row">
-        <div class="col-md-6">
-          <div class="form-group">
-            <app-search-site-input [placeholder]="'Chercher par local'" />
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="form-group">
-            <input
-              class="form-control"
-              id="example-datetime-local-input"
-              type="date"
-              value=""
-            />
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="form-group">
-            <input
-              class="form-control"
-              id="example-datetime-local-input"
-              type="date"
-              value=""
-            />
-          </div>
+      <div class="row mb-4">
+        <div class="col-md-12">
+          <app-date-range-picker
+            (startDate)="onStartDateChange($event)"
+            (endDate)="onEndDateChange($event)"
+          ></app-date-range-picker>
         </div>
       </div>
 
@@ -174,7 +209,8 @@
           </td>
           <td style="cursor: pointer" (click)="redirectToDetails(payment.id)">
             <span class="">
-              {{ payment.rentStartDate | date: "dd/MM/yyyy" }} - {{ payment.rentEndDate | date: "dd/MM/yyyy" }}
+              {{ payment.rentStartDate | date }} -
+              {{ payment.rentEndDate | date }}
             </span>
           </td>
           <td style="cursor: pointer" (click)="redirectToDetails(payment.id)">
@@ -186,11 +222,11 @@
           </td>
 
           <td style="cursor: pointer" (click)="redirectToDetails(payment.id)">
-            <span class=""> {{ payment.createdAt | date: "dd/MM/yyyy" }} </span>
+            <span class=""> {{ payment.createdAt | date }} </span>
           </td>
 
           <td class="table-actions">
-            <a
+            <!-- <a
               class="table-action"
               routerLink="../create-aggrement"
               href="javascript:void(0)"
@@ -198,7 +234,7 @@
               placement="top"
             >
               <i class="fas fa-user-edit"> </i>
-            </a>
+            </a> -->
 
             <a
               (click)="deletePayment(payment.id, '')"

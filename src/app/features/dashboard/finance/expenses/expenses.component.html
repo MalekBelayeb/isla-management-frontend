@@ -24,50 +24,6 @@
         </a>
       </div>
     </div>
-
-    <form>
-      <div class="row">
-        <div class="col-md-12">
-          <div class="row">
-            <div class="col">
-              <div class="form-group">
-                <input
-                  placeholder="Séléctionner une période"
-                  type="text"
-                  class="form-control"
-                  bsDaterangepicker
-                  [minDate]="minDate"
-                  [bsConfig]="bsConfig"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-md-4">
-          <div class="form-group">
-            <app-search-site-input
-              [placeholder]="'Chercher par propriètaire'"
-            />
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="form-group">
-            <app-search-site-input [placeholder]="'Chercher par bien'" />
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="form-group">
-            <app-search-site-input [placeholder]="'Chercher par local'" />
-          </div>
-        </div>
-      </div>
-      <div class="d-flex w-100 justify-content-end">
-        <button class="btn btn-secondary" type="submit">Filtrer</button>
-      </div>
-    </form>
   </div>
 </div>
 
@@ -104,7 +60,7 @@
           <tr *ngFor="let payment of financialBalance?.payments">
             <th scope="row">{{ payment.createdAt | date: "dd/MM/yyyy" }}</th>
             <td>
-              <h4>{{ payment.agreement }}</h4>
+              <h4>{{ payment.account }}</h4>
             </td>
             <td>
               <div class="row">
@@ -112,7 +68,7 @@
                   <h4>{{ payment.tenant }}</h4>
                 </div>
                 <div class="col-6">
-                  <h4>{{ payment.label }}</h4>
+                  <h4>{{ payment.reason }}</h4>
                 </div>
               </div>
             </td>

@@ -13,12 +13,14 @@ import { OwnerService } from '@dashboard/owner/service/owner.service';
 import { FinancialBalance } from '@dashboard/payment/entity/financial-balance';
 import { PaymentMapper } from '@dashboard/payment/mappers/payment-mapper';
 import { PaymentService } from '@dashboard/payment/service/payment.service';
+import { Property } from '@dashboard/property/entity/property';
 import { PropertyMapper } from '@dashboard/property/mappers/property-mapper';
 import { PropertyService } from '@dashboard/property/service/property.service';
 import { ConfirmDialogService } from '@shared/confirm-dialog/confirm-dialog.service';
 import { SearchResult } from '@shared/search-input/search-input.component';
 import { ToastAlertService } from '@shared/toast-alert/toast-alert.service';
 import { BsModalService } from 'ngx-bootstrap/modal';
+import { PageChangedEvent } from 'ngx-bootstrap/pagination';
 import { defaultSearchLimit } from 'src/app/variables/consts';
 
 @Component({
@@ -38,13 +40,19 @@ export class OwnerDetailsComponent implements OnInit {
 
   ownerDetails?: OwnerDetails;
   financialBalance?: FinancialBalance;
-  formGroup: FormGroup;
+
+  properties: Property[] = [];
+  
   submitted = false;
   isLoading = false;
+  
+  isLoadingFetchingProperties = false;
+  totalLength = 0;
+  page = 1;
+  pageSize = 10;
 
   constructor(
     private formBuilder: FormBuilder,
-
     private route: ActivatedRoute,
     private ownerService: OwnerService,
     private paymentService: PaymentService,
@@ -55,19 +63,19 @@ export class OwnerDetailsComponent implements OnInit {
   ) {
     this.maxDate.setDate(this.maxDate.getDate() + 7);
     this.bsRangeValue = [this.bsValue, this.maxDate];
-
-    this.formGroup = this.formBuilder.group({
-      propertyId: new FormControl('', Validators.required),
-    });
   }
+
   ngOnInit(): void {
     this.getOwnerDetails();
+    this.getAllPropertiesByOwner(
+      this.page,
+      this.pageSize,
+      { ownerId: this.getOwnerId() },
+      false,
+    );
     this.getFinancialBalance();
   }
-  propertiesInitialList: SearchResult[] = [
-    { id: '', title: 'B9 - 12 Rue Nozha, Ariana, Tunis' },
-    { id: '', title: 'B6 - 36 Rue Yasmine, Ariana, Tunis' },
-  ];
+
   getOwnerId(): string {
     return this.route.snapshot.paramMap.get('id') ?? '';
   }
@@ -105,38 +113,6 @@ export class OwnerDetailsComponent implements OnInit {
       },
     });
   }
-  onSelectedPropertySearchItem(searchResult: SearchResult) {
-    this.formGroup.get('propertyId')?.setValue(searchResult.id);
-  }
-  searchPropertyValue: string = '';
-
-  get editPropertyForm() {
-    return this.formGroup.controls;
-  }
-  setPropertyToOwner() {
-    this.submitted = true;
-    console.log(this.formGroup.controls);
-    if (this.formGroup.invalid) return;
-    this.isLoading = true;
-
-    let body: any = {
-      ownerId: this.getOwnerId(),
-    };
-    this.propertyService
-      .updateProperty(this.formGroup.get('propertyId')?.value, body)
-      .subscribe({
-        next: (value) => {
-          this.toastAlertService.showSuccessNotification(
-            'Propriétaire modifié avec succés',
-            'Propriétaire a été modifier avec succés',
-          );
-          this.isLoading = false;
-        },
-        error: (err) => {
-          this.isLoading = false;
-        },
-      });
-  }
 
   getOwnerDetails() {
     console.log(this.getOwnerId());
@@ -150,5 +126,44 @@ export class OwnerDetailsComponent implements OnInit {
         console.log(err);
       },
     });
+  }
+
+  pageChange(event: PageChangedEvent) {
+    this.page = event.page;
+
+    this.getAllPropertiesByOwner(
+      this.page,
+      this.pageSize,
+      { ownerId: this.getOwnerId() },
+      false,
+    );
+  }
+
+  async getAllPropertiesByOwner(
+    page: number,
+    pageSize: number,
+    filters?: Record<string, string>,
+    useCache = true,
+  ) {
+    this.isLoadingFetchingProperties = true;
+    const params = { page: `${page}`, limit: `${pageSize}`, ...filters };
+    const urlParameters = new URLSearchParams(params).toString();
+
+    this.propertyService
+      .getAllProperties(`?${urlParameters}`, useCache)
+      .subscribe({
+        next: (value) => {
+          this.isLoadingFetchingProperties = false;
+          this.totalLength = value.body.meta.total ?? 0;
+          const properties = PropertyMapper.mapProperties(
+            value.body.properties,
+          );
+          this.properties = properties;
+        },
+        error: (err) => {
+          console.log(err);
+          this.isLoadingFetchingProperties = false;
+        },
+      });
   }
 }

@@ -11,6 +11,12 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { PageChangedEvent } from 'ngx-bootstrap/pagination';
 import { PropertyService } from '../../service/property.service';
 import { PropertyMapper } from '@dashboard/property/mappers/property-mapper';
+import { defaultSearchLimit } from 'src/app/variables/consts';
+import { ApartmentService } from '@dashboard/apartment/service/apartment.service';
+import { ApartmentMapper } from '@dashboard/apartment/mappers/apartment-mapper';
+import { DataTypes } from '@models/data';
+import { OwnerService } from '@dashboard/owner/service/owner.service';
+import { GetAllOwnersMapper } from '@dashboard/owner/mappers/get-all-owners-mapper';
 
 @Component({
   selector: 'app-properties-list',
@@ -21,21 +27,28 @@ export class PropertiesListComponent implements OnInit {
   totalLength = 0;
   page = 1;
   pageSize = 10;
+  focus1: boolean = false;
 
   properties: Property[] = [];
   isLoadingFetchingProperties = false;
   isLoadingArchiveProperty = false;
 
-  groupSearchResult: SearchResult[] = [];
-  activitySearchResult: SearchResult[] = [];
-  siteSearchResult: SearchResult[] = [];
+  ownerOptions: SearchResult[] = [];
+  propertiesType: SearchResult[] = [
+    { id: 'All', title: 'Tous (Immeuble, magasin, duplex ...)' },
+    ...DataTypes.propertiesType,
+  ];
+
+  searchOwnerValue: string = '';
 
   filtersFormGroup: FormGroup;
+  propertyTypeSearchValue: SearchResult = this.propertiesType[0];
 
   constructor(
     //private employeeService: EmployeeService,
     //private getAllEmployeeDto: GetAllEmployeeDTO,
     private propertyService: PropertyService,
+    private ownerService: OwnerService,
     private formBuilder: FormBuilder,
     private toastAlertService: ToastAlertService,
     private modalService: BsModalService,
@@ -44,23 +57,12 @@ export class PropertiesListComponent implements OnInit {
     private router: Router,
   ) {
     this.filtersFormGroup = this.formBuilder.group({
-      name: new FormControl(''),
-      employeeId: new FormControl(''),
-      tripType: new FormControl(''),
-      attachment: new FormControl(''),
-      postId: new FormControl(''),
-      siteId: new FormControl(''),
-      activityId: new FormControl(''),
-      packetId: new FormControl(''),
+      searchTerm: new FormControl(''),
+      matricule: new FormControl(''),
+      ownerId: new FormControl(''),
+      type: new FormControl(''),
     });
   }
-
-  selectedUsers: string[] = [];
-  showCheckboxSelection = false;
-
-  affectGroupModal?: BsModalRef;
-
-  @ViewChild('modalAffectGroup') modalAffectGroup?: TemplateRef<void>;
 
   ngOnInit(): void {
     this.getAllProperties(this.page, this.pageSize);
@@ -77,34 +79,39 @@ export class PropertiesListComponent implements OnInit {
     );
   }
 
-  showClearFilterBtn = false;
-
-  clearFilter() {
-    this.filtersFormGroup.reset();
-    this.filtersFormGroup.get('');
-    this.clearInputValue = !this.clearInputValue;
-    this.getAllProperties(this.page, this.pageSize);
-    this.showClearFilterBtn = false;
+  onSelectedPropertyTypeSearchItem(event: SearchResult) {
+    this.propertyTypeSearchValue = event;
+    this.filtersFormGroup.get('type')?.setValue(event.id);
   }
 
-  exportAllEmployeeIsLoading = false;
-
-  exportAllEmployees() {
-    this.exportAllEmployeeIsLoading = true;
+  onSelectedOwnerSearchItem(searchResult: SearchResult) {
+    this.filtersFormGroup.get('ownerId')?.setValue(searchResult.id);
   }
 
-  clearInputValue = false;
+  onSearchOwnerValueChanged(searchValue?: string) {
+    const params = {
+      ...(searchValue && { searchValue }),
+      limit: `${defaultSearchLimit}`,
+    };
 
-  onSelectedShiftSearchItem(event: SearchResult) {
-    this.filtersFormGroup.get('postId')?.setValue(event.id);
+    const queryString = new URLSearchParams(params).toString();
+
+    this.ownerService.getAllOwners(`?${queryString}`).subscribe({
+      next: (value) => {
+        const owners = GetAllOwnersMapper.fromResponse(value.body.owners);
+        this.ownerOptions = owners.map((item) => ({
+          id: item.id,
+          title: `${item.name}`,
+        }));
+      },
+    });
   }
 
-  onSelectedPackageSearchItem(event: SearchResult) {
-    this.filtersFormGroup.get('packetId')?.setValue(event.id);
+  onSelectedStatusTenantSearchItem(searchResult: SearchResult) {
+    this.filtersFormGroup.get('statusTenant')?.setValue(searchResult.id);
   }
 
-  filterEmployees() {
-    this.showClearFilterBtn = true;
+  filterProperties() {
     this.getAllProperties(
       this.page,
       this.pageSize,
@@ -142,7 +149,9 @@ export class PropertiesListComponent implements OnInit {
     useCache = true,
   ) {
     this.isLoadingFetchingProperties = true;
-
+    if (this.filtersFormGroup.get('type')?.value === 'All') {
+      this.filtersFormGroup.get('type')?.setValue('');
+    }
     const urlParameters = this.queryStringBuilder.create(
       { page, limit: pageSize },
       this.filtersFormGroup,
@@ -162,25 +171,7 @@ export class PropertiesListComponent implements OnInit {
     });
   }
 
-  onSelectedSiteSearchItem(event: SearchResult) {
-    this.filtersFormGroup.get('siteId')?.setValue(event.id);
-  }
-
-  onSelectedActivitySearchItem(event: SearchResult) {
-    this.filtersFormGroup.get('activityId')?.setValue(event.title);
-  }
-
   redirectToDetails(id: string) {
     this.router.navigate([`./dashboard/property/property-details/${id}`]);
-  }
-
-  verifyEmployee(id: string, fullName: string) {
-    this.confirmDialogService.showDialog({
-      title: `Êtes-vous sûr de vouloir vérifier ce bénéficiaire: ${fullName} ?`,
-      message: ``,
-      cancelBtnTitle: 'Annuler',
-      confirmBtnTitle: 'Confirmer',
-      onConfirmClick: () => {},
-    });
   }
 }

@@ -13,6 +13,8 @@ import { DataTypes } from '@models/data';
 import { SearchResult } from '@shared/search-input/search-input.component';
 import { ToastAlertService } from '@shared/toast-alert/toast-alert.service';
 import { defaultSearchLimit } from 'src/app/variables/consts';
+import { ActivatedRoute } from '@angular/router';
+import { PropertyDetails } from '@dashboard/property/entity/property-details';
 
 @Component({
   selector: 'app-upsert-apartment',
@@ -27,10 +29,12 @@ export class UpsertApartmentComponent {
   focus2 = false;
   focus3 = false;
   focus4 = false;
+  propertyDetails?: PropertyDetails;
 
   @Input() apartmentDetails?: ApartmentDetails;
 
   constructor(
+    private route: ActivatedRoute,
     private formBuilder: FormBuilder,
     private propertyService: PropertyService,
     private apartmentService: ApartmentService,
@@ -70,10 +74,32 @@ export class UpsertApartmentComponent {
     }
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    const propertyId = this.getPropertyId();
+    if (propertyId) {
+      // case coming from property details
+      this.getPropertyDetails();
+    }
+  }
 
   get createApartmentForm() {
     return this.formGroup.controls;
+  }
+
+  getPropertyId(): string {
+    return this.route.snapshot.paramMap.get('idProperty') ?? '';
+  }
+
+  getPropertyDetails() {
+    this.propertyService.getProperty(this.getPropertyId()).subscribe({
+      next: (value) => {
+        const result = value.body;
+        const propertyDetails = PropertyMapper.mapPropertyDetails(result);
+        this.propertyDetails = propertyDetails;
+        this.searchPropertyValue = this.propertyDetails.address;
+        this.formGroup.get('propertyId')?.setValue(this.propertyDetails.id);
+      },
+    });
   }
 
   searchPropertyValue: string = '';
@@ -86,8 +112,8 @@ export class UpsertApartmentComponent {
     const queryString = new URLSearchParams(params).toString();
     this.propertyService.getAllProperties(`?${queryString}`).subscribe({
       next: (value) => {
-        const owners = PropertyMapper.mapProperties(value.body.properties);
-        this.propertyOptions = owners.map((item) => ({
+        const properties = PropertyMapper.mapProperties(value.body.properties);
+        this.propertyOptions = properties.map((item) => ({
           id: item.id,
           title: `${item.matricule} - ${item.address}`,
         }));

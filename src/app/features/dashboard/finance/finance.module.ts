@@ -8,7 +8,6 @@ import { IncomeComponent } from './income/income.component';
 import { BalanceSummaryComponent } from './balance-summary/balance-summary.component';
 import { SearchInputModule } from '@shared/search-input/search-input.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { SearchAutocompleteInputModule } from '@shared/searchable-autocomplete-inputs/search-autocomple-input-module';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 
@@ -24,7 +23,7 @@ import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
     FinanceRoutingModule,
     FormsModule,
     ReactiveFormsModule,
-    SearchAutocompleteInputModule,
+    SearchInputModule,
     PaginationModule.forRoot(),
     BsDatepickerModule.forRoot(),
   ],

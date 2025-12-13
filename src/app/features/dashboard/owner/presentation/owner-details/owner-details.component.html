@@ -23,7 +23,9 @@
         </div>
         <div class="col-lg-3">
           <div class="form-group">
-            <h5 class="card-title text-uppercase text-muted mb-0">Matricule</h5>
+            <h5 class="card-title text-uppercase text-muted mb-0">
+              Identifiant
+            </h5>
 
             <h5 class="h2 font-weight-bold mb-0 mt-1">
               {{ ownerDetails?.matricule }}
@@ -90,79 +92,6 @@
           </div>
         </div>
       </div>
-      <h6 class="heading-small text-muted my-4">Liste des biens</h6>
-
-      <div class="row mb-4">
-        <table class="table table-responsive table-striped">
-          <thead>
-            <tr>
-              <th scope="col">Identifiant</th>
-              <th scope="col">Adresse</th>
-              <th scope="col">Nb Local</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <th scope="row">P1B2</th>
-              <td>
-                <h4>25 Rue bassatine tunis, tunisie</h4>
-              </td>
-              <td>
-                <h4>2</h4>
-              </td>
-            </tr>
-            <tr>
-              <th scope="row">P1B3</th>
-              <td>
-                <h4>10 Rue zayatine manouba, tunisie</h4>
-              </td>
-              <td>
-                <h4>1</h4>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <h6 class="heading-small text-muted my-4">Liste des locaux</h6>
-
-      <div class="row mb-4">
-        <table class="table table-responsive table-striped">
-          <thead>
-            <tr>
-              <th scope="col">Identifiant</th>
-              <th scope="col">Adresse</th>
-              <th scope="col">Bien</th>
-              <th scope="col">Piece</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <th scope="row">P1B2L2</th>
-              <td>
-                <h4>25 Rue bassatine tunis, tunisie</h4>
-              </td>
-              <td>
-                <h4>P1B2</h4>
-              </td>
-              <td>
-                <h4>3 pieces</h4>
-              </td>
-            </tr>
-            <tr>
-              <th scope="row">P1B2L2</th>
-              <td>
-                <h4>25 Rue bassatine tunis, tunisie</h4>
-              </td>
-              <td>
-                <h4>P1B2</h4>
-              </td>
-              <td>
-                <h4>3 pieces</h4>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
     </div>
   </div>
 </div>
@@ -170,56 +99,92 @@
 <app-upsert-owner [ownerDetails]="ownerDetails"></app-upsert-owner>
 
 <div class="card">
-  <div class="card-header">
+  <div class="card-body">
     <div class="row align-items-center">
       <div class="col-8">
-        <h3 class="mb-0">Ajouter des biens</h3>
+        <h3 class="mb-0">Liste des biens pour ce propriétaire ({{ totalLength }})</h3>
+      </div>
+    </div>
+    <div class="row justify-content-end px-3 pb-4">
+      <a
+        class="btn btn-sm btn-primary btn-round btn-icon"
+        href="javascript:void(0)"
+        routerLink="../../../property/create-property/{{ ownerDetails?.id }}"
+      >
+        <span class="btn-inner--icon">
+          <i class="ni ni-fat-add"> </i>
+        </span>
+        <span class="btn-inner--text"> Ajouter un bien pour ce propriétaire </span>
+      </a>
+    </div>
+    <div class="row mb-3 mt-3">
+      <div class="table-responsive">
+        <table class="table align-items-center table-flush table-hover">
+          <thead>
+            <tr>
+              <th scope="col">Numéro dossier</th>
+              <th scope="col">Adresse</th>
+              <th scope="col">Type</th>
+            </tr>
+          </thead>
+          <div
+            *ngIf="isLoadingFetchingProperties"
+            class="spinner-border text-primary mt-4 ml-4"
+            role="status"
+          ></div>
+          <div
+            *ngIf="properties.length === 0 && !isLoadingFetchingProperties"
+            class=""
+          >
+            <p class="ml-4 mb-0">Liste vide, aucun element trouvé.</p>
+          </div>
+          <tbody>
+            <tr *ngFor="let property of properties">
+              <td>
+                <h4>{{ property.idNumber }}</h4>
+              </td>
+              <td>
+                <h4>{{ property.address }}</h4>
+              </td>
+              <td>
+                <h4>{{ property.type }}</h4>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
+  <div class="card-footer py-4">
+    <nav aria-label="...">
+      <pagination
+        [totalItems]="totalLength"
+        [itemsPerPage]="pageSize"
+        [rotate]="false"
+        [boundaryLinks]="true"
+        [(ngModel)]="page"
+        firstText="&laquo;"
+        lastText="&raquo;"
+        [maxSize]="5"
+        class="justify-content-end mb-0"
+        [customPreviousTemplate]="prevTemplate"
+        (pageChanged)="pageChange($event)"
+        [customNextTemplate]="nextTemplate"
+      >
+      </pagination>
 
-  <div class="card-body">
-    <form [formGroup]="formGroup" (ngSubmit)="setPropertyToOwner()">
-      <div class="row mb-3 mt-3">
-        <div class="col">
-          <div class="form-group">
-            <label class="form-control-label"> Chercher un bien </label>
+      <ng-template #nextTemplate let-currentPage="currentPage">
+        <ng-container>
+          <i class="fas fa-angle-right"></i>
+        </ng-container>
+      </ng-template>
 
-            <div class="row">
-              <div class="col-md-12">
-                <app-search-input
-                  [clearInput]="false"
-                  [prefixIcon]="'fas fa-search'"
-                  [searchPlaceholder]="'Chercher un Bien'"
-                  [searchLabel]="'Résultats'"
-                  [maxSize]="5"
-                  [isInvalid]="
-                    submitted &&
-                    editPropertyForm['propertyId'].errors?.['required']
-                  "
-                  [errorMessage]="'Champs incorrect, Bien est obligatoire'"
-                  [triggerSearchOnOpen]="true"
-                  (searchValue)="onSearchApartmentValueChanged($event)"
-                  [searchInputValue]="searchPropertyValue"
-                  (selectedResultItem)="onSelectedPropertySearchItem($event)"
-                  [searchResult]="propertyOptions"
-                ></app-search-input>
-              </div>
-            </div>
-            <div class="mt-3 d-flex w-100 flex-row justify-content-end">
-              <button *ngIf="!isLoading" class="btn btn-primary" type="submit">
-                Confirmer
-              </button>
-              <div
-                *ngIf="isLoading"
-                class="spinner-border text-primary mr-5"
-                role="status"
-              ></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </form>
+      <ng-template #prevTemplate let-currentPage="currentPage">
+        <ng-container>
+          <i class="fas fa-angle-left"></i>
+        </ng-container>
+      </ng-template>
+    </nav>
   </div>
 </div>
 
@@ -233,7 +198,7 @@
   </div>
 
   <div class="card-body">
-    <div class="row mb-5 mt-3">
+    <!-- <div class="row mb-5 mt-3">
       <div class="col">
         <div class="form-group">
           <label class="form-control-label">
@@ -254,7 +219,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
     <div class="table-responsive">
       <div class="my-3 pr-2 d-flex w-100 flex-row justify-content-end">
         <button class="btn btn-icon btn-secondary" type="button">
@@ -279,7 +244,7 @@
           <tr *ngFor="let payment of financialBalance?.payments">
             <th scope="row">{{ payment.createdAt | date: "dd/MM/yyyy" }}</th>
             <td>
-              <h4>{{ payment.agreement }}</h4>
+              <h4>{{ payment.account }}</h4>
             </td>
             <td>
               <div class="row">
@@ -287,7 +252,7 @@
                   <h4>{{ payment.tenant }}</h4>
                 </div>
                 <div class="col-6">
-                  <h4>{{ payment.category }}</h4>
+                  <h4>{{ payment.reason }}</h4>
                 </div>
               </div>
             </td>

@@ -48,12 +48,6 @@ export class NavbarComponent implements OnInit {
 
   @ViewChild('modalSearch') modalSearch?: TemplateRef<void>;
 
-  codeSocietyModal?: BsModalRef;
-  @ViewChild('modalCodeSociety') modalCodeSociety?: TemplateRef<void>;
-
-  supportContactModal?: BsModalRef;
-  @ViewChild('modalSupportContact') modalSupportContact?: TemplateRef<void>;
-
   @Input() user?: User;
   @Input() getUserIsLoading = false;
 
@@ -68,14 +62,9 @@ export class NavbarComponent implements OnInit {
   constructor(
     location: Location,
     private router: Router,
-    private formBuild: FormBuilder,
     private confirmDialogService: ConfirmDialogService,
     private modalService: BsModalService,
     private toastAlertService: ToastAlertService,
-    private userService: UserService,
-    private queryStringBuilder: QueryStringBuilder,
-    private getAllEmployeeDto: GetAllEmployeeDTO,
-    private refreshNotificationService: RefreshNotificationsService,
   ) {
     this.location = location;
   }
@@ -101,41 +90,10 @@ export class NavbarComponent implements OnInit {
       this.sidenavOpen = true;
     }
   }
-  showModalSupport() {
-    this.supportContactModal = this.modalService.show(
-      this.modalSupportContact!,
-      {
-        class: 'modal-md',
-      },
-    );
-  }
 
-  hideCodeSocietyModalSupport() {
-    this.supportContactModal?.hide();
-  }
-
-  showCodeSocietyModal() {
-    /*if (!this.userService.user?.societyId) return;
-    this.userService
-      .fetchSocietyCode(this.userService.user?.societyId)
-      .subscribe({
-        next: (value) => {
-          console.log(value);
-          this.codeSociety = value.body.data?.attachmentCode ?? '';
-        },
-      });*/
-    this.codeSocietyModal = this.modalService.show(this.modalCodeSociety!, {
-      class: 'modal-md',
-    });
-  }
-
-  hideCodeSocietyModal() {
-    this.codeSocietyModal?.hide();
-  }
-
-  moveToEmployeeDetail(id: string) {
+  moveToTenantDetail(id: string) {
     this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
-      this.router.navigate([`./dashboard/employee/employee-details/${id}`]);
+      this.router.navigate([`./dashboard/tenant/tenant-details/${id}`]);
     });
 
     this.hideModal();
@@ -201,30 +159,11 @@ export class NavbarComponent implements OnInit {
     }, 500);
   }
 
-  showSocietyCodePopup() {
-    this.showCodeSocietyModal();
-  }
-
   redirectToNotificationDetail(id: string) {
     this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
       this.router.navigate([`./dashboard/employee/employee-details/${id}`], {
         queryParams: { scrollTo: 'address' },
       });
-    });
-  }
-
-  async getAllEmployee(
-    page: number,
-    pageSize: number,
-    filters?: Record<string, string>,
-    useCache = false,
-  ) {
-    this.isLoading = true;
-
-    const urlParameters = this.queryStringBuilder.create({
-      page,
-      pageSize,
-      attachment: false,
     });
   }
 }

@@ -25,6 +25,10 @@ const routes: Routes = [
         component: UpsertApartmentComponent,
       },
       {
+        path: 'create-apartment/:idProperty',
+        component: UpsertApartmentComponent,
+      },
+      {
         path: 'apartment-details/:id',
         component: ApartmentDetailsComponent,
       },

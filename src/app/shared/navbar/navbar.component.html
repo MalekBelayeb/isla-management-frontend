@@ -143,11 +143,7 @@
             </a>
             <div class="dropdown-divider"></div>
 
-            <a
-              class="dropdown-item"
-              style="color: #212529; cursor: pointer"
-              (click)="showModalSupport()"
-            >
+            <a class="dropdown-item" style="color: #212529; cursor: pointer">
               <i class="ni ni-support-16"></i> <span>Support</span>
             </a>
             <div class="dropdown-divider"></div>
@@ -169,6 +165,6 @@
 <ng-template #modalSearch>
   <app-searchable-modal
     (cancelClicked)="hideModal()"
-    (employeeClicked)="moveToEmployeeDetail($event)"
+    (tenantClicked)="moveToTenantDetail($event)"
   ></app-searchable-modal>
 </ng-template>

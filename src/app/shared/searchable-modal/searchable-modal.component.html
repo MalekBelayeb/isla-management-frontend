@@ -37,9 +37,9 @@
           </div>
 
           <div class="row my-3">
-            <div *ngIf="!isLoading && isFetched" class="col-lg-12">
+            <div *ngIf="!isLoadingFetchingTenants" class="col-lg-12">
               <small *ngIf="totalLength > 0" class="mb-0">
-                Nombre de bénéficiaires trouvés : {{ totalLength }}
+                Nombre de locataires trouvés : {{ totalLength }}
               </small>
               <small *ngIf="totalLength == 0" class="ml-4 mb-0">
                 Liste vide, aucun element trouvé
@@ -47,7 +47,7 @@
             </div>
 
             <div
-              *ngIf="isLoading"
+              *ngIf="isLoadingFetchingTenants"
               class="spinner-border text-primary mt-4 ml-4"
               role="status"
             ></div>
@@ -63,58 +63,113 @@
   class="modal-body"
 >
   <div class="px-4">
-    <ul class="list-group list-group-flush list my--3">
+    <ul
+      class="list-group list-group-flush list my--3"
+      style="overflow-y: auto !important"
+    >
       <li
         style="cursor: pointer"
-        *ngFor="let emp of employees"
+        *ngFor="let tenant of tenants"
         class="list-group-item list-group-item-action px-0"
       >
-        <div (click)="moveToDetails(emp.id)" class="row align-items-center">
-          <div class="col-auto mt-2 ml-2">
-            <i class="ni ni-circle-08 ni-lg"> </i>
-          </div>
+        <div
+          class="row"
+          style="
+            display: flex !important;
+            align-items: stretch !important;
+            gap: 1rem !important;
+          "
+        >
+          <div (click)="moveToDetails(tenant.id)" class="col">
+            <small> Identifiant: </small>
 
-          <div class="col">
+            <h5 class="mb-0 mt-2">{{ tenant.matricule }}</h5>
+          </div>
+          <div (click)="moveToDetails(tenant.id)" class="col">
             <small> Prénom et nom: </small>
 
-            <h5 class="mb-0">{{ emp.fullname }}</h5>
+            <h5 class="mb-0 mt-2">{{ tenant.fullname }}</h5>
           </div>
 
-          <div class="col">
-            <small> Adresse: </small>
+          <div (click)="moveToDetails(tenant.id)" class="col">
+            <small> Téléphone: </small>
 
-            <h5 class="mb-0">{{ emp.activeAddress }}</h5>
+            <h5 class="mb-0 mt-2">{{ tenant.phoneNumber }}</h5>
           </div>
-          <div class="col">
-            <small> Temps départ/arrivée </small>
+          <div (click)="moveToDetails(tenant.id)" class="col">
+            <small> CIN </small>
 
-            <h5 class="mb-0">
-              {{ emp.departureTime }} - {{ emp.arrivalTime }}
+            <h5 class="mb-0 mt-2">
+              {{ tenant.cin }}
+            </h5>
+          </div>
+          <div (click)="moveToDetails(tenant.id)" class="col">
+            <small> Status </small>
+
+            <div class="mt-2">
+              <span *ngIf="tenant.status == 'NO_AGREEMENT'">
+                <h5 class="mb-0 mt-2">Pas de contrat</h5>
+              </span>
+
+              <span *ngIf="tenant.status == 'NO_PAYMENT'">
+                <h5 class="mb-0 mt-2">Aucun paiement</h5>
+              </span>
+
+              <span *ngIf="tenant.status == 'AGREEMENT_EXPIRED'">
+                <h5 class="mb-0 mt-2">Contrat expiré</h5>
+              </span>
+
+              <span *ngIf="tenant.status == 'TERMINATED'">
+                <h5 class="mb-0 mt-2">Contrat suspendu</h5>
+              </span>
+              <span *ngIf="tenant.status == 'PAYMENT_DEFAULT'">
+                <h5 class="mb-0 mt-2">Retard de paiement</h5>
+              </span>
+
+              <span *ngIf="tenant.status == 'IN_GOOD_STANDING'">
+                <h5 class="mb-0 mt-2">En régle</h5>
+              </span>
+            </div>
+          </div>
+
+          <div (click)="moveToDetails(tenant.id)" class="col">
+            <small> Contrat: </small>
+
+            <h5 class="mb-0 mt-2">{{ tenant.agreement }}</h5>
+          </div>
+
+          <div (click)="moveToDetails(tenant.id)" class="col">
+            <small> Local: </small>
+
+            <h5 class="mb-0 mt-2">{{ tenant.apartment }}</h5>
+          </div>
+
+          <div (click)="moveToDetails(tenant.id)" class="col">
+            <small> Crée le: </small>
+
+            <h5 class="mb-0 mt-2">
+              {{ tenant.createdAt | date: "dd/MM/yyyy" }}
             </h5>
           </div>
 
-          <div class="col">
-            <small> Téléphone: </small>
-
-            <h5 class="mb-0">{{ emp.phoneNumber }}</h5>
-          </div>
-
-          <div class="col">
-            <small> Matricule: </small>
-
-            <h5 class="mb-0">{{ emp.employeeId }}</h5>
-          </div>
-
-          <div class="col">
-            <small> Groupe: </small>
-
-            <h5 class="mb-0">{{ emp.group }}</h5>
-          </div>
-
-          <div class="col">
-            <small> Site: </small>
-
-            <h5 class="mb-0">{{ emp.site }}</h5>
+          <div class="col-md-2 d-flex flex-column">
+            <div class="flex-grow-1 h-100">
+              <a
+                *ngIf="
+                  tenant.agreement &&
+                  (tenant.status == 'IN_GOOD_STANDING' ||
+                    tenant.status == 'PAYMENT_DEFAULT')
+                "
+                href="dashboard/payment/create-payment/{{ tenant.id }}"
+                class="nav-link h-100 d-flex align-items-center"
+                target="_blank"
+              >
+                <div class="d-flex gap-2">
+                  <i class="ni ni-money-coins"></i>
+                  <small class="ml-2">Ajouter loyer</small>
+                </div>
+              </a>
+            </div>
           </div>
         </div>
       </li>

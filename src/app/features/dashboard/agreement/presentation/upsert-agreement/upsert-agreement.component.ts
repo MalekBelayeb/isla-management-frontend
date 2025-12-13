@@ -15,7 +15,7 @@ import { TenantService } from '@dashboard/tenant/service/tenant.service';
 import { DataTypes } from '@models/data';
 import { SearchResult } from '@shared/search-input/search-input.component';
 import { ToastAlertService } from '@shared/toast-alert/toast-alert.service';
-import { conts, defaultSearchLimit } from 'src/app/variables/consts';
+import { defaultSearchLimit } from 'src/app/variables/consts';
 
 @Component({
   selector: 'app-upsert-agreement',
@@ -33,6 +33,7 @@ export class UpsertAgreementComponent implements OnInit {
   focus5 = false;
   focus6 = false;
   focus7 = false;
+  focus8 = false;
 
   @Input() agreementDetails?: AgreementDetails;
 
@@ -42,6 +43,7 @@ export class UpsertAgreementComponent implements OnInit {
     private tenantService: TenantService,
     private apartmentService: ApartmentService,
     private toastAlertService: ToastAlertService,
+    private tenantMapper: TenantMapper,
   ) {
     this.formGroup = this.formBuilder.group(
       {
@@ -55,6 +57,7 @@ export class UpsertAgreementComponent implements OnInit {
         ),
         apartmentId: new FormControl('', Validators.required),
         tenantId: new FormControl('', Validators.required),
+        nbDaysOfTolerance: new FormControl('10', Validators.required),
         deposit: new FormControl(''),
         firstDayOfPayment: new FormControl(''),
         documentUrl: new FormControl(''),
@@ -70,6 +73,7 @@ export class UpsertAgreementComponent implements OnInit {
   apartmentOptions: SearchResult[] = [];
   searchTenantValue: string = '';
   searchApartmentValue: string = '';
+  paymentFrequencySearchValue: string = '';
 
   onStartDateChange($event: Date) {
     this.formGroup
@@ -80,7 +84,7 @@ export class UpsertAgreementComponent implements OnInit {
   onEndDateChange($event: Date) {
     this.formGroup
       .get('expireDate')
-      ?.setValue($event.toISOString().split('T')[0]);
+      ?.setValue($event?.toISOString().split('T')[0]);
   }
   ngOnChanges(changes: SimpleChanges): void {
     if (
@@ -120,7 +124,17 @@ export class UpsertAgreementComponent implements OnInit {
         this.formGroup
           .get('tenantId')
           ?.setValue(this.agreementDetails?.tenantId);
-
+        this.formGroup
+          .get('nbDaysOfTolerance')
+          ?.setValue(this.agreementDetails?.nbDaysOfTolerance);
+        this.formGroup
+          .get('paymentFrequency')
+          ?.setValue(this.agreementDetails?.paymentFrequency);
+        console.log(this.agreementDetails.paymentFrequency);
+        this.paymentFrequencySearchValue =
+          DataTypes.paymentFrequencyTypeList.find(
+            (item) => item.id === this.agreementDetails?.paymentFrequency,
+          )?.title ?? '';
         this.searchTenantValue = this.agreementDetails.tenant;
         this.searchApartmentValue = this.agreementDetails.apartment;
       }
@@ -145,7 +159,7 @@ export class UpsertAgreementComponent implements OnInit {
 
     this.tenantService.getAllTenant(`?${queryString}`).subscribe({
       next: (value) => {
-        const tenants = TenantMapper.mapTenants(value.body.tenants);
+        const tenants = this.tenantMapper.mapTenants(value.body.tenants);
         this.tenantOptions = tenants.map((item) => ({
           id: item.id,
           title: `${item.matricule} - ${item.fullname}`,
@@ -193,6 +207,7 @@ export class UpsertAgreementComponent implements OnInit {
       paymentFrequency: this.formGroup.get('paymentFrequency')?.value,
       apartmentId: this.formGroup.get('apartmentId')?.value,
       tenantId: this.formGroup.get('tenantId')?.value,
+      nbDaysOfTolerance: this.formGroup.get('nbDaysOfTolerance')?.value,
       ...(this.formGroup.get('deposit')?.value && {
         deposit: this.formGroup.get('deposit')?.value,
       }),

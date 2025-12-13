@@ -11,6 +11,8 @@ export class PropertyMapper {
       type: data.type,
       owner: `${data.owner.gender == 'M' ? 'Mr' : 'Mme'}  ${data.owner.firstname} ${data.owner.lastname}`,
       ownerId: data.owner.id,
+      idNumber: `Prop-${data.matricule}`,
+      createdAt: data.createdAt,
       apartments: [],
     };
   }
@@ -19,9 +21,11 @@ export class PropertyMapper {
       id: data.id,
       matricule: data.matricule,
       address: data.address,
+      idNumber: `Prop-${data.matricule}`,
       type: data.type,
       owner: `${data.owner.gender == 'M' ? 'Mr' : 'Mme'}  ${data.owner.firstname} ${data.owner.lastname}`,
       nbApartments: data._count.apartments ?? 0,
+      createdAt: data.createdAt,
       apartments: [],
     };
   }

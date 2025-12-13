@@ -8,7 +8,7 @@
   </div>
 
   <div class="px-4 pt-2 pb-4">
-    <div class="row justify-content-end px-3">
+    <div class="row justify-content-end px-3 pb-4">
       <a
         class="btn btn-sm btn-primary btn-round btn-icon"
         href="javascript:void(0)"
@@ -21,46 +21,79 @@
       </a>
     </div>
 
-    <div class="row justify-content-end my-4">
-      <div *ngIf="showClearFilterBtn" class="col-6 text-right">
-        <a
-          class="btn btn-sm btn-secondary btn-round btn-icon"
-          (click)="clearFilter()"
-          href="javascript:void(0)"
-          tooltip="Edit product"
-          placement="top"
-        >
-          <span class="btn-inner--icon">
-            <i class="fas fa-times"> </i>
-          </span>
-
-          <span class="btn-inner--text"> Effacer les filtres</span>
-        </a>
-      </div>
-    </div>
-
-    <form [formGroup]="filtersFormGroup" (ngSubmit)="filterEmployees()">
+    <form [formGroup]="filtersFormGroup" (ngSubmit)="filterProperties()">
       <div class="row">
-        <div class="col-md-9">
+        <div class="col-md-7">
           <div class="form-group">
             <input
               class="form-control"
               id="example2cols1Input"
-              formControlName="name"
-              placeholder="Identifiant, Propriètaire, adresse ..."
+              formControlName="searchTerm"
+              placeholder="Chercher par adresse"
             />
           </div>
         </div>
-        <div class="col-md-3">
-          <div class="form-group">
-            <app-search-site-input
-              [placeholder]="'Chercher par type'"
-              (selectedSite)="onSelectedSiteSearchItem($event)"
-            />
+
+        <div class="col-md-5">
+          <div
+            class="form-group"
+            [ngClass]="{
+              focused: focus1 === true,
+            }"
+          >
+            <div class="input-group input-group-merge">
+              <div class="input-group-prepend">
+                <span class="input-group-text text-sm"> Prop- </span>
+              </div>
+              <input
+                class="form-control"
+                [ngClass]="{
+                  focused: focus1 === true,
+                }"
+                type="number"
+                min="1"
+                formControlName="matricule"
+                placeholder="Chercher par num dossier"
+                (focus)="focus1 = true"
+                (blur)="focus1 = false"
+              />
+            </div>
           </div>
         </div>
       </div>
-
+      <div class="row">
+        <div class="col-md-7">
+          <div class="form-group">
+            <app-search-input
+              [clearInput]="false"
+              [prefixIcon]="'fas fa-search'"
+              [searchPlaceholder]="'Filtrer par propriétaire'"
+              [searchLabel]="'Résultats'"
+              [maxSize]="5"
+              [triggerSearchOnOpen]="true"
+              (searchValue)="onSearchOwnerValueChanged($event)"
+              [searchInputValue]="searchOwnerValue"
+              (selectedResultItem)="onSelectedOwnerSearchItem($event)"
+              [searchResult]="ownerOptions"
+            ></app-search-input>
+          </div>
+        </div>
+        <div class="col-md-5">
+          <div class="form-group">
+            <app-search-input
+              [clearInput]="false"
+              [prefixIcon]="'fas fa-search'"
+              [searchPlaceholder]="'Filtrer par type'"
+              [searchLabel]="'Résultats'"
+              [prefixText]="'Type:'"
+              [maxSize]="4"
+              [searchInputValue]="propertyTypeSearchValue.title"
+              (selectedResultItem)="onSelectedPropertyTypeSearchItem($event)"
+              [searchResult]="propertiesType"
+            ></app-search-input>
+          </div>
+        </div>
+      </div>
       <div class="d-flex w-100 justify-content-end">
         <button class="btn btn-secondary" type="submit">Filtrer</button>
       </div>
@@ -71,13 +104,14 @@
     <table class="table align-items-center table-flush table-hover">
       <thead class="thead-light">
         <tr>
-          <th>Identifiant</th>
+          <th>Numéro dossier</th>
           <th>Propriètaire</th>
 
           <th>Adresse</th>
           <th>Type</th>
 
           <th>Nb locaux</th>
+          <th>Ajouté le</th>
 
           <th></th>
         </tr>
@@ -101,22 +135,14 @@
             (click)="redirectToDetails(property.id)"
             class="table-user"
           >
-            <b> {{ property.matricule }} </b>
+            <span> {{ property.idNumber }} </span>
           </td>
           <td
             style="cursor: pointer"
             (click)="redirectToDetails(property.id)"
             class="table-user"
           >
-            <b> {{ property.owner }} </b>
-          </td>
-
-          <td
-            style="cursor: pointer"
-            (click)="redirectToDetails(property.id)"
-            class="table-user"
-          >
-            <b> {{ property.address }} </b>
+            <span> {{ property.owner }} </span>
           </td>
 
           <td
@@ -124,7 +150,15 @@
             (click)="redirectToDetails(property.id)"
             class="table-user"
           >
-            <b> {{ property.type }} </b>
+            <span> {{ property.address }} </span>
+          </td>
+
+          <td
+            style="cursor: pointer"
+            (click)="redirectToDetails(property.id)"
+            class="table-user"
+          >
+            <span> {{ property.type }} </span>
           </td>
 
           <td style="cursor: pointer" (click)="redirectToDetails(property.id)">
@@ -132,8 +166,13 @@
               {{ property.nbApartments }}
             </div>
           </td>
+          <td style="cursor: pointer" (click)="redirectToDetails(property.id)">
+            <div class="col-auto">
+              {{ property.createdAt | date }}
+            </div>
+          </td>
           <td class="table-actions">
-            <a
+            <!-- <a
               class="table-action"
               routerLink="../create-property"
               href="javascript:void(0)"
@@ -141,7 +180,7 @@
               placement="top"
             >
               <i class="fas fa-user-edit"> </i>
-            </a>
+            </a> -->
 
             <a
               (click)="deleteProperty(property.id, property.address)"

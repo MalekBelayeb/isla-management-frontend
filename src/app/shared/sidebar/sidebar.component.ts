@@ -101,7 +101,22 @@ export const DASHBOARD_ROUTES: RouteInfo[] = [
       },
     ],
   },
+  {
+    path: '/dashboard/finance',
+    title: 'Agence',
+    type: 'sub',
+    icontype: 'fa-solid fa-suitcase text-primary',
+    children: [
+      {
+        path: 'expenses',
+        title: 'Comptes',
+        type: 'link',
+      },
+    ],
+  },
 ];
+
+//habitation professionel commercial
 
 @Component({
   selector: 'app-sidebar',
