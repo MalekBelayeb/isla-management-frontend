@@ -5,6 +5,7 @@
       focused: focus === true,
       'has-danger': isInvalid && !showSearchResult,
     }"
+    (click)="onInputClicked()"
   >
     <div *ngIf="prefixIcon" class="input-group-prepend">
       <span

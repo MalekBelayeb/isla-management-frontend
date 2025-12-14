@@ -88,15 +88,20 @@ export class UpsertPaymentComponent implements OnInit {
     if (changes['paymentDetails'] && !changes['paymentDetails'].firstChange) {
       this.paymentDetails = changes['paymentDetails'].currentValue;
       if (this.paymentDetails) {
+        console.log(this.paymentDetails);
         this.formGroup.get('amount')?.setValue(this.paymentDetails?.amount);
         this.formGroup.get('method')?.setValue(this.paymentDetails?.method);
         this.formGroup.get('label')?.setValue(this.paymentDetails?.label);
         this.formGroup
           .get('rentStartDate')
-          ?.setValue(this.paymentDetails?.rentStartDate);
+          ?.setValue(
+            this.paymentDetails?.rentStartDate?.toString().split('T')[0],
+          );
         this.formGroup
           .get('rentEndDate')
-          ?.setValue(this.paymentDetails?.rentEndDate);
+          ?.setValue(
+            this.paymentDetails?.rentEndDate?.toString().split('T')[0],
+          );
         this.formGroup.get('type')?.setValue(this.paymentDetails?.type);
         this.formGroup.get('category')?.setValue(this.paymentDetails?.category);
         this.formGroup
@@ -189,6 +194,8 @@ export class UpsertPaymentComponent implements OnInit {
   }
 
   onEndDateChange($event: Date) {
+
+    console.log($event)
     this.formGroup
       .get('rentEndDate')
       ?.setValue($event?.toISOString().split('T')[0]);
@@ -226,8 +233,8 @@ export class UpsertPaymentComponent implements OnInit {
       ...(this.paymentDetails && { id: this.paymentDetails.id }),
       amount: this.formGroup.get('amount')?.value,
       label: this.formGroup.get('label')?.value,
-      rentStartDate: this.formGroup.get('rentStartDate')?.value,
-      rentEndDate: this.formGroup.get('rentEndDate')?.value,
+      rentStartDate: new Date(this.formGroup.get('rentStartDate')?.value),
+      rentEndDate: new Date(this.formGroup.get('rentEndDate')?.value),
       type: this.formGroup.get('type')?.value,
       category: this.formGroup.get('category')?.value,
       method: this.formGroup.get('method')?.value,

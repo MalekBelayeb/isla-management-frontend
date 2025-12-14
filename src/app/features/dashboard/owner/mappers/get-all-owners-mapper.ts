@@ -12,7 +12,10 @@ export class GetAllOwnersMapper {
         email: item.email,
         gender: item.gender,
         matricule: item.matricule,
-        name: `${item.gender == 'M' ? 'Mr' : 'Mme'}  ${item.firstname} ${item.lastname}`,
+        name:
+          item.type === 'natural'
+            ? `${item.gender == 'M' ? 'Mr' : 'Mme'}  ${item.firstname} ${item.lastname}`
+            : (item.society ?? ''),
         nationality: item.nationality,
         phoneNumber: item.phoneNumber,
         type: item.type == 'natural' ? 'natural' : 'legal',

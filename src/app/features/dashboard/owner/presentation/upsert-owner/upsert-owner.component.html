@@ -156,7 +156,8 @@
               class="form-control"
               id="example-text-input"
               placeholder="Matricule fiscal"
-              type="text"
+              type="number"
+              min="0"
               value=""
               (focus)="focus3 = true"
               (blur)="focus3 = false"
@@ -310,8 +311,8 @@
               formControlName="cin"
               class="form-control"
               id="example-text-input"
-              type="text"
-              value=""
+              type="number"
+              min="0"
               placeholder="Num carte identité national"
               (focus)="focus5 = true"
               (blur)="focus5 = false"
@@ -361,55 +362,64 @@
         </div>
       </div>
 
-      <div class="form-group row">
+      <div
+        class="form-group row"
+        [ngClass]="{
+          focused: focus10 === true,
+          'has-danger':
+            submitted &&
+            (f['phoneNumber'].errors?.['required'] ||
+              formGroup.errors?.['phoneNumberIncorrect']),
+        }"
+      >
         <label
           class="col-md-2 col-form-label form-control-label"
-          for="example-time-input"
+          for="example-text-input"
         >
-          Téléphone <span class="text-danger">*</span>
+          Num Tél <span class="text-danger">*</span>
         </label>
+
         <div class="col-md-10">
           <div class="input-group input-group-merge">
+            <div class="input-group-prepend">
+              <span class="input-group-text text-sm"> +216 </span>
+            </div>
             <input
-              formControlName="phoneNumber"
               [ngClass]="{
+                focused: focus10 === true,
                 'is-invalid':
                   submitted &&
                   (f['phoneNumber'].errors?.['required'] ||
                     formGroup.errors?.['phoneNumberIncorrect']),
-                'is-valid':
-                  submitted &&
-                  !f['phoneNumber'].errors?.['required'] &&
-                  !formGroup.errors?.['phoneNumberIncorrect'],
               }"
+              formControlName="phoneNumber"
               class="form-control"
-              placeholder="Num Téléphone"
-              type="text"
-              (focus)="focus7 = true"
-              (blur)="focus7 = false"
+              id="example-text-input"
+              type="number"
+              min="0"
+              value=""
+              placeholder="Num Téléphone propriètaire"
+              (focus)="focus10 = true"
+              (blur)="focus10 = false"
             />
-
-            <div
-              *ngIf="submitted && f['phoneNumber'].errors?.['required']"
-              class="invalid-feedback"
-            >
-              Champs manquant, num de téléphone est obligatoire.
-            </div>
-
-            <div
-              *ngIf="
-                submitted &&
-                !f['phoneNumber'].errors?.['required'] &&
-                formGroup.errors?.['phoneNumberIncorrect']
-              "
-              class="invalid-feedback"
-            >
-              Champs incorrect, num de téléphone invalide.
-            </div>
+          </div>
+          <small class="text-muted font-weight-light">
+            Un Num tél valide doit contenir exactement 8 chiffres
+          </small>
+          <div
+            *ngIf="submitted && f['phoneNumber'].errors?.['required']"
+            class="error-text"
+          >
+            Champs incorrect, Num tél est obligatoire.
+          </div>
+          <div
+            *ngIf="submitted && formGroup.errors?.['phoneNumberIncorrect']"
+            class="error-text"
+          >
+            Champs incorrect, Num tél est incorrect.
           </div>
         </div>
       </div>
-
       <div class="form-group row">
         <label
           class="col-md-2 col-form-label form-control-label"
@@ -433,7 +443,8 @@
               }"
               class="form-control"
               placeholder="RIB Bancaire"
-              type="text"
+              type="number"
+              min="0"
               (focus)="focus8 = true"
               (blur)="focus8 = false"
             />

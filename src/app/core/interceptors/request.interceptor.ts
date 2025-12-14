@@ -48,7 +48,7 @@ export class RequestInterceptor implements HttpInterceptor {
               if (this.codeStatus.includes(error.status)) {
                 this.toastAlertService.showErrorNotification(
                   "Une erreur s'est produite",
-                  error.error?.message?.message ||
+                  error.error?.message ||
                     'Erreur du serveur, veuillez réessayer plus tard',
                 );
               }

@@ -47,7 +47,7 @@ export class UpsertAgreementComponent implements OnInit {
   ) {
     this.formGroup = this.formBuilder.group(
       {
-        matricule: new FormControl('', Validators.required),
+        //matricule: new FormControl('', Validators.required),
         rentAmount: new FormControl('', Validators.required),
         startDate: new FormControl('', Validators.required),
         expireDate: new FormControl('', Validators.required),
@@ -57,9 +57,9 @@ export class UpsertAgreementComponent implements OnInit {
         ),
         apartmentId: new FormControl('', Validators.required),
         tenantId: new FormControl('', Validators.required),
-        nbDaysOfTolerance: new FormControl('10', Validators.required),
-        deposit: new FormControl(''),
-        firstDayOfPayment: new FormControl(''),
+        //nbDaysOfTolerance: new FormControl(10, Validators.required),
+        //deposit: new FormControl(''),
+        //firstDayOfPayment: new FormControl(''),
         documentUrl: new FormControl(''),
         notes: new FormControl(''),
       },
@@ -200,14 +200,18 @@ export class UpsertAgreementComponent implements OnInit {
     this.isLoading = true;
     let body: any = {
       ...(this.agreementDetails && { id: this.agreementDetails.id }),
-      matricule: this.formGroup.get('matricule')?.value,
+      //matricule: this.formGroup.get('matricule')?.value,
       rentAmount: this.formGroup.get('rentAmount')?.value,
       startDate: new Date(this.formGroup.get('startDate')?.value),
       expireDate: new Date(this.formGroup.get('expireDate')?.value),
       paymentFrequency: this.formGroup.get('paymentFrequency')?.value,
       apartmentId: this.formGroup.get('apartmentId')?.value,
       tenantId: this.formGroup.get('tenantId')?.value,
-      nbDaysOfTolerance: this.formGroup.get('nbDaysOfTolerance')?.value,
+      ...(this.formGroup.get('nbDaysOfTolerance')?.value && {
+        nbDaysOfTolerance: Number(
+          this.formGroup.get('nbDaysOfTolerance')?.value,
+        ),
+      }),
       ...(this.formGroup.get('deposit')?.value && {
         deposit: this.formGroup.get('deposit')?.value,
       }),

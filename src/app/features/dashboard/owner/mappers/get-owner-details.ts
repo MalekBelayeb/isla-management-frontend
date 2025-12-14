@@ -10,6 +10,8 @@ export class GetOwnerDetailsMapper {
       cin: data.cin,
       email: data.email,
       gender: data.gender,
+      society: data.society,
+      taxId: data.taxId,
       matricule: data.matricule,
       fullname: `${data.gender == 'M' ? 'Mr' : 'Mme'}  ${data.firstname} ${data.lastname}`,
       firstname: data.firstname,

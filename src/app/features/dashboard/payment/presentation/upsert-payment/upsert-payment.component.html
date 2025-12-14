@@ -110,6 +110,12 @@
             [endDateValue]="upsertPaymentForm['rentEndDate'].value"
             (startDate)="onStartDateChange($event)"
             (endDate)="onEndDateChange($event)"
+            [startDateErrorMessage]="
+              'Champs incorrect, Date de début est obligatoire'
+            "
+            [endDateErrorMessage]="
+              'Champs incorrect, Date de fin est obligatoire'
+            "
           ></app-date-range-picker>
           <small class="text-muted font-weight-light">
             Période concernée par le paiement, ex: ce paiement couvre la période

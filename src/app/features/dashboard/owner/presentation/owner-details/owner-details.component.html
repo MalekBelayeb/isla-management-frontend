@@ -7,7 +7,7 @@
     </div>
   </div>
 
-  <div class="card-body">
+  <div *ngIf="ownerDetails?.type == 'natural'" class="card-body">
     <div class="pl-lg-4">
       <div class="row">
         <div class="col-lg-3">
@@ -94,6 +94,95 @@
       </div>
     </div>
   </div>
+
+
+  <div *ngIf="ownerDetails?.type == 'legal'" class="card-body">
+    <div class="pl-lg-4">
+      <div class="row">
+        <div class="col-lg-3">
+          <div class="form-group">
+            <h5 class="card-title text-uppercase text-muted mb-0">
+              Nom société
+            </h5>
+
+            <h5 class="h2 font-weight-bold mb-0 mt-1">
+              {{ ownerDetails?.society }}
+            </h5>
+          </div>
+        </div>
+        <div class="col-lg-3">
+          <div class="form-group">
+            <h5 class="card-title text-uppercase text-muted mb-0">
+              Identifiant
+            </h5>
+
+            <h5 class="h2 font-weight-bold mb-0 mt-1">
+              {{ ownerDetails?.matricule }}
+            </h5>
+          </div>
+        </div>
+        <div class="col-lg-3">
+          <div class="form-group">
+            <h5 class="card-title text-uppercase text-muted mb-0">Téléphone</h5>
+
+            <h5 class="h2 font-weight-bold mb-0 mt-1">
+              {{ ownerDetails?.phoneNumber }}
+            </h5>
+          </div>
+        </div>
+        <div class="col-lg-3">
+          <div class="form-group">
+            <h5 class="card-title text-uppercase text-muted mb-0">Type</h5>
+
+            <h5 class="h5 font-weight-bold mb-0 mt-1">
+              {{
+                ownerDetails?.type == "natural" ? "P. Physique" : "P. Morale"
+              }}
+            </h5>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-lg-3">
+          <div class="form-group">
+            <h5 class="card-title text-uppercase text-muted mb-0">Email</h5>
+
+            <h5 class="h2 font-weight-bold mb-0 mt-1">
+              {{ ownerDetails?.email }}
+            </h5>
+          </div>
+        </div>
+        <div class="col-lg-3">
+          <div class="form-group">
+            <h5 class="card-title text-uppercase text-muted mb-0">Matricule Fiscal</h5>
+
+            <h5 class="h2 font-weight-bold mb-0 mt-1">
+              {{ ownerDetails?.taxId }}
+            </h5>
+          </div>
+        </div>
+        <div class="col-lg-3">
+          <div class="form-group">
+            <h5 class="card-title text-uppercase text-muted mb-0">RIB</h5>
+
+            <h5 class="h2 font-weight-bold mb-0 mt-1">
+              {{ ownerDetails?.rib }}
+            </h5>
+          </div>
+        </div>
+        <div class="col-lg-3">
+          <div class="form-group">
+            <h5 class="card-title text-uppercase text-muted mb-0">Ajouté le</h5>
+
+            <h5 class="h2 font-weight-bold mb-0 mt-1">
+              {{ ownerDetails?.createdAt | date }}
+            </h5>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <app-upsert-owner [ownerDetails]="ownerDetails"></app-upsert-owner>
@@ -102,7 +191,9 @@
   <div class="card-body">
     <div class="row align-items-center">
       <div class="col-8">
-        <h3 class="mb-0">Liste des biens pour ce propriétaire ({{ totalLength }})</h3>
+        <h3 class="mb-0">
+          Liste des biens pour ce propriétaire ({{ totalLength }})
+        </h3>
       </div>
     </div>
     <div class="row justify-content-end px-3 pb-4">
@@ -114,7 +205,9 @@
         <span class="btn-inner--icon">
           <i class="ni ni-fat-add"> </i>
         </span>
-        <span class="btn-inner--text"> Ajouter un bien pour ce propriétaire </span>
+        <span class="btn-inner--text">
+          Ajouter un bien pour ce propriétaire
+        </span>
       </a>
     </div>
     <div class="row mb-3 mt-3">
