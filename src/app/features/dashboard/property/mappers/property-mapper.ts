@@ -9,7 +9,10 @@ export class PropertyMapper {
       id: data.id,
       address: data.address,
       type: data.type,
-      owner: `${data.owner.gender == 'M' ? 'Mr' : 'Mme'}  ${data.owner.firstname} ${data.owner.lastname}`,
+      owner:
+        data.owner.type === 'natural'
+          ? `${data.owner.gender == 'M' ? 'Mr' : 'Mme'}  ${data.owner.firstname} ${data.owner.lastname}`
+          : `${data.owner.society}`,
       ownerId: data.owner.id,
       idNumber: `Prop-${data.matricule}`,
       createdAt: data.createdAt,
@@ -23,8 +26,11 @@ export class PropertyMapper {
       address: data.address,
       idNumber: `Prop-${data.matricule}`,
       type: data.type,
-      owner: `${data.owner.gender == 'M' ? 'Mr' : 'Mme'}  ${data.owner.firstname} ${data.owner.lastname}`,
-      nbApartments: data._count.apartments ?? 0,
+      owner:
+        data.owner.type === 'natural'
+          ? `${data.owner.gender == 'M' ? 'Mr' : 'Mme'}  ${data.owner.firstname} ${data.owner.lastname}`
+          : `${data.owner.society}`,
+      nbApartments: data.apartments?.length ?? 0,
       createdAt: data.createdAt,
       apartments: [],
     };
