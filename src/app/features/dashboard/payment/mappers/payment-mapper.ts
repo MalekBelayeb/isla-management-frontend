@@ -66,7 +66,7 @@ export class PaymentMapper {
     return (
       `${DataTypes.paymentCategoryList.find(
         (category) => category.id === item.category,
-      )?.title ?? ''} pour ${apartmentPrefix}${item.agreement?.apartment?.matricule ?? ''}` ?? ''
+      )?.title ?? ''} pour ${apartmentPrefix}${item.agreement?.apartment?.matricule ?? ''} - ${item.agreement?.apartment?.address ?? ''}` ?? ''
     );
   }
 

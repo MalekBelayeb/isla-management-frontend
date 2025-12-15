@@ -37,6 +37,9 @@ export class PropertyDetailsComponent implements OnInit {
     containerClass: 'theme-red',
   };
 
+  trimestersOptions: SearchResult[] = [];
+  trimesterSearchValue?: SearchResult;
+
   propertyDetails?: PropertyDetails;
   financialBalance?: FinancialBalance;
   formGroup: FormGroup;
@@ -69,6 +72,19 @@ export class PropertyDetailsComponent implements OnInit {
   apartments: Apartment[] = [];
 
   ngOnInit(): void {
+    this.trimestersOptions = this.getTrimesters().map(
+      (item): SearchResult => ({
+        id: item.name,
+        title: `${item.name} - ${item.start.toISOString().split('T')[0]} - ${item.end.toISOString().split('T')[0]}`,
+      }),
+    );
+    const currrentTrimstre = this.getCurrentTrimestre();
+    if (currrentTrimstre) {
+      this.trimesterSearchValue = {
+        id: currrentTrimstre.name,
+        title: `${currrentTrimstre.name} - ${currrentTrimstre.start.toISOString().split('T')[0]} - ${currrentTrimstre.end.toISOString().split('T')[0]}`,
+      };
+    }
     this.getPropertyDetails();
     this.getAllApartmentsByProperty(
       this.page,
@@ -76,10 +92,13 @@ export class PropertyDetailsComponent implements OnInit {
       { propertyId: this.getPropertyId() },
       false,
     );
-    this.getFinancialBalance();
+    this.getFinancialBalance(
+      currrentTrimstre?.start.toISOString().split('T')[0],
+      currrentTrimstre?.end.toISOString().split('T')[0],
+    );
   }
 
-  get editApartmentForm() { 
+  get editApartmentForm() {
     return this.formGroup.controls;
   }
 
@@ -87,9 +106,19 @@ export class PropertyDetailsComponent implements OnInit {
     return this.route.snapshot.paramMap.get('id') ?? '';
   }
 
-  getFinancialBalance() {
+  onSelectedTrimesterSearchItem($event: SearchResult) {
+    const id = $event.id;
+    const trimester = this.getTrimesters().find((item) => item.name === id);
+    this.getFinancialBalance(
+      trimester?.start.toISOString().split('T')[0],
+      trimester?.end.toISOString().split('T')[0],
+    );
+  }
+  getFinancialBalance(startDate?: string, endDate?: string) {
     const params = {
       propertyId: this.getPropertyId(),
+      ...(startDate && { startDate }),
+      ...(endDate && { endDate }),
     };
 
     const queryString = new URLSearchParams(params).toString();
@@ -148,5 +177,20 @@ export class PropertyDetailsComponent implements OnInit {
           this.isLoadingFetchingApartments = false;
         },
       });
+  }
+
+  getTrimesters() {
+    const year = new Date().getFullYear();
+    return Array.from({ length: 4 }, (_, i) => ({
+      name: `T${i + 1}`,
+      start: new Date(year, i * 3, 1),
+      end: new Date(year, (i + 1) * 3, 0),
+    }));
+  }
+
+  getCurrentTrimestre(date = new Date()) {
+    return this.getTrimesters().find(
+      (item) => item.start <= date && date <= item.end,
+    );
   }
 }

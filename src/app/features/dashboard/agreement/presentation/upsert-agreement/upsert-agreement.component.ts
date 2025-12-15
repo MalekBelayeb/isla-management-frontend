@@ -15,7 +15,7 @@ import { TenantService } from '@dashboard/tenant/service/tenant.service';
 import { DataTypes } from '@models/data';
 import { SearchResult } from '@shared/search-input/search-input.component';
 import { ToastAlertService } from '@shared/toast-alert/toast-alert.service';
-import { defaultSearchLimit } from 'src/app/variables/consts';
+import { apartmentPrefix, defaultSearchLimit } from 'src/app/variables/consts';
 
 @Component({
   selector: 'app-upsert-agreement',
@@ -57,9 +57,6 @@ export class UpsertAgreementComponent implements OnInit {
         ),
         apartmentId: new FormControl('', Validators.required),
         tenantId: new FormControl('', Validators.required),
-        //nbDaysOfTolerance: new FormControl(10, Validators.required),
-        //deposit: new FormControl(''),
-        //firstDayOfPayment: new FormControl(''),
         documentUrl: new FormControl(''),
         notes: new FormControl(''),
       },
@@ -129,12 +126,22 @@ export class UpsertAgreementComponent implements OnInit {
           ?.setValue(this.agreementDetails?.nbDaysOfTolerance);
         this.formGroup
           .get('paymentFrequency')
-          ?.setValue(this.agreementDetails?.paymentFrequency);
-        console.log(this.agreementDetails.paymentFrequency);
+          ?.setValue(
+            DataTypes.paymentFrequencyTypeList.find(
+              (item) => item.title === this.agreementDetails?.paymentFrequency,
+            )?.id ?? '',
+          );
+        /*console.log(
+          DataTypes.paymentFrequencyTypeList.find(
+            (item) => item.title === this.agreementDetails?.paymentFrequency,
+          )?.id ?? '',
+        );*/
+
         this.paymentFrequencySearchValue =
           DataTypes.paymentFrequencyTypeList.find(
-            (item) => item.id === this.agreementDetails?.paymentFrequency,
+            (item) => item.title === this.agreementDetails?.paymentFrequency,
           )?.title ?? '';
+        console.log(this.agreementDetails?.paymentFrequency);
         this.searchTenantValue = this.agreementDetails.tenant;
         this.searchApartmentValue = this.agreementDetails.apartment;
       }
@@ -184,7 +191,7 @@ export class UpsertAgreementComponent implements OnInit {
         const apartments = ApartmentMapper.mapApartments(value.body.apartments);
         this.apartmentOptions = apartments.map((item) => ({
           id: item.id,
-          title: `${item.matricule} - ${item.address}`,
+          title: `${apartmentPrefix}${item.matricule} - ${item.address}`,
         }));
       },
     });
