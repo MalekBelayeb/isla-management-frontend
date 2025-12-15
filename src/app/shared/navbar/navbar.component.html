@@ -106,15 +106,15 @@
                   <h6 *ngIf="user.type === 'admin'" class="mb-0 text-muted">
                     Administrateur
                   </h6>
-                  <h6 *ngIf="user.type === 'responsible'" class="mb-0">
-                    <span class="text-muted"> Responsable Site </span>
+                  <h6 *ngIf="user.type === 'agent'" class="mb-0">
+                    <span class="text-muted"> Agent </span>
 
                     <span class="badge badge-dot ml-2">
                       <i class="bg-default"> </i>
                     </span>
 
                     <span class="text-muted">
-                      {{ user.siteName ?? "" }}
+                      {{ user.societyName }}
                     </span>
                   </h6>
                 </div>

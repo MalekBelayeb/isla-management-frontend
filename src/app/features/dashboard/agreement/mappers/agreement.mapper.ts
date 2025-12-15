@@ -2,22 +2,25 @@ import { Injectable } from '@angular/core';
 import { Agreement } from '../entity/agreement';
 import { AgreementDetails } from '../entity/agreement-details';
 import { DataTypes } from '@models/data';
+import { agreementPrefix, apartmentPrefix } from 'src/app/variables/consts';
 
 @Injectable({ providedIn: 'root' })
 export class AgreeementMapper {
   static mapAgreementDetails(data: any): AgreementDetails {
-    console.log('---->', data);
     return {
       id: data.id,
-      matricule: data.matricule,
+      matricule: `${agreementPrefix}${data.matricule}`,
       status: data.status,
-      paymentFrequency: data.paymentFrequency,
+      paymentFrequency:
+        DataTypes.paymentFrequencyTypeList.find(
+          (frequency) => frequency.id === data.paymentFrequency,
+        )?.title ?? '',
       rentAmount: data.rentAmount,
       startDate: data.startDate,
       expireDate: data.expireDate,
       createdAt: data.createdAt,
       signedAt: data.signedAt,
-      apartment: `${data.apartment?.matricule} - ${data.apartment?.type} - ${data.apartment?.address}`,
+      apartment: `${apartmentPrefix}${data.apartment?.matricule} - ${data.apartment?.type} - ${data.apartment?.address}`,
       apartmentId: data.apartment?.id,
       nbDaysOfTolerance: data.nbDaysOfTolerance,
       deposit: data.deposit,
@@ -32,7 +35,7 @@ export class AgreeementMapper {
     return data.map((item): Agreement => {
       return {
         id: item.id,
-        matricule: item.matricule,
+        matricule: `${agreementPrefix}${item.matricule}`,
         status: new Date(item.expireDate) > new Date() ? 'ACTIVE' : 'EXPIRED',
         paymentFrequency:
           DataTypes.paymentFrequencyTypeList.find(
@@ -44,7 +47,7 @@ export class AgreeementMapper {
         createdAt: item.createdAt,
         signedAt: item.signedAt,
         nbDaysOfTolerance: item.nbDaysOfTolerance,
-        apartment: `${item.apartment.matricule} - ${item.apartment.type} - ${item.apartment.address}`,
+        apartment: `${apartmentPrefix}${item.apartment.matricule} - ${item.apartment.type} - ${item.apartment.address}`,
         tenant: `${item.tenant.gender == 'M' ? 'Mr' : 'Mme'} ${item.tenant.fullname}`,
       };
     });

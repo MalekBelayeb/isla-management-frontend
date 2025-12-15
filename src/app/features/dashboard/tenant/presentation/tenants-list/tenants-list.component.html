@@ -62,6 +62,7 @@
               [searchInputValue]="statusTenantSearchValue.title"
               (selectedResultItem)="onSelectedStatusTenantSearchItem($event)"
               [searchResult]="statusTenantOptions"
+              [isEditable]="false"
             ></app-search-input>
           </div>
         </div>
@@ -73,7 +74,7 @@
             <app-search-input
               [clearInput]="false"
               [prefixIcon]="'fas fa-search'"
-              [searchPlaceholder]="'Filtrer par local'"
+              [searchPlaceholder]="'Filtrer par local (adresse ou num local)'"
               [searchLabel]="'Résultats'"
               [maxSize]="5"
               [triggerSearchOnOpen]="true"
@@ -84,20 +85,61 @@
             ></app-search-input>
           </div>
         </div>
-        <div class="col-md-6">
-          <div class="form-group">
-            <app-search-input
-              [clearInput]="false"
-              [prefixIcon]="'fas fa-search'"
-              [searchPlaceholder]="'Filtrer par contrat'"
-              [searchLabel]="'Résultats'"
-              [maxSize]="5"
-              [triggerSearchOnOpen]="true"
-              (searchValue)="onSearchAgreementValueChanged($event)"
-              [searchInputValue]="searchAgreementValue"
-              (selectedResultItem)="onSelectedAgreementSearchItem($event)"
-              [searchResult]="agreementOptions"
-            ></app-search-input>
+        
+        <div class="col-md-3">
+          <div
+            class="form-group"
+            [ngClass]="{
+              focused: focus2 === true,
+            }"
+          >
+            <div class="input-group input-group-merge">
+              <div class="input-group-prepend">
+                <span class="input-group-text text-sm">
+                  {{ agreementPrefix }}
+                </span>
+              </div>
+              <input
+                class="form-control"
+                [ngClass]="{
+                  focused: focus2 === true,
+                }"
+                type="number"
+                min="1"
+                formControlName="tenantAgreement"
+                placeholder="Chercher par num contrat"
+                (focus)="focus2 = true"
+                (blur)="focus2 = false"
+              />
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div
+            class="form-group"
+            [ngClass]="{
+              focused: focus3 === true,
+            }"
+          >
+            <div class="input-group input-group-merge">
+              <div class="input-group-prepend">
+                <span class="input-group-text text-sm">
+                  {{ propertyPrefix }}
+                </span>
+              </div>
+              <input
+                class="form-control"
+                [ngClass]="{
+                  focused: focus3 === true,
+                }"
+                type="number"
+                min="1"
+                formControlName="tenantProperty"
+                placeholder="Chercher par num dossier"
+                (focus)="focus3 = true"
+                (blur)="focus3 = false"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -112,14 +154,14 @@
     <table class="table align-items-center table-flush table-hover">
       <thead class="thead-light">
         <tr>
-          <th>Identifiant</th>
+          <th>Num locataire</th>
           <th>Nom & Prénom</th>
           <th>Téléphone</th>
           <th>Nationalité</th>
           <th>CIN</th>
           <th>Emploi</th>
           <th>Status du contrat</th>
-          <th>Matricule du dernier contrat signé</th>
+          <th>Num du dernier contrat signé</th>
           <th>Période de validité du contrat</th>
           <th>Dernier local loué</th>
           <th>Dernier loyer payé le</th>

@@ -12,7 +12,11 @@ import { ToastAlertService } from '@shared/toast-alert/toast-alert.service';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { PageChangedEvent } from 'ngx-bootstrap/pagination';
 import { Apartment } from '@dashboard/apartment/entity/Apartment';
-import { defaultSearchLimit } from 'src/app/variables/consts';
+import {
+  apartmentPrefix,
+  defaultSearchLimit,
+  propertyPrefix,
+} from 'src/app/variables/consts';
 import { OwnerService } from '@dashboard/owner/service/owner.service';
 import { GetAllOwnersMapper } from '@dashboard/owner/mappers/get-all-owners-mapper';
 
@@ -56,10 +60,10 @@ export class ApartmentListComponent {
   showCheckboxSelection = false;
   ownerOptions: SearchResult[] = [];
   searchOwnerValue: string = '';
-
+  apartmentPrefix: string = apartmentPrefix;
   apartementStatus: SearchResult[] = DataTypes.apartmentStatusType;
   apartmentStatusSearchValue: SearchResult = DataTypes.apartmentStatusType[0];
-
+  propertyPrefix: string = propertyPrefix;
   apartmentsType: SearchResult[] = [
     { id: 'All', title: 'Tous (Studio, appart., depot ...)' },
     ...DataTypes.apartmentsType,
@@ -140,7 +144,7 @@ export class ApartmentListComponent {
 
   onSearchOwnerValueChanged(searchValue?: string) {
     const params = {
-      ...(searchValue && { searchValue }),
+      ...(searchValue && { searchTerm: searchValue }),
       limit: `${defaultSearchLimit}`,
     };
 

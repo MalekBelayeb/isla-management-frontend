@@ -42,10 +42,10 @@ export class OwnerDetailsComponent implements OnInit {
   financialBalance?: FinancialBalance;
 
   properties: Property[] = [];
-  
+
   submitted = false;
   isLoading = false;
-  
+
   isLoadingFetchingProperties = false;
   totalLength = 0;
   page = 1;
@@ -97,7 +97,7 @@ export class OwnerDetailsComponent implements OnInit {
 
   onSearchApartmentValueChanged(searchValue?: string) {
     const params = {
-      ...(searchValue && { searchValue }),
+      ...(searchValue && { searchTerm: searchValue }),
       limit: `${defaultSearchLimit}`,
     };
 

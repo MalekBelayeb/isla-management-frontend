@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Property } from '@property/entity/property';
 import { PropertyDetails } from '../entity/property-details';
+import { propertyPrefix } from 'src/app/variables/consts';
 
 @Injectable({ providedIn: 'root' })
 export class PropertyMapper {
@@ -14,7 +15,7 @@ export class PropertyMapper {
           ? `${data.owner.gender == 'M' ? 'Mr' : 'Mme'}  ${data.owner.firstname} ${data.owner.lastname}`
           : `${data.owner.society}`,
       ownerId: data.owner.id,
-      idNumber: `Prop-${data.matricule}`,
+      idNumber: `${propertyPrefix}${data.matricule}`,
       createdAt: data.createdAt,
       apartments: [],
     };
@@ -24,7 +25,7 @@ export class PropertyMapper {
       id: data.id,
       matricule: data.matricule,
       address: data.address,
-      idNumber: `Prop-${data.matricule}`,
+      idNumber: `${propertyPrefix}${data.matricule}`,
       type: data.type,
       owner:
         data.owner.type === 'natural'

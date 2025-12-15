@@ -29,7 +29,7 @@
               class="form-control"
               id="example2cols1Input"
               formControlName="searchTerm"
-              placeholder="Chercher par adresse"
+              placeholder="Chercher par adresse local"
             />
           </div>
         </div>
@@ -42,7 +42,9 @@
           >
             <div class="input-group input-group-merge">
               <div class="input-group-prepend">
-                <span class="input-group-text text-sm"> Prop- </span>
+                <span class="input-group-text text-sm">
+                  {{ propertyPrefix }}
+                </span>
               </div>
               <input
                 class="form-control"
@@ -68,7 +70,9 @@
           >
             <div class="input-group input-group-merge">
               <div class="input-group-prepend">
-                <span class="input-group-text text-sm"> Apt- </span>
+                <span class="input-group-text text-sm">
+                  {{ apartmentPrefix }}
+                </span>
               </div>
               <input
                 class="form-control"
@@ -78,7 +82,7 @@
                 type="number"
                 min="1"
                 formControlName="matricule"
-                placeholder="Chercher par num apartement"
+                placeholder="Chercher par num local"
                 (focus)="focus1 = true"
                 (blur)="focus1 = false"
               />
@@ -99,6 +103,7 @@
               [searchInputValue]="apartmentTypeSearchValue.title"
               (selectedResultItem)="onSelectedApartmentTypeSearchItem($event)"
               [searchResult]="apartmentsType"
+              [isEditable]="false"
             ></app-search-input>
           </div>
         </div>
@@ -132,6 +137,7 @@
                 onSelectedApartmentRentStatusSearchItem($event)
               "
               [searchResult]="apartementStatus"
+              [isEditable]="false"
             ></app-search-input>
           </div>
         </div>
@@ -146,7 +152,7 @@
     <table class="table align-items-center table-flush table-hover">
       <thead class="thead-light">
         <tr>
-          <th>Numéro apartement</th>
+          <th>Num local</th>
           <th>Adresse</th>
           <th>Type</th>
           <th>Pieces</th>

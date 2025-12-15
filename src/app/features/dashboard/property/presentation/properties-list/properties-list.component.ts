@@ -11,7 +11,7 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { PageChangedEvent } from 'ngx-bootstrap/pagination';
 import { PropertyService } from '../../service/property.service';
 import { PropertyMapper } from '@dashboard/property/mappers/property-mapper';
-import { defaultSearchLimit } from 'src/app/variables/consts';
+import { defaultSearchLimit, propertyPrefix } from 'src/app/variables/consts';
 import { ApartmentService } from '@dashboard/apartment/service/apartment.service';
 import { ApartmentMapper } from '@dashboard/apartment/mappers/apartment-mapper';
 import { DataTypes } from '@models/data';
@@ -43,7 +43,7 @@ export class PropertiesListComponent implements OnInit {
 
   filtersFormGroup: FormGroup;
   propertyTypeSearchValue: SearchResult = this.propertiesType[0];
-
+  propertyPrefix: string = propertyPrefix;
   constructor(
     //private employeeService: EmployeeService,
     //private getAllEmployeeDto: GetAllEmployeeDTO,
@@ -90,7 +90,7 @@ export class PropertiesListComponent implements OnInit {
 
   onSearchOwnerValueChanged(searchValue?: string) {
     const params = {
-      ...(searchValue && { searchValue }),
+      ...(searchValue && { searchTerm: searchValue }),
       limit: `${defaultSearchLimit}`,
     };
 

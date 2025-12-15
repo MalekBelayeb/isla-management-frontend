@@ -29,7 +29,7 @@
               class="form-control"
               id="example2cols1Input"
               formControlName="searchTerm"
-              placeholder="Chercher par adresse"
+              placeholder="Chercher par adresse du bien"
             />
           </div>
         </div>
@@ -43,7 +43,9 @@
           >
             <div class="input-group input-group-merge">
               <div class="input-group-prepend">
-                <span class="input-group-text text-sm"> Prop- </span>
+                <span class="input-group-text text-sm">
+                  {{ propertyPrefix }}
+                </span>
               </div>
               <input
                 class="form-control"
@@ -90,6 +92,7 @@
               [searchInputValue]="propertyTypeSearchValue.title"
               (selectedResultItem)="onSelectedPropertyTypeSearchItem($event)"
               [searchResult]="propertiesType"
+              [isEditable]="false"
             ></app-search-input>
           </div>
         </div>
@@ -104,7 +107,7 @@
     <table class="table align-items-center table-flush table-hover">
       <thead class="thead-light">
         <tr>
-          <th>Numéro dossier</th>
+          <th>Num dossier</th>
           <th>Propriètaire</th>
 
           <th>Adresse</th>

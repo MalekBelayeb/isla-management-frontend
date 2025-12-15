@@ -12,20 +12,10 @@ import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { SearchResult } from '../search-input/search-input.component';
 import { ConfirmDialogService } from '../confirm-dialog/confirm-dialog.service';
-import { User } from '@models/old/user';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { ToastAlertService } from '../toast-alert/toast-alert.service';
-import { UserService } from '@auth/service/user.service';
 import { DASHBOARD_ROUTES } from '@shared/sidebar/sidebar.component';
-import { QueryStringBuilder } from '@core/query-string-builder/query-string-builder';
-import { GetAllEmployeeDTO } from '@models/dto/employee/get-all-employees-dto';
-import { RefreshNotificationsService } from '@core/services/refresh-notifications.service';
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  Validators,
-} from '@angular/forms';
+import { User } from '@models/user';
 
 interface NotificationModel {
   id: string;

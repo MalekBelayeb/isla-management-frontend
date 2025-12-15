@@ -33,7 +33,6 @@
         </div>
       </div>
 
-      
       <div class="form-group row">
         <label
           class="col-md-2 col-form-label form-control-label"
@@ -96,6 +95,7 @@
             [errorMessage]="'Champs incorrect, Type est obligatoire'"
             (selectedResultItem)="onSelectedPropertyTypeSearchItem($event)"
             [searchResult]="propertiesType"
+            [isEditable]="false"
           ></app-search-input>
         </div>
       </div>

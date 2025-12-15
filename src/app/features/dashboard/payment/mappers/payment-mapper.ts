@@ -3,14 +3,15 @@ import { Payment } from '../entity/payment';
 import { PaymentDetails } from '../entity/payment-details';
 import { FinancialBalance } from '../entity/financial-balance';
 import { DataTypes } from '@models/data';
+import { agreementPrefix, apartmentPrefix, propertyPrefix } from 'src/app/variables/consts';
 
 @Injectable({ providedIn: 'root' })
 export class PaymentMapper {
   static mapPaymentDetails(data: any): PaymentDetails {
     return {
       id: data.id,
-      agreement: `${data.agreement.matricule}`,
-      apartment: `${data.agreement.apartment.matricule} - ${data.agreement.apartment.type} - ${data.agreement.apartment.address}`,
+      agreement: `${agreementPrefix}${data.agreement.matricule}`,
+      apartment: `${apartmentPrefix}${data.agreement.apartment.matricule} - ${data.agreement.apartment.type} - ${data.agreement.apartment.address}`,
       amount: data.amount,
       method: data.method,
       label: data.label,
@@ -30,11 +31,11 @@ export class PaymentMapper {
     return data.map((item): Payment => {
       return {
         id: item.id,
-        agreement: `${item.agreement.matricule}`,
-        apartment: `Apt-${item.agreement.apartment.matricule} - ${item.agreement.apartment.type} - ${item.agreement.apartment.address}`,
+        agreement: `${agreementPrefix}${item.agreement.matricule}`,
+        apartment: `${apartmentPrefix}${item.agreement.apartment.matricule} - ${item.agreement.apartment.type} - ${item.agreement.apartment.address}`,
         amount: item.amount,
         label: item.label,
-        account: `Prop-${item.agreement?.apartment?.property?.matricule ?? ''}`,
+        account: `${propertyPrefix}${item.agreement?.apartment?.property?.matricule ?? ''}`,
         rentStartDate: item.rentStartDate,
         reason: `${this.getReason(item)} `,
         rentEndDate: item.rentEndDate,
@@ -65,7 +66,7 @@ export class PaymentMapper {
     return (
       `${DataTypes.paymentCategoryList.find(
         (category) => category.id === item.category,
-      )?.title ?? ''} pour Apt-${item.agreement?.apartment?.matricule ?? ''}` ?? ''
+      )?.title ?? ''} pour ${apartmentPrefix}${item.agreement?.apartment?.matricule ?? ''}` ?? ''
     );
   }
 

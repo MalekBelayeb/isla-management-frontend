@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { TenantDetails } from '../entity/tenant-details';
 import { Tenant, TenantStatusType } from '../entity/tenant';
 import { AgreeementMapper } from '@dashboard/agreement/mappers/agreement.mapper';
+import { agreementPrefix, apartmentPrefix } from 'src/app/variables/consts';
 
 @Injectable({ providedIn: 'root' })
 export class TenantMapper {
@@ -62,9 +63,9 @@ export class TenantMapper {
           ? new Date(agreement.startDate)
           : undefined,
         apartment: agreement
-          ? `${agreement.apartment.matricule} - ${agreement.apartment.type} - ${agreement.apartment.address}`
+          ? `${apartmentPrefix}${agreement.apartment.matricule} - ${agreement.apartment.type} - ${agreement.apartment.address}`
           : '',
-        agreement: agreement ? `${agreement.matricule}` : '',
+        agreement: agreement ? `${agreementPrefix}${agreement.matricule}` : '',
 
         status: item.status ?? '',
       };

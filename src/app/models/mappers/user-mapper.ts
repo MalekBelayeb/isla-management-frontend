@@ -11,6 +11,11 @@ export class UserMapper {
       email: data.email,
       firstname: data.firstname,
       lastname: data.lastname,
+      societyId: '',
+      societyLogo: '',
+      societyName: 'Isla Immo',
+      type: 'admin',
+      webSite: '',
     };
   }
 }

@@ -2,6 +2,10 @@ import { environment } from 'src/environments/environment';
 
 export const defaultSearchLimit = 5;
 
+export const apartmentPrefix = 'Apt-'
+export const propertyPrefix = 'Prop-'
+export const agreementPrefix = 'Agr-'
+
 export const conts = {
   getOwnerUrl: `${environment.url}/owner`,
   createPropertyUrl: `${environment.url}/property`,

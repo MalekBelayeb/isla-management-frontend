@@ -151,7 +151,7 @@ export class UpsertAgreementComponent implements OnInit {
 
   onSearchTenantValueChanged(searchValue?: string) {
     const params = {
-      ...(searchValue && { searchValue }),
+      ...(searchValue && { searchTerm: searchValue }),
       limit: `${defaultSearchLimit}`,
     };
 
@@ -173,7 +173,7 @@ export class UpsertAgreementComponent implements OnInit {
 
   onSearchApartmentValueChanged(searchValue?: string) {
     const params = {
-      ...(searchValue && { searchValue }),
+      ...(searchValue && { searchTerm: searchValue }),
       limit: `${defaultSearchLimit}`,
     };
 

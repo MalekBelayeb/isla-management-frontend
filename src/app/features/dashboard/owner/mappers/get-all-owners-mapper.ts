@@ -20,11 +20,12 @@ export class GetAllOwnersMapper {
         phoneNumber: item.phoneNumber,
         type: item.type == 'natural' ? 'natural' : 'legal',
         createdAt: new Date(item.createdAt),
-        nbPremises:
-          item.properties.length > 0
-            ? (item.properties[0]._count.apartments ?? 0)
-            : 0,
-        nbProperty: item._count.properties ?? 0,
+        nbPremises: item.properties.reduce(
+          (sum: number, property: any) =>
+            sum + (property.apartments?.length || 0),
+          0,
+        ) ?? 0,
+        nbProperty: item.properties?.length ?? 0,
       };
     });
   }

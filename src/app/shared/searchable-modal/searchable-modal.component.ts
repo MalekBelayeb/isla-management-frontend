@@ -8,10 +8,6 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { SearchResult } from '../search-input/search-input.component';
-import { Employee } from '@models/old/employe';
-//import { EmployeeService } from 'src/app/features/dashboard/employee/service/employee.service';
-import { GetAllEmployeeDTO } from '@models/dto/employee/get-all-employees-dto';
-import { QueryStringBuilder } from '@core/query-string-builder/query-string-builder';
 import { TenantService } from '@dashboard/tenant/service/tenant.service';
 import { TenantMapper } from '@dashboard/tenant/mappers/tenant-mapper';
 import { Tenant } from '@dashboard/tenant/entity/tenant';

@@ -105,7 +105,7 @@ export class UpsertApartmentComponent {
   searchPropertyValue: string = '';
   onSearchPropertyValueChanged(searchValue?: string) {
     const params = {
-      ...(searchValue && { searchValue }),
+      ...(searchValue && { searchTerm: searchValue }),
       limit: `${defaultSearchLimit}`,
     };
 

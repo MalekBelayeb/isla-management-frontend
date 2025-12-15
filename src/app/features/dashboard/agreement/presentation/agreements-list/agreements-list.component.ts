@@ -15,7 +15,12 @@ import { SearchResult } from '@shared/search-input/search-input.component';
 import { ToastAlertService } from '@shared/toast-alert/toast-alert.service';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { PageChangedEvent } from 'ngx-bootstrap/pagination';
-import { defaultSearchLimit } from 'src/app/variables/consts';
+import {
+  agreementPrefix,
+  apartmentPrefix,
+  defaultSearchLimit,
+  propertyPrefix,
+} from 'src/app/variables/consts';
 
 @Component({
   selector: 'app-agreements-list',
@@ -26,10 +31,14 @@ export class AgreementsListComponent implements OnInit {
   totalLength = 0;
   page = 1;
   pageSize = 10;
-
+  focus2: boolean = false;
+  focus3: boolean = false;
   agreements: Agreement[] = [];
   isLoadingFetchingAgreements = false;
   isLoadingArchiveOwner = false;
+  
+  agreementPrefix: string = agreementPrefix;
+  propertyPrefix:string = propertyPrefix
 
   groupSearchResult: SearchResult[] = [];
   activitySearchResult: SearchResult[] = [];
@@ -66,6 +75,8 @@ export class AgreementsListComponent implements OnInit {
       agreementStatus: new FormControl(DataTypes.agreementStatusTypeList[0].id),
       startDate: new FormControl(''),
       endDate: new FormControl(''),
+      propertyMatricule: new FormControl(''),
+      agreementProperty: new FormControl(''),
     });
   }
 
@@ -103,7 +114,7 @@ export class AgreementsListComponent implements OnInit {
 
   onSearchTenantValueChanged(searchValue?: string) {
     const params = {
-      ...(searchValue && { searchValue }),
+      ...(searchValue && { searchTerm: searchValue }),
       limit: `${defaultSearchLimit}`,
     };
 
@@ -125,7 +136,7 @@ export class AgreementsListComponent implements OnInit {
 
   onSearchApartmentValueChanged(searchValue?: string) {
     const params = {
-      ...(searchValue && { searchValue }),
+      ...(searchValue && { searchTerm: searchValue }),
       limit: `${defaultSearchLimit}`,
     };
 
@@ -136,7 +147,7 @@ export class AgreementsListComponent implements OnInit {
         const apartments = ApartmentMapper.mapApartments(value.body.apartments);
         this.apartmentOptions = apartments.map((item) => ({
           id: item.id,
-          title: `${item.matricule} - ${item.address}`,
+          title: `${apartmentPrefix}${item.matricule} - ${item.address}`,
         }));
       },
     });

@@ -33,7 +33,6 @@
         </div>
       </div>
 
-
       <div class="form-group row">
         <label
           class="col-md-2 col-form-label form-control-label"
@@ -86,7 +85,7 @@
           <app-search-input
             [clearInput]="false"
             [prefixIcon]="'fas fa-search'"
-            [searchPlaceholder]="'Chercher propriétaire'"
+            [searchPlaceholder]="'Séléctionner un type de local'"
             [searchLabel]="'Résultats'"
             [maxSize]="4"
             [isInvalid]="
@@ -96,6 +95,7 @@
             [searchInputValue]="apartmentDetails?.type ?? ''"
             (selectedResultItem)="onSelectedApartmentTypeSearchItem($event)"
             [searchResult]="apartmentsType"
+            [isEditable]="false"
           ></app-search-input>
         </div>
       </div>

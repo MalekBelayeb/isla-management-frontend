@@ -42,11 +42,67 @@
     <form [formGroup]="filtersFormGroup" (ngSubmit)="filterPayments()">
       <div class="row">
         <div class="col-md-3">
+          <div
+            class="form-group"
+            [ngClass]="{
+              focused: focus2 === true,
+            }"
+          >
+            <div class="input-group input-group-merge">
+              <div class="input-group-prepend">
+                <span class="input-group-text text-sm">
+                  {{ agreementPrefix }}
+                </span>
+              </div>
+              <input
+                class="form-control"
+                [ngClass]="{
+                  focused: focus2 === true,
+                }"
+                type="number"
+                min="1"
+                formControlName="paymentAgreement"
+                placeholder="Chercher par num contrat"
+                (focus)="focus2 = true"
+                (blur)="focus2 = false"
+              />
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div
+            class="form-group"
+            [ngClass]="{
+              focused: focus3 === true,
+            }"
+          >
+            <div class="input-group input-group-merge">
+              <div class="input-group-prepend">
+                <span class="input-group-text text-sm">
+                  {{ propertyPrefix }}
+                </span>
+              </div>
+              <input
+                class="form-control"
+                [ngClass]="{
+                  focused: focus3 === true,
+                }"
+                type="number"
+                min="1"
+                formControlName="paymentProperty"
+                placeholder="Chercher par num dossier"
+                (focus)="focus3 = true"
+                (blur)="focus3 = false"
+              />
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
           <div class="form-group">
             <app-search-input
               [clearInput]="false"
               [prefixIcon]="'fas fa-search'"
-              [searchPlaceholder]="'Filtrer par local'"
+              [searchPlaceholder]="'Filtrer par local (adresse ou num local)'"
               [searchLabel]="'Résultats'"
               [maxSize]="5"
               [triggerSearchOnOpen]="true"
@@ -57,37 +113,7 @@
             ></app-search-input>
           </div>
         </div>
-        <div class="col-md-3">
-          <div class="form-group">
-            <app-search-input
-              [clearInput]="false"
-              [prefixIcon]="'fas fa-search'"
-              [searchPlaceholder]="'Filtrer par contrat'"
-              [searchLabel]="'Résultats'"
-              [maxSize]="5"
-              [triggerSearchOnOpen]="true"
-              (searchValue)="onSearchAgreementValueChanged($event)"
-              [searchInputValue]="searchAgreementValue"
-              (selectedResultItem)="onSelectedAgreementSearchItem($event)"
-              [searchResult]="agreementOptions"
-            ></app-search-input>
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="form-group">
-            <app-search-input
-              [clearInput]="false"
-              [prefixIcon]="'fas fa-search'"
-              [searchPlaceholder]="'Filtrer par locataire'"
-              [searchLabel]="'Résultats'"
-              [triggerSearchOnOpen]="true"
-              (searchValue)="onSearchTenantValueChanged($event)"
-              [searchInputValue]="searchTenantValue"
-              (selectedResultItem)="onSelectedTenantSearchItem($event)"
-              [searchResult]="tenantOptions"
-            ></app-search-input>
-          </div>
-        </div>
+
         <div class="col-md-3">
           <div class="form-group">
             <app-search-input
@@ -102,17 +128,33 @@
                 onSelectedPaymentMethodTypeSearchItem($event)
               "
               [searchResult]="paymentMethodsType"
+              [isEditable]="false"
             ></app-search-input>
           </div>
         </div>
       </div>
 
       <div class="row mb-4">
-        <div class="col-md-12">
+        <div class="col-md-6">
           <app-date-range-picker
             (startDate)="onStartDateChange($event)"
             (endDate)="onEndDateChange($event)"
           ></app-date-range-picker>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <app-search-input
+              [clearInput]="false"
+              [prefixIcon]="'fas fa-search'"
+              [searchPlaceholder]="'Filtrer par locataire'"
+              [searchLabel]="'Résultats'"
+              [triggerSearchOnOpen]="true"
+              (searchValue)="onSearchTenantValueChanged($event)"
+              [searchInputValue]="searchTenantValue"
+              (selectedResultItem)="onSelectedTenantSearchItem($event)"
+              [searchResult]="tenantOptions"
+            ></app-search-input>
+          </div>
         </div>
       </div>
 
@@ -126,7 +168,7 @@
     <table class="table align-items-center table-flush table-hover">
       <thead class="thead-light">
         <tr>
-          <th>Contrat</th>
+          <th>Num contrat</th>
           <th>Libellé</th>
           <th>Locataire</th>
           <th>Local</th>

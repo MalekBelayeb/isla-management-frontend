@@ -1,6 +1,6 @@
 import { Component, HostListener, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { User } from '@models/old/user';
+import { User } from '@models/user';
 
 export interface RouteInfo {
   path: string;

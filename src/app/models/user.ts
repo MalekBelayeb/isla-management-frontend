@@ -3,4 +3,9 @@ export interface User {
   email: string;
   firstname: string;
   lastname: string;
+  societyId: string;
+  societyLogo: string;
+  societyName: string;
+  type: 'admin' | 'agent';
+  webSite: string;
 }

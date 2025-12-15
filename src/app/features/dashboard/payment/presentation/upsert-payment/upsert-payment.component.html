@@ -67,6 +67,7 @@
             "
             (selectedResultItem)="selectedPaymentType($event)"
             [searchResult]="paymentTypeList"
+            [isEditable]="false"
           ></app-search-input>
         </div>
       </div>
@@ -75,7 +76,7 @@
           class="col-md-2 col-form-label form-control-label"
           for="example-text-input"
         >
-          Categorie de paiement <span class="text-danger">*</span>
+          Catégorie de paiement <span class="text-danger">*</span>
         </label>
 
         <div class="col-md-10">
@@ -83,7 +84,7 @@
             [clearInput]="false"
             [searchInputValue]="searchCategoryValue"
             [prefixIcon]="'fas fa-search'"
-            [searchPlaceholder]="'Type de paiement'"
+            [searchPlaceholder]="'Catégorie de paiement'"
             [searchLabel]="'Résultats'"
             [maxSize]="3"
             [isInvalid]="
@@ -147,6 +148,7 @@
             "
             (selectedResultItem)="selectedPaymentMethod($event)"
             [searchResult]="paymentMethodTypeList"
+            [isEditable]="false"
           ></app-search-input>
         </div>
       </div>

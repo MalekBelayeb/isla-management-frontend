@@ -28,7 +28,7 @@
       </span>
     </div>
     <input
-      readonly
+      [readOnly]="!isEditable"
       style="background-color: white; cursor: pointer"
       [ngClass]="{
         inputElement: showSearchResult,

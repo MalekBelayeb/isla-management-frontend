@@ -1,6 +1,6 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { UserService } from '../auth/service/user.service';
-import { User } from '@models/old/user';
+import { User } from '@models/user';
 
 @Component({
   selector: 'app-dashboard',
@@ -12,10 +12,6 @@ export class DashboardComponent implements OnInit {
 
   constructor(private userService: UserService) {
     this.isMobileResolution = false;
-    /*if (window.innerWidth < 1200) {
-    } else {
-      this.isMobileResolution = false;
-    }*/
   }
 
   @HostListener('window:resize', ['$event'])
@@ -27,8 +23,8 @@ export class DashboardComponent implements OnInit {
   fetchUserIsLoading = false;
 
   ngOnInit(): void {
-    //this.user = this.userService.getUser()
     this.user = {
+      id: '',
       email: '',
       firstname: '',
       lastname: '',

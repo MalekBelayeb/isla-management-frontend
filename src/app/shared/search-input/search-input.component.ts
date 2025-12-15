@@ -21,7 +21,6 @@ export interface SearchResult {
 })
 export class SearchInputComponent implements OnChanges {
   focus = false;
-
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['searchResult'] && !changes['searchResult'].firstChange) {
       this.searchResult = changes['searchResult'].currentValue;
@@ -38,6 +37,7 @@ export class SearchInputComponent implements OnChanges {
 
   debounceDelay = 500;
   timerId?: NodeJS.Timeout;
+  @Input() isEditable: boolean = true;
 
   showSearchResult = false;
   isEmptyResult = false;
