@@ -7,7 +7,7 @@
             <h5 class="card-title text-uppercase text-muted mb-0">Dépenses</h5>
 
             <span class="h2 font-weight-bold mb-0">
-              {{ totalExpense }} DT
+              {{ totalExpense | number: "1.3-3"}} TND
             </span>
           </div>
 
@@ -38,7 +38,7 @@
           <div class="col">
             <h5 class="card-title text-uppercase text-muted mb-0">Recettes</h5>
 
-            <span class="h2 font-weight-bold mb-0"> {{ totalIncome }} DT </span>
+            <span class="h2 font-weight-bold mb-0"> {{ totalIncome | number: "1.3-3" }} TND </span>
           </div>
 
           <div class="col-auto">
@@ -70,7 +70,7 @@
               BILAN TOTAL
             </h5>
 
-            <span class="h2 font-weight-bold mb-0"> {{ netBalance }} DT </span>
+            <span class="h2 font-weight-bold mb-0"> {{ netBalance | number: "1.3-3" }} TND </span>
           </div>
 
           <div class="col-auto">
@@ -127,7 +127,7 @@
   <div class="card-header">
     <div class="row align-items-center">
       <div class="col-8">
-        <h3 class="mb-0">Dépenses</h3>
+        <h3 class="mb-0">Bilan</h3>
       </div>
     </div>
   </div>
@@ -172,13 +172,13 @@
             <td>
               <h4 *ngIf="payment.type == 'expense'">
                 <i class="fas fa-arrow-down text-warning mr-3"> </i>
-                {{ payment.amount }} DT
+                {{ payment.amount | number: "1.3-3" }} TND
               </h4>
             </td>
             <td>
               <h4 *ngIf="payment.type == 'income'">
                 <i class="fas fa-arrow-up text-success mr-3"> </i>
-                {{ payment.amount }} DT
+                {{ payment.amount | number: "1.3-3" }} TND
               </h4>
             </td>
           </tr>
@@ -192,13 +192,13 @@
             <td>
               <h4 class="text-warning">
                 <i class="fas fa-arrow-down text-warning mr-3"> </i
-                >{{ financialBalance?.totalExpense }} DT
+                >{{ financialBalance?.totalExpense | number: "1.3-3" }} TND
               </h4>
             </td>
             <td>
               <h4 class="text-success">
                 <i class="fas fa-arrow-up text-success mr-3"> </i>
-                {{ financialBalance?.totalIncome }} DT
+                {{ financialBalance?.totalIncome | number: "1.3-3" }} TND
               </h4>
             </td>
           </tr>
@@ -209,7 +209,7 @@
               </div>
             </td>
             <td colspan="2">
-              <h4>{{ financialBalance?.netBalance }} DT</h4>
+              <h4>{{ financialBalance?.netBalance | number: "1.3-3" }} TND</h4>
             </td>
           </tr>
         </tbody>

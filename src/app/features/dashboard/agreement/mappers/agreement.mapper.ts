@@ -2,7 +2,11 @@ import { Injectable } from '@angular/core';
 import { Agreement } from '../entity/agreement';
 import { AgreementDetails } from '../entity/agreement-details';
 import { DataTypes } from '@models/data';
-import { agreementPrefix, apartmentPrefix } from 'src/app/variables/consts';
+import {
+  agreementPrefix,
+  apartmentPrefix,
+  propertyPrefix,
+} from 'src/app/variables/consts';
 
 @Injectable({ providedIn: 'root' })
 export class AgreeementMapper {
@@ -17,7 +21,6 @@ export class AgreeementMapper {
         )?.title ?? '',
       rentAmount: data.rentAmount,
       startDate: data.startDate,
-      expireDate: data.expireDate,
       createdAt: data.createdAt,
       signedAt: data.signedAt,
       apartment: `${apartmentPrefix}${data.apartment?.matricule} - ${data.apartment?.type} - ${data.apartment?.address}`,
@@ -28,6 +31,8 @@ export class AgreeementMapper {
       firstDayOfPayment: data.firstDayOfPayment,
       notes: data.notes,
       tenant: `${data.tenant?.gender == 'M' ? 'Mr' : 'Mme'} ${data.tenant?.fullname}`,
+      owner: `${data.apartment?.property?.owner?.gender == 'M' ? 'Mr' : 'Mme'} ${data.apartment?.property?.owner?.fullname ?? ''}`,
+      property: `${propertyPrefix}${data.apartment?.property?.matricule} - ${data.apartment?.property?.address}`,
       tenantId: data.tenant?.id,
     };
   }
@@ -36,16 +41,17 @@ export class AgreeementMapper {
       return {
         id: item.id,
         matricule: `${agreementPrefix}${item.matricule}`,
-        status: new Date(item.expireDate) > new Date() ? 'ACTIVE' : 'EXPIRED',
+        status: item.status,
         paymentFrequency:
           DataTypes.paymentFrequencyTypeList.find(
             (frequency) => frequency.id === item.paymentFrequency,
           )?.title ?? '',
         rentAmount: item.rentAmount,
         startDate: item.startDate,
-        expireDate: item.expireDate,
         createdAt: item.createdAt,
         signedAt: item.signedAt,
+        owner: `${item.apartment?.property?.owner?.gender == 'M' ? 'Mr' : 'Mme'} ${item.apartment?.property?.owner?.fullname ?? ''}`,
+        property: `${propertyPrefix}${item.apartment?.property?.matricule} - ${item.apartment?.property?.address}`,
         nbDaysOfTolerance: item.nbDaysOfTolerance,
         apartment: `${apartmentPrefix}${item.apartment.matricule} - ${item.apartment.type} - ${item.apartment.address}`,
         tenant: `${item.tenant.gender == 'M' ? 'Mr' : 'Mme'} ${item.tenant.fullname}`,

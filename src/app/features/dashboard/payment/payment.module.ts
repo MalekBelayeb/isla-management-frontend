@@ -23,7 +23,6 @@ import { SearchInputModule } from '@shared/search-input/search-input.module';
     ReactiveFormsModule,
     FormsModule,
     PaginationModule.forRoot(),
-    BsDatepickerModule.forRoot(),
     SearchInputModule,
     DateRangePickerModule,
   ],

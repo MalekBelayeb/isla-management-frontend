@@ -4,6 +4,7 @@ import { FinanceComponent } from './finance.component';
 import { IncomeComponent } from './income/income.component';
 import { ExpensesComponent } from './expenses/expenses.component';
 import { BalanceSummaryComponent } from './balance-summary/balance-summary.component';
+import { UpsertAgencyExpenseComponent } from './upsert-agency-expense/upsert-agency-expense.component';
 
 const routes: Routes = [
   {
@@ -22,6 +23,10 @@ const routes: Routes = [
       {
         path: 'expenses',
         component: ExpensesComponent,
+      },
+      {
+        path: 'create-agency-expense',
+        component: UpsertAgencyExpenseComponent,
       },
       {
         path: 'balance-summary',

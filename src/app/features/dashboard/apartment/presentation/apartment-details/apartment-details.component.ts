@@ -64,11 +64,11 @@ export class ApartmentDetailsComponent implements OnInit {
     );
     this.getFinancialBalance();
   }
-  
+
   getApartmentId(): string {
     return this.route.snapshot.paramMap.get('id') ?? '';
   }
-  
+
   getFinancialBalance() {
     const params = {
       apartmentId: this.getApartmentId(),
@@ -83,7 +83,6 @@ export class ApartmentDetailsComponent implements OnInit {
   }
 
   getApartmentDetails() {
-
     this.apartmentService.getApartment(this.getApartmentId()).subscribe({
       next: (value) => {
         const result = value.body;

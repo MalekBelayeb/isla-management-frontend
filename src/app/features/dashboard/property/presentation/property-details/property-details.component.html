@@ -2,7 +2,7 @@
   <div class="card-header">
     <div class="row align-items-center">
       <div class="col-8">
-        <h3 class="mb-0">Détails du bien</h3>
+        <h3 class="mb-0">Détails de la propriété (Bien)</h3>
       </div>
     </div>
   </div>
@@ -54,10 +54,12 @@
       <div class="row">
         <div class="col-lg-3">
           <div class="form-group">
-            <h5 class="card-title text-uppercase text-muted mb-0">Ajouté le</h5>
+            <h5 class="card-title text-uppercase text-muted mb-0">
+              Date de création
+            </h5>
 
             <h5 class="h2 font-weight-bold mb-0 mt-1">
-              {{ propertyDetails?.createdAt | date }}
+              {{ propertyDetails?.createdAt | date: "dd/MM/yyyy" }}
             </h5>
           </div>
         </div>
@@ -72,7 +74,9 @@
   <div class="card-body">
     <div class="row align-items-center">
       <div class="col-8">
-        <h3 class="mb-0">Liste des locaux pour ce bien ({{ totalLength }})</h3>
+        <h3 class="mb-0">
+          Liste des locaux pour cette propriété (Bien) ({{ totalLength }})
+        </h3>
       </div>
     </div>
     <div class="row justify-content-end px-3 pb-4">
@@ -86,7 +90,7 @@
         <span class="btn-inner--icon">
           <i class="ni ni-fat-add"> </i>
         </span>
-        <span class="btn-inner--text"> Ajouter un local pour ce bien </span>
+        <span class="btn-inner--text"> Ajouter un local </span>
       </a>
     </div>
     <div class="row mb-3 mt-3">
@@ -179,7 +183,7 @@
   <div class="card-header">
     <div class="row align-items-center">
       <div class="col-8">
-        <h3 class="mb-0">Relevé de compte du bien</h3>
+        <h3 class="mb-0">Relevé de compte de la propriété (Bien)</h3>
       </div>
     </div>
   </div>
@@ -200,9 +204,6 @@
             [searchResult]="trimestersOptions"
             [isEditable]="false"
           ></app-search-input>
-          <!-- <div class="mt-3 d-flex w-100 flex-row justify-content-end">
-            <button class="btn btn-primary" type="submit">Confirmer</button>
-          </div> -->
         </div>
       </div>
     </div>
@@ -228,15 +229,20 @@
         </thead>
         <tbody>
           <tr *ngFor="let payment of financialBalance?.payments">
-            <th scope="row">{{ payment.createdAt | date: "dd/MM/yyyy" }}</th>
+            <th scope="row">{{ payment.paymentDate | date: "dd/MM/yyyy" }}</th>
             <td>
               <h4>{{ payment.account }}</h4>
             </td>
             <td>
-              <div class="row">
+              <div *ngIf="payment.type == 'income'" class="row">
                 <div class="col-6">
                   <h4>{{ payment.tenant }}</h4>
                 </div>
+                <div class="col-6">
+                  <h4>{{ payment.reason }}</h4>
+                </div>
+              </div>
+              <div *ngIf="payment.type == 'expense'" class="row">
                 <div class="col-6">
                   <h4>{{ payment.reason }}</h4>
                 </div>
@@ -245,91 +251,77 @@
             <td>
               <h4 *ngIf="payment.type == 'expense'">
                 <i class="fas fa-arrow-down text-warning mr-3"> </i>
-                {{ payment.amount }} DT
+                {{ payment.amount | number: "1.3-3" }} TND
               </h4>
             </td>
             <td>
               <h4 *ngIf="payment.type == 'income'">
                 <i class="fas fa-arrow-up text-success mr-3"> </i>
-                {{ payment.amount }} DT
+                {{ payment.amount | number: "1.3-3" }} TND
               </h4>
             </td>
           </tr>
-          <!-- <tr>
-            <th scope="row">20/08/2024</th>
-            <td>
-              <h4>MAG 3</h4>
-            </td>
-            <td>
-              <div class="row">
-                <div class="col-6"><h4>Monsieur Sahbi Ben Amor</h4></div>
-                <div class="col-6"><h4>Loyer aout 2024</h4></div>
-              </div>
-            </td>
+          <tr *ngIf="financialBalance?.profit">
+            <th scope="row">{{ endDate | date: "dd/MM/yyyy" }}</th>
             <td>
               <h4></h4>
             </td>
             <td>
-              <h4>750 DT</h4>
-            </td>
-          </tr>
-          <tr>
-            <th scope="row">27/08/2024</th>
-            <td>
-              <h4>MAG 3</h4>
-            </td>
-            <td>
               <div class="row">
-                <div class="col-6"><h4>Monsieur Sahbi Ben Amor</h4></div>
-                <div class="col-6"><h4>Loyer Septembre 2024</h4></div>
-              </div>
-            </td>
-            <td>
-              <h4></h4>
-            </td>
-            <td>
-              <h4>750 DT</h4>
-            </td>
-          </tr>
-          <tr>
-            <th scope="row">27/08/2024</th>
-            <td>
-              <h4>Apt N3</h4>
-            </td>
-            <td>
-              <div class="row">
-                <div class="col-6"><h4>MR Mongi JMILI</h4></div>
-                <div class="col-6"><h4>Avance sur travaux peinture</h4></div>
-              </div>
-            </td>
-            <td>
-              <h4>200 DT</h4>
-            </td>
-            <td>
-              <h4></h4>
-            </td>
-          </tr>
-          <tr>
-            <th scope="row">15/09/2024</th>
-            <td>
-              <h4>Apt N3</h4>
-            </td>
-            <td>
-              <div class="row">
-                <div class="col-6"><h4>MR FARHAT HAJAM</h4></div>
                 <div class="col-6">
-                  <h4>Solde Sur divers travaux de plomberie</h4>
+                  <table class="table table-borderless">
+                    <tr>
+                      <td><h4>RECOUVREMENT AGENCE</h4></td>
+                      <td>
+                        <h4>{{ propertyDetails?.profitInPercentage }}%</h4>
+                      </td>
+                      <td>
+                        <h4>
+                          SUR
+                          {{ financialBalance?.totalIncome | number: "1.3-3" }}
+                          TND
+                        </h4>
+                      </td>
+                      <td><h4>=</h4></td>
+                      <td>
+                        <h4>
+                          {{
+                            financialBalance?.profit?.grossProfit
+                              | number: "1.3-3"
+                          }}
+                          TND
+                        </h4>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><h4>TVA</h4></td>
+                      <td><h4>19%</h4></td>
+                      <td></td>
+                      <td><h4>=</h4></td>
+                      <td>
+                        <h4>
+                          {{
+                            financialBalance?.profit?.taxAmount
+                              | number: "1.3-3"
+                          }}
+                          TND
+                        </h4>
+                      </td>
+                    </tr>
+                  </table>
                 </div>
               </div>
+              <div class="row"></div>
             </td>
             <td>
-              <h4>200 DT</h4>
+              <h4>
+                <i class="fas fa-arrow-down text-warning mr-3"> </i>
+                {{ financialBalance?.profit?.profitWithTax | number: "1.3-3" }}
+                TND
+              </h4>
             </td>
-            <td>
-              <h4></h4>
-            </td>
-          </tr> -->
-
+            <td></td>
+          </tr>
           <tr>
             <td colspan="3">
               <div class="d-flex justify-content-end">
@@ -339,13 +331,13 @@
             <td>
               <h4 class="text-warning">
                 <i class="fas fa-arrow-down text-warning mr-3"> </i
-                >{{ financialBalance?.totalExpense }} DT
+                >{{ financialBalance?.totalExpense | number: "1.3-3" }} TND
               </h4>
             </td>
             <td>
               <h4 class="text-success">
                 <i class="fas fa-arrow-up text-success mr-3"> </i>
-                {{ financialBalance?.totalIncome }} DT
+                {{ financialBalance?.totalIncome | number: "1.3-3" }} TND
               </h4>
             </td>
           </tr>
@@ -356,7 +348,7 @@
               </div>
             </td>
             <td colspan="2">
-              <h4>{{ financialBalance?.netBalance }} DT</h4>
+              <h4>{{ financialBalance?.netBalance | number: "1.3-3" }} TND</h4>
             </td>
           </tr>
         </tbody>

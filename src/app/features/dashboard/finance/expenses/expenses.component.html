@@ -12,7 +12,7 @@
       <a
         class="btn btn-sm btn-primary btn-round btn-icon"
         href="javascript:void(0)"
-        routerLink="../create-agreement"
+        routerLink="../create-agency-expense"
       >
         <span class="btn-inner--icon">
           <i class="ni ni-fat-add"> </i>
@@ -75,10 +75,20 @@
               <h4>{{ payment.account }}</h4>
             </td>
             <td>
-              <div class="row">
+              <div *ngIf="payment.type == 'income'" class="row">
                 <div class="col-6">
                   <h4>{{ payment.tenant }}</h4>
                 </div>
+                <div class="col-6">
+                  <h4>{{ payment.reason }}</h4>
+                </div>
+              </div>
+              <div *ngIf="payment.type == 'expense'" class="row">
+                <div class="col-6">
+                  <h4>{{ payment.reason }}</h4>
+                </div>
+              </div>
+              <div *ngIf="payment.type == 'expense_agency'" class="row">
                 <div class="col-6">
                   <h4>{{ payment.reason }}</h4>
                 </div>
@@ -87,7 +97,11 @@
             <td>
               <h4 *ngIf="payment.type == 'expense'">
                 <i class="fas fa-arrow-down text-warning mr-3"> </i>
-                {{ payment.amount }} DT
+                {{ payment.amount | number: "1.3-3" }} TND
+              </h4>
+              <h4 *ngIf="payment.type == 'expense_agency'">
+                <i class="fas fa-arrow-down text-warning mr-3"> </i>
+                {{ payment.amount | number: "1.3-3" }} TND
               </h4>
             </td>
           </tr>
@@ -99,7 +113,9 @@
               </div>
             </td>
             <td>
-              <h4>{{ financialBalance?.totalExpense }} DT</h4>
+              <h4>
+                {{ financialBalance?.totalExpense | number: "1.3-3" }} TND
+              </h4>
             </td>
           </tr>
         </tbody>

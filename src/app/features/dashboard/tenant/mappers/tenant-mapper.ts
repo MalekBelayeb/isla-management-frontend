@@ -56,9 +56,6 @@ export class TenantMapper {
         phoneNumber: item.phoneNumber,
         createdAt: item.createdAt,
         lastPaymentDate: payment ? payment.createdAt : '',
-        agreementExpireDate: agreement
-          ? new Date(agreement.expireDate)
-          : undefined,
         agreementStartDate: agreement
           ? new Date(agreement.startDate)
           : undefined,

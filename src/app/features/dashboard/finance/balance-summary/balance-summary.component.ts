@@ -40,7 +40,7 @@ export class BalanceSummaryComponent implements OnInit {
 
   getFinancialBalance() {
     const params = {
-      //apartmentId: this.getApartmentId(),
+      type: 'expense,income,expense_agency',
     };
     const queryString = new URLSearchParams(params).toString();
     this.paymentService.getFinancialBalance(`?${queryString}`).subscribe({

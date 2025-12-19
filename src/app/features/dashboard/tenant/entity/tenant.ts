@@ -12,7 +12,6 @@ export interface Tenant {
   job: string;
   apartment: string;
   agreement: string;
-  agreementExpireDate?: Date;
   agreementStartDate?: Date;
   lastPaymentDate: string;
   status: TenantStatusType;
@@ -20,8 +19,7 @@ export interface Tenant {
 
 export type TenantStatusType =
   | 'NO_AGREEMENT'
-  | 'NO_PAYMENT'
-  | 'AGREEMENT_EXPIRED'
-  | 'TERMINATED'
+  | 'NO_RENT'
+  | 'AGREEMENT_SUSPENDED'
   | 'IN_GOOD_STANDING'
   | 'PAYMENT_DEFAULT';

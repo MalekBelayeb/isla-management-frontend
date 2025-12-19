@@ -5,7 +5,6 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
-import { agreementPeriodDateValidator } from '@core/form-validators/form-validators';
 import { AgreementDetails } from '@dashboard/agreement/entity/agreement-details';
 import { AgreementService } from '@dashboard/agreement/service/agreement.service';
 import { ApartmentMapper } from '@dashboard/apartment/mappers/apartment-mapper';
@@ -45,23 +44,18 @@ export class UpsertAgreementComponent implements OnInit {
     private toastAlertService: ToastAlertService,
     private tenantMapper: TenantMapper,
   ) {
-    this.formGroup = this.formBuilder.group(
-      {
-        //matricule: new FormControl('', Validators.required),
-        rentAmount: new FormControl('', Validators.required),
-        startDate: new FormControl('', Validators.required),
-        expireDate: new FormControl('', Validators.required),
-        paymentFrequency: new FormControl(
-          this.frequencyPaymentsTypeList[0].id,
-          Validators.required,
-        ),
-        apartmentId: new FormControl('', Validators.required),
-        tenantId: new FormControl('', Validators.required),
-        documentUrl: new FormControl(''),
-        notes: new FormControl(''),
-      },
-      { validators: [agreementPeriodDateValidator] },
-    );
+    this.formGroup = this.formBuilder.group({
+      rentAmount: new FormControl('', Validators.required),
+      startDate: new FormControl('', Validators.required),
+      paymentFrequency: new FormControl(
+        this.frequencyPaymentsTypeList[0].id,
+        Validators.required,
+      ),
+      apartmentId: new FormControl('', Validators.required),
+      tenantId: new FormControl('', Validators.required),
+      documentUrl: new FormControl(''),
+      notes: new FormControl(''),
+    });
   }
   frequencyPaymentsTypeList: SearchResult[] =
     DataTypes.paymentFrequencyTypeList;
@@ -78,11 +72,6 @@ export class UpsertAgreementComponent implements OnInit {
       ?.setValue($event.toISOString().split('T')[0]);
   }
 
-  onEndDateChange($event: Date) {
-    this.formGroup
-      .get('expireDate')
-      ?.setValue($event?.toISOString().split('T')[0]);
-  }
   ngOnChanges(changes: SimpleChanges): void {
     if (
       changes['agreementDetails'] &&
@@ -99,11 +88,6 @@ export class UpsertAgreementComponent implements OnInit {
         this.formGroup
           .get('startDate')
           ?.setValue(this.agreementDetails?.startDate.toString().split('T')[0]);
-        this.formGroup
-          .get('expireDate')
-          ?.setValue(
-            this.agreementDetails?.expireDate.toString().split('T')[0],
-          );
         this.formGroup.get('status')?.setValue(this.agreementDetails?.status);
         this.formGroup.get('deposit')?.setValue(this.agreementDetails?.deposit);
         this.formGroup
@@ -131,17 +115,12 @@ export class UpsertAgreementComponent implements OnInit {
               (item) => item.title === this.agreementDetails?.paymentFrequency,
             )?.id ?? '',
           );
-        /*console.log(
-          DataTypes.paymentFrequencyTypeList.find(
-            (item) => item.title === this.agreementDetails?.paymentFrequency,
-          )?.id ?? '',
-        );*/
 
         this.paymentFrequencySearchValue =
           DataTypes.paymentFrequencyTypeList.find(
             (item) => item.title === this.agreementDetails?.paymentFrequency,
           )?.title ?? '';
-        console.log(this.agreementDetails?.paymentFrequency);
+
         this.searchTenantValue = this.agreementDetails.tenant;
         this.searchApartmentValue = this.agreementDetails.apartment;
       }
@@ -150,7 +129,19 @@ export class UpsertAgreementComponent implements OnInit {
   selectedPaymentFrequency(resultItem: SearchResult) {
     this.formGroup.get('paymentFrequency')?.setValue(resultItem.id);
   }
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    const now = new Date();
+
+    const startDate = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      1,
+    ).toLocaleDateString('en-CA', {
+      timeZone: 'Africa/Tunis',
+    });
+
+    this.formGroup.get('startDate')?.setValue(startDate.split('T')[0]);
+  }
 
   get upsertAgreementForm() {
     return this.formGroup.controls;
@@ -210,7 +201,6 @@ export class UpsertAgreementComponent implements OnInit {
       //matricule: this.formGroup.get('matricule')?.value,
       rentAmount: this.formGroup.get('rentAmount')?.value,
       startDate: new Date(this.formGroup.get('startDate')?.value),
-      expireDate: new Date(this.formGroup.get('expireDate')?.value),
       paymentFrequency: this.formGroup.get('paymentFrequency')?.value,
       apartmentId: this.formGroup.get('apartmentId')?.value,
       tenantId: this.formGroup.get('tenantId')?.value,

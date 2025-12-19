@@ -92,10 +92,9 @@
               (focus)="focus1 = true"
               (blur)="focus1 = false"
             />
-
-            <div class="invalid-feedback">
-              Champs manquant, nom est obligatoire.
-            </div>
+          </div>
+          <div class="invalid-feedback">
+            Champs manquant, nom est obligatoire.
           </div>
         </div>
       </div>
@@ -127,10 +126,9 @@
               (focus)="focus2 = true"
               (blur)="focus2 = false"
             />
-
-            <div class="invalid-feedback">
-              Champs manquant, Nom de société est obligatoire.
-            </div>
+          </div>
+          <div class="invalid-feedback">
+            Champs manquant, Nom de société est obligatoire.
           </div>
         </div>
       </div>
@@ -162,10 +160,9 @@
               (focus)="focus3 = true"
               (blur)="focus3 = false"
             />
-
-            <div class="invalid-feedback">
-              Champs manquant, Matricule fiscal est obligatoire.
-            </div>
+          </div>
+          <div class="invalid-feedback">
+            Champs manquant, Matricule fiscal est obligatoire.
           </div>
         </div>
       </div>
@@ -196,10 +193,9 @@
               (focus)="focus4 = true"
               (blur)="focus4 = false"
             />
-
-            <div class="invalid-feedback">
-              Champs manquant, prénom est obligatoire.
-            </div>
+          </div>
+          <div class="invalid-feedback">
+            Champs manquant, prénom est obligatoire.
           </div>
         </div>
       </div>
@@ -312,7 +308,7 @@
               formControlName="cin"
               class="form-control"
               id="example-text-input"
-              type="number"
+              type="text"
               min="0"
               placeholder="Num carte identité national"
               (focus)="focus5 = true"
@@ -333,9 +329,12 @@
               "
               class="invalid-feedback"
             >
-              Champs incorrect, cin invalide.
+              Champs incorrect, cin invalide il faut exactement 8 chiffres.
             </div>
           </div>
+          <small class="text-muted font-weight-light">
+            Un CIN valide doit contenir exactement 8 chiffres
+          </small>
         </div>
       </div>
 
@@ -396,7 +395,7 @@
               formControlName="phoneNumber"
               class="form-control"
               id="example-text-input"
-              type="number"
+              type="text"
               min="0"
               value=""
               placeholder="Num Téléphone propriètaire"
@@ -417,7 +416,8 @@
             *ngIf="submitted && formGroup.errors?.['phoneNumberIncorrect']"
             class="error-text"
           >
-            Champs incorrect, Num tél est incorrect.
+            Champs incorrect, Num tél est incorrect il faut exactement 8
+            chiffres.
           </div>
         </div>
       </div>
@@ -444,7 +444,7 @@
               }"
               class="form-control"
               placeholder="RIB Bancaire"
-              type="number"
+              type="text"
               min="0"
               (focus)="focus8 = true"
               (blur)="focus8 = false"
@@ -454,7 +454,7 @@
               *ngIf="submitted && f['rib'].errors?.['required']"
               class="invalid-feedback"
             >
-              Champs manquant, num est obligatoire.
+              Champs manquant, rib est obligatoire.
             </div>
 
             <div
@@ -465,9 +465,12 @@
               "
               class="invalid-feedback"
             >
-              Champs incorrect, numéro tél invalide.
+              Champs incorrect, rib invalide, il faut exactement 20 chiffres.
             </div>
           </div>
+          <small class="text-muted font-weight-light">
+            Un RIB tunisien valide doit contenir exactement 20 chiffres
+          </small>
         </div>
       </div>
 

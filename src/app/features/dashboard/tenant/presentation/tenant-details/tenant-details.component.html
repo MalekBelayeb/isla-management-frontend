@@ -89,6 +89,23 @@
         </h3>
       </div>
     </div>
+    <div
+      *ngIf="tenantDetails?.agreement?.status === 'ACTIVE'"
+      class="row justify-content-end px-3 pb-4"
+    >
+      <a
+        class="btn btn-sm btn-primary btn-round btn-icon"
+        href="javascript:void(0)"
+        routerLink="../../../payment/create-payment/{{ tenantDetails?.id }}"
+      >
+        <span class="btn-inner--icon">
+          <i class="ni ni-fat-add"> </i>
+        </span>
+        <span class="btn-inner--text">
+          Ajouter un paiement pour ce locataire
+        </span>
+      </a>
+    </div>
   </div>
 
   <div class="card-body">
@@ -219,7 +236,7 @@
             <th scope="col">Matricule</th>
             <th scope="col">Local</th>
             <th scope="col">Montant</th>
-            <th scope="col">Periode de validité</th>
+            <th scope="col">Date d'effet du contrat</th>
           </tr>
         </thead>
         <div
@@ -246,8 +263,7 @@
             </td>
             <td>
               <h4>
-                {{ agreement.startDate | date: "dd/MM/yyyy" }} -
-                {{ agreement.expireDate | date: "dd/MM/yyyy" }}
+                {{ agreement.startDate | date: "dd/MM/yyyy" }}
               </h4>
             </td>
           </tr>

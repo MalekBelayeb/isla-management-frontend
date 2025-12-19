@@ -111,17 +111,14 @@
                 <h5 class="mb-0 mt-2">Pas de contrat</h5>
               </span>
 
-              <span *ngIf="tenant.status == 'NO_PAYMENT'">
+              <span *ngIf="tenant.status == 'NO_RENT'">
                 <h5 class="mb-0 mt-2">Aucun paiement</h5>
               </span>
 
-              <span *ngIf="tenant.status == 'AGREEMENT_EXPIRED'">
-                <h5 class="mb-0 mt-2">Contrat expiré</h5>
-              </span>
-
-              <span *ngIf="tenant.status == 'TERMINATED'">
+              <span *ngIf="tenant.status == 'AGREEMENT_SUSPENDED'">
                 <h5 class="mb-0 mt-2">Contrat suspendu</h5>
               </span>
+
               <span *ngIf="tenant.status == 'PAYMENT_DEFAULT'">
                 <h5 class="mb-0 mt-2">Retard de paiement</h5>
               </span>
@@ -145,7 +142,7 @@
           </div>
 
           <div (click)="moveToDetails(tenant.id)" class="col">
-            <small> Crée le: </small>
+            <small> Date de création </small>
 
             <h5 class="mb-0 mt-2">
               {{ tenant.createdAt | date: "dd/MM/yyyy" }}
@@ -157,8 +154,8 @@
               <a
                 *ngIf="
                   tenant.agreement &&
-                  (tenant.status == 'IN_GOOD_STANDING' ||
-                    tenant.status == 'PAYMENT_DEFAULT')
+                  tenant.status !== 'NO_AGREEMENT' &&
+                  tenant.status !== 'AGREEMENT_SUSPENDED'
                 "
                 href="dashboard/payment/create-payment/{{ tenant.id }}"
                 class="nav-link h-100 d-flex align-items-center"

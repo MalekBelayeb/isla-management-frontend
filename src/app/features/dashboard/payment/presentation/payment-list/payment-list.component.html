@@ -172,13 +172,16 @@
           <th>Libellé</th>
           <th>Locataire</th>
           <th>Local</th>
+          <th>Propriété (Bien)</th>
+          <th>Propriétaire</th>
+          <th>Montant (TND)</th>
           <th>Type</th>
           <th>Catégorie</th>
-          <th>Montant (DT)</th>
-          <th>Période courvré</th>
+          <th>Période couverte</th>
           <th>Méthode</th>
           <th>Fréquence de paiement</th>
-          <th>Crée le:</th>
+          <th>Date de paiement</th>
+          <th>Date de création</th>
 
           <th></th>
         </tr>
@@ -206,6 +209,31 @@
           <td style="cursor: pointer" (click)="redirectToDetails(payment.id)">
             <span class=""> {{ payment.apartment }} </span>
           </td>
+          <td style="cursor: pointer" (click)="redirectToDetails(payment.id)">
+            <span class=""> {{ payment.property }} </span>
+          </td>
+          <td style="cursor: pointer" (click)="redirectToDetails(payment.id)">
+            <span class=""> {{ payment.owner }} </span>
+          </td>
+          <td
+            style="cursor: pointer"
+            (click)="redirectToDetails(payment.id)"
+            class="table-user"
+          >
+            <b>
+              <i
+                *ngIf="payment.type == 'expense'"
+                class="fas fa-arrow-down text-warning mr-3"
+              >
+              </i>
+              <i
+                *ngIf="payment.type == 'income'"
+                class="fas fa-arrow-up text-success mr-3"
+              >
+              </i>
+              {{ payment.amount | number: "1.3-3" }} TND
+            </b>
+          </td>
           <td
             style="cursor: pointer"
             (click)="redirectToDetails(payment.id)"
@@ -230,29 +258,11 @@
           <td style="cursor: pointer" (click)="redirectToDetails(payment.id)">
             <span class=""> {{ payment.category }} </span>
           </td>
-          <td
-            style="cursor: pointer"
-            (click)="redirectToDetails(payment.id)"
-            class="table-user"
-          >
-            <b>
-              <i
-                *ngIf="payment.type == 'expense'"
-                class="fas fa-arrow-down text-warning mr-3"
-              >
-              </i>
-              <i
-                *ngIf="payment.type == 'income'"
-                class="fas fa-arrow-up text-success mr-3"
-              >
-              </i>
-              {{ payment.amount }} DT
-            </b>
-          </td>
+
           <td style="cursor: pointer" (click)="redirectToDetails(payment.id)">
             <span class="">
-              {{ payment.rentStartDate | date }} -
-              {{ payment.rentEndDate | date }}
+              {{ payment.rentStartDate | date: "dd/MM/yyyy" }} -
+              {{ payment.rentEndDate | date: "dd/MM/yyyy" }}
             </span>
           </td>
           <td style="cursor: pointer" (click)="redirectToDetails(payment.id)">
@@ -262,9 +272,13 @@
           <td style="cursor: pointer" (click)="redirectToDetails(payment.id)">
             <span class=""> {{ payment.payementFrequency }} </span>
           </td>
-
           <td style="cursor: pointer" (click)="redirectToDetails(payment.id)">
-            <span class=""> {{ payment.createdAt | date }} </span>
+            <span class="">
+              {{ payment.paymentDate | date: "dd/MM/yyyy" }}
+            </span>
+          </td>
+          <td style="cursor: pointer" (click)="redirectToDetails(payment.id)">
+            <span class=""> {{ payment.createdAt | date: "dd/MM/yyyy" }} </span>
           </td>
 
           <td class="table-actions">

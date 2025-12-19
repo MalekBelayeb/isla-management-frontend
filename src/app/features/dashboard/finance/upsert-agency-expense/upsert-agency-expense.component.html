@@ -1,0 +1,197 @@
+<div class="card">
+  <div class="card-header">
+    <h3 class="mb-0">Créer une dépense agence</h3>
+  </div>
+
+  <div class="card-body">
+    <form [formGroup]="agencyExpenseFormGroup" (ngSubmit)="upsertPayment()">
+      <div class="form-group row">
+        <label
+          class="col-md-2 col-form-label form-control-label"
+          for="example-text-input"
+        >
+          Montant en DT <span class="text-danger">*</span>
+        </label>
+
+        <div class="col-md-10">
+          <div class="input-group input-group-merge">
+            <input
+              formControlName="amount"
+              class="form-control"
+              id="example-text-input"
+              placeholder=""
+              type="number"
+              value=""
+              [ngClass]="{
+                focused: focus1 === true,
+                'is-invalid':
+                  submitted &&
+                  agencyExpenseFormGroup.controls['amount']?.errors?.[
+                    'required'
+                  ],
+              }"
+              (focus)="focus1 = true"
+              (blur)="focus1 = false"
+            />
+          </div>
+          <div
+            *ngIf="
+              submitted &&
+              agencyExpenseFormGroup.controls['amount']?.errors?.['required']
+            "
+            class="error-text"
+          >
+            Champs incorrect, Montant est obligatoire.
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label
+          class="col-md-2 col-form-label form-control-label"
+          for="example-text-input"
+        >
+          Catégorie de paiement <span class="text-danger">*</span>
+        </label>
+
+        <div class="col-md-10">
+          <app-search-input
+            [clearInput]="false"
+            [searchInputValue]="searchExpensePaymentCategoryValue"
+            [prefixIcon]="'fas fa-search'"
+            [searchPlaceholder]="'Catégorie de paiement'"
+            [searchLabel]="'Résultats'"
+            [maxSize]="3"
+            [isInvalid]="
+              submitted &&
+              agencyExpenseFormGroup.controls['category'].errors?.['required']
+            "
+            [errorMessage]="
+              'Champs incorrect, Catégorie de paiment est obligatoire'
+            "
+            (selectedResultItem)="selectedPaymentCategory($event)"
+            [searchResult]="expensePaymentCategoryList"
+            [isEditable]="false"
+          ></app-search-input>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label
+          class="col-md-2 col-form-label form-control-label"
+          for="example-text-input"
+        >
+          Libellé
+        </label>
+
+        <div class="col-md-10">
+          <div class="input-group input-group-merge">
+            <input
+              formControlName="label"
+              class="form-control"
+              id="example-text-input"
+              placeholder=""
+              type="text"
+              value=""
+              (focus)="focus1 = true"
+              (blur)="focus1 = false"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label
+          class="col-md-2 col-form-label form-control-label"
+          for="example-text-input"
+        >
+          Méthode de paiment <span class="text-danger">*</span>
+        </label>
+
+        <div class="col-md-10">
+          <app-search-input
+            [clearInput]="false"
+            [searchInputValue]="searchExpensePaymentMethodValue"
+            [prefixIcon]="'fas fa-search'"
+            [searchPlaceholder]="'Methode de paiment'"
+            [searchLabel]="'Résultats'"
+            [maxSize]="3"
+            [isInvalid]="
+              submitted &&
+              agencyExpenseFormGroup.controls['method']?.errors?.['required']
+            "
+            [errorMessage]="
+              'Champs incorrect, Méthode de paiment est obligatoire'
+            "
+            (selectedResultItem)="selectedPaymentMethod($event)"
+            [searchResult]="paymentMethodTypeList"
+            [isEditable]="false"
+          ></app-search-input>
+        </div>
+      </div>
+
+      <div class="row mb-4">
+        <label
+          class="col-md-2 col-form-label form-control-label"
+          for="example-datetime-local-input"
+        >
+          Date du mouvement <span class="text-danger">*</span>
+        </label>
+
+        <div class="col-md-10">
+          <app-date-range-picker
+            [startDateValue]="
+              agencyExpenseFormGroup.controls['paymentDate']?.value
+            "
+            (startDate)="onPaymentDateChange($event)"
+            [startDateInvalid]="
+              submitted &&
+              agencyExpenseFormGroup.controls['paymentDate']?.errors?.[
+                'required'
+              ]
+            "
+            [startDateErrorMessage]="
+              'Champs incorrect, Date de début est obligatoire'
+            "
+            [useSingleInputDate]="true"
+            [isTodayMinDate]="false"
+          ></app-date-range-picker>
+        </div>
+      </div>
+      <div class="form-group row mt-4">
+        <label
+          class="col-md-2 col-form-label form-control-label"
+          for="example-text-input"
+        >
+          Notes
+        </label>
+
+        <div class="col-md-10">
+          <div class="input-group input-group-merge">
+            <textarea
+              formControlName="notes"
+              class="form-control"
+              id="example-text-input"
+              type="text"
+              value=""
+              rows="4"
+              placeholder="Description"
+              (focus)="focus7 = true"
+              (blur)="focus7 = false"
+            ></textarea>
+          </div>
+        </div>
+      </div>
+      <hr />
+
+      <div class="mt-5 d-flex w-100 flex-row justify-content-end">
+        <button *ngIf="!isLoading" class="btn btn-primary" type="submit">
+          Confirmer
+        </button>
+        <div
+          *ngIf="isLoading"
+          class="spinner-border text-primary mr-5"
+          role="status"
+        ></div>
+      </div>
+    </form>
+  </div>
+</div>

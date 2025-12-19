@@ -116,15 +116,22 @@ export class DataTypes {
     { id: 'check', title: 'Par Chéque' },
   ];
 
-  static paymentCategoryList: SearchResult[] = [
+  static incomePaymentCategoryList: SearchResult[] = [
     { id: 'rent', title: 'Loyer' },
+    { id: 'others', title: 'Autres' },
+  ];
+
+
+  static expensePaymentCategoryList: SearchResult[] = [
+    { id: 'cleaning_fees', title: 'Frais de nettoyage' },
+    { id: 'utility_payments', title: 'Charges (eau, électricité, gaz, etc.)' },
     { id: 'deposit', title: 'Caution (Dépôt de garantie)' },
     { id: 'agency_fees', title: "Frais d'agence" },
     { id: 'maintenance_fees', title: "Frais d'entretien" },
-    { id: 'utility_payments', title: 'Charges (eau, électricité, gaz, etc.)' },
-    { id: 'cleaning_fees', title: 'Frais de nettoyage' },
     { id: 'furniture_rental_fees', title: 'Location de mobilier' },
     { id: 'home_insurance_payment', title: 'Assurance habitation' },
+    { id: 'others', title: 'Autres' },
+
   ];
 
   static paymentTypeList: SearchResult[] = [

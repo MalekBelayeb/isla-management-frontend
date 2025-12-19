@@ -171,11 +171,13 @@
           <th>Num contrat</th>
           <th>Locataire</th>
           <th>Local</th>
-          <th>Période de validité du contrat</th>
+          <th>Propriété</th>
+          <th>Propriétaire</th>
+          <th>Date d'effet</th>
           <th>Montant du loyer</th>
           <th>Fréquence de paiement</th>
           <th>Status</th>
-          <th>Crée le:</th>
+          <th>Date de création</th>
 
           <th></th>
         </tr>
@@ -212,10 +214,16 @@
           <td style="cursor: pointer" (click)="redirectToDetails(agreement.id)">
             <span class=""> {{ agreement.apartment }} </span>
           </td>
+
+          <td style="cursor: pointer" (click)="redirectToDetails(agreement.id)">
+            <span class=""> {{ agreement.property }} </span>
+          </td>
+          <td style="cursor: pointer" (click)="redirectToDetails(agreement.id)">
+            <span class=""> {{ agreement.owner }} </span>
+          </td>
           <td style="cursor: pointer" (click)="redirectToDetails(agreement.id)">
             <span class="status">
-              {{ agreement.startDate | date: "dd/MM/yyyy" }} -
-              {{ agreement.expireDate | date: "dd/MM/yyyy" }}
+              {{ agreement.startDate | date: "dd/MM/yyyy" }}
             </span>
           </td>
           <td style="cursor: pointer" (click)="redirectToDetails(agreement.id)">
@@ -236,17 +244,17 @@
               </span>
 
               <span
-                *ngIf="agreement.status == 'EXPIRED'"
-                class="badge badge-lg badge-danger"
+                *ngIf="agreement.status == 'SUSPENDED'"
+                class="badge badge-lg badge-warning"
               >
-                Expiré
+                SUSPENDU
               </span>
             </div>
           </td>
 
           <td style="cursor: pointer" (click)="redirectToDetails(agreement.id)">
             <span class="status">
-              {{ agreement.createdAt | date }}
+              {{ agreement.createdAt | date: "dd/MM/yyyy" }}
             </span>
           </td>
 

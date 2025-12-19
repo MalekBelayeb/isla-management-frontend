@@ -2,7 +2,7 @@
   <div class="card-header border-0">
     <div class="row">
       <div class="col-6">
-        <h3 class="mb-0">Liste des biens ({{ totalLength }})</h3>
+        <h3 class="mb-0">Liste des propriétés (Biens) ({{ totalLength }})</h3>
       </div>
     </div>
   </div>
@@ -17,7 +17,7 @@
         <span class="btn-inner--icon">
           <i class="ni ni-fat-add"> </i>
         </span>
-        <span class="btn-inner--text"> Ajouter un bien </span>
+        <span class="btn-inner--text"> Ajouter une propriété </span>
       </a>
     </div>
 
@@ -29,7 +29,7 @@
               class="form-control"
               id="example2cols1Input"
               formControlName="searchTerm"
-              placeholder="Chercher par adresse du bien"
+              placeholder="Chercher par adresse de propriété (Bien)"
             />
           </div>
         </div>
@@ -114,7 +114,7 @@
           <th>Type</th>
 
           <th>Nb locaux</th>
-          <th>Ajouté le</th>
+          <th>Date de création</th>
 
           <th></th>
         </tr>
@@ -171,7 +171,7 @@
           </td>
           <td style="cursor: pointer" (click)="redirectToDetails(property.id)">
             <div class="col-auto">
-              {{ property.createdAt | date }}
+              {{ property.createdAt | date: "dd/MM/yyyy" }}
             </div>
           </td>
           <td class="table-actions">

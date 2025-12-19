@@ -35,8 +35,11 @@ export class ApartmentMapper {
           )?.title ?? '',
         rooms: item.rooms,
         createdAt: item.createdAt,
-        property: `${propertyPrefix}${item.property.matricule} - ${item.property.address}`,
-        owner: `${item.property.owner.gender == 'M' ? 'Mr' : 'Mme'}  ${item.property.owner.fullname}`,
+        property: `${propertyPrefix}${item.property?.matricule} - ${item.property?.address}`,
+        owner:
+          item.property?.owner?.type === 'natural'
+            ? `${item.property?.owner?.gender == 'M' ? 'Mr' : 'Mme'} ${item.property?.owner?.fullname}`
+            : `${item.property?.owner?.society}`,
         rentStatus: item.rentStatus ?? '',
       };
     });

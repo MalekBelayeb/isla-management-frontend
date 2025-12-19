@@ -53,8 +53,9 @@
           <th>Nationalté</th>
 
           <th>Type</th>
-          <th>Nb biens</th>
+          <th>Nb propriétés</th>
           <th>Nb locaux</th>
+          <th>Date de création</th>
 
           <th></th>
         </tr>
@@ -119,6 +120,11 @@
                 {{ owner.nbPremises }}
               </span>
             </div>
+          </td>
+          <td style="cursor: pointer" (click)="redirectToDetails(owner.id)">
+            <span class="status">
+              {{ owner.createdAt | date: "dd/MM/yyyy" }}
+            </span>
           </td>
           <td class="table-actions">
             <!-- <a

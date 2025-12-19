@@ -5,7 +5,6 @@ export interface AgreementDetails {
   tenant: string;
   apartment: string;
   startDate: Date;
-  expireDate: Date;
   status: string;
   paymentFrequency: string;
   tenantId: string;
@@ -14,6 +13,8 @@ export interface AgreementDetails {
   deposit: string;
   firstDayOfPayment: string;
   documentUrl: string;
+  property: string;
+  owner: string;
   notes: string;
   createdAt: string;
   signedAt: string;

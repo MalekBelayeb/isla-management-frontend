@@ -10,6 +10,8 @@ import { SearchInputModule } from '@shared/search-input/search-input.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+import { UpsertAgencyExpenseComponent } from './upsert-agency-expense/upsert-agency-expense.component';
+import { DateRangePickerModule } from '@shared/form-inputs/date-range-picker/date-range-picker.module';
 
 @NgModule({
   declarations: [
@@ -17,6 +19,7 @@ import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
     ExpensesComponent,
     IncomeComponent,
     BalanceSummaryComponent,
+    UpsertAgencyExpenseComponent,
   ],
   imports: [
     CommonModule,
@@ -26,6 +29,7 @@ import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
     SearchInputModule,
     PaginationModule.forRoot(),
     BsDatepickerModule.forRoot(),
+    DateRangePickerModule,
   ],
 })
 export class FinanceModule {}

@@ -70,6 +70,7 @@ export class PropertyDetailsComponent implements OnInit {
   page = 1;
   pageSize = 10;
   apartments: Apartment[] = [];
+  endDate: Date = new Date();
 
   ngOnInit(): void {
     this.trimestersOptions = this.getTrimesters().map(
@@ -120,6 +121,10 @@ export class PropertyDetailsComponent implements OnInit {
       ...(startDate && { startDate }),
       ...(endDate && { endDate }),
     };
+    
+    if (endDate) {
+      this.endDate = new Date(endDate);
+    }
 
     const queryString = new URLSearchParams(params).toString();
     this.paymentService.getFinancialBalance(`?${queryString}`).subscribe({
@@ -181,11 +186,19 @@ export class PropertyDetailsComponent implements OnInit {
 
   getTrimesters() {
     const year = new Date().getFullYear();
-    return Array.from({ length: 4 }, (_, i) => ({
-      name: `T${i + 1}`,
-      start: new Date(year, i * 3, 1),
-      end: new Date(year, (i + 1) * 3, 0),
-    }));
+
+    return Array.from({ length: 4 }, (_, i) => {
+      const start = new Date(year, i * 3, 1);
+      const end = new Date(year, (i + 1) * 3, 0);
+      start.setDate(start.getDate() + 1);
+      end.setDate(end.getDate() + 1);
+
+      return {
+        name: `T${i + 1}`,
+        start,
+        end,
+      };
+    });
   }
 
   getCurrentTrimestre(date = new Date()) {

@@ -13,7 +13,10 @@ export class GetOwnerDetailsMapper {
       society: data.society,
       taxId: data.taxId,
       matricule: data.matricule,
-      fullname: `${data.gender == 'M' ? 'Mr' : 'Mme'}  ${data.firstname} ${data.lastname}`,
+      fullname:
+        data.type == 'natural'
+          ? `${data.gender == 'M' ? 'Mr' : 'Mme'}  ${data.firstname} ${data.lastname}`
+          : `${data.society}`,
       firstname: data.firstname,
       lastname: data.lastname,
       nationality: data.nationality,

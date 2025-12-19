@@ -25,3 +25,13 @@ export function translateDaysOfWeek(day: string) {
     SUNDAY: 'Dimanche',
   }[day];
 }
+
+export function fixDecimals(
+  value: number | undefined | null,
+  decimals: number,
+): number {
+  const num = Number(value ?? 0);
+  if (isNaN(num)) return 0;
+
+  return Number(num.toFixed(decimals));
+}

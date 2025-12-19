@@ -6,6 +6,7 @@ import { PaymentService } from '@dashboard/payment/service/payment.service';
 import { ConfirmDialogService } from '@shared/confirm-dialog/confirm-dialog.service';
 import { ToastAlertService } from '@shared/toast-alert/toast-alert.service';
 import { BsModalService } from 'ngx-bootstrap/modal';
+import { propertyPrefix } from 'src/app/variables/consts';
 
 @Component({
   selector: 'app-payment-details',
@@ -16,13 +17,10 @@ export class PaymentDetailsComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private paymentService: PaymentService,
-    private confirmDialogService: ConfirmDialogService,
-    private modalService: BsModalService,
-    private toastAlertService: ToastAlertService,
   ) {}
 
   paymentDetails?: PaymentDetails;
-
+  propertyPrefix: string = propertyPrefix;
   ngOnInit() {
     this.getPaymentDetails();
   }

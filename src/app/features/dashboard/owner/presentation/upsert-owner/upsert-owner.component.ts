@@ -17,6 +17,7 @@ import {
   cinValidator,
   emailValidator,
   phoneNumberTnValidator,
+  ribValidator,
 } from '@core/form-validators/form-validators';
 import { OwnerDetails } from '@dashboard/owner/entity/owner-details';
 import { OwnerService } from '@dashboard/owner/service/owner.service';
@@ -146,7 +147,11 @@ export class UpsertOwnerComponent implements OnInit, OnChanges {
     if (type == 'natural') {
       this.formGroup.addValidators([cinValidator]);
     }
-    this.formGroup.addValidators([emailValidator, phoneNumberTnValidator]);
+    this.formGroup.addValidators([
+      emailValidator,
+      phoneNumberTnValidator,
+      ribValidator,
+    ]);
 
     Object.keys(this.formGroup.controls).forEach((key) => {
       this.formGroup.get(key)?.updateValueAndValidity();

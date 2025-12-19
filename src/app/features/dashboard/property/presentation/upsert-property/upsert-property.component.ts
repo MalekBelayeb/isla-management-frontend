@@ -27,6 +27,7 @@ export class UpsertPropertyComponent implements OnInit {
   submitted = false;
   isLoading = false;
   focus1 = false;
+  focus2 = false;
   ownerDetails?: OwnerDetails;
 
   @Input() propertyDetails?: PropertyDetails;
@@ -42,6 +43,7 @@ export class UpsertPropertyComponent implements OnInit {
       ownerId: new FormControl('', Validators.required),
       address: new FormControl('', Validators.required),
       type: new FormControl('', Validators.required),
+      profitInPercentage: new FormControl(10, Validators.required),
     });
   }
 
@@ -56,6 +58,10 @@ export class UpsertPropertyComponent implements OnInit {
         this.formGroup.get('address')?.setValue(this.propertyDetails?.address);
         this.formGroup.get('type')?.setValue(this.propertyDetails?.type);
         this.formGroup.get('ownerId')?.setValue(this.propertyDetails?.ownerId);
+        this.formGroup
+          .get('profitInPercentage')
+          ?.setValue(this.propertyDetails?.profitInPercentage);
+        
         this.searchOwnerValue = this.propertyDetails.owner;
       }
     }
@@ -83,6 +89,7 @@ export class UpsertPropertyComponent implements OnInit {
     this.ownerService.getAllOwners(`?${queryString}`).subscribe({
       next: (value) => {
         const owners = GetAllOwnersMapper.fromResponse(value.body.owners);
+        console.log(owners)
         this.ownerOptions = owners.map((item) => ({
           id: item.id,
           title: item.name,
@@ -132,6 +139,7 @@ export class UpsertPropertyComponent implements OnInit {
       ownerId: this.formGroup.get('ownerId')?.value,
       address: this.formGroup.get('address')?.value,
       type: this.formGroup.get('type')?.value,
+      profitInPercentage: this.formGroup.get('profitInPercentage')?.value,
     };
     if (this.propertyDetails) {
       this.propertyService

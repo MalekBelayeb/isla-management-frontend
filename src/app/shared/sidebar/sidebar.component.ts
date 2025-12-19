@@ -35,13 +35,13 @@ export const DASHBOARD_ROUTES: RouteInfo[] = [
   },
   {
     path: '/dashboard',
-    title: 'Biens & Locaux',
+    title: 'Propriétés & Locaux',
     type: 'sub',
     icontype: 'fa-home text-primary',
     children: [
       {
         path: 'property',
-        title: 'Liste des biens',
+        title: 'Liste des propriétés',
         type: 'link',
       },
       {

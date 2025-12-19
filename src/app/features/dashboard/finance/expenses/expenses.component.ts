@@ -38,8 +38,7 @@ export class ExpensesComponent implements OnInit {
 
   getFinancialBalance() {
     const params = {
-      //apartmentId: this.getApartmentId(),
-      type: 'expense',
+      type: 'expense,expense_agency',
     };
 
     const queryString = new URLSearchParams(params).toString();

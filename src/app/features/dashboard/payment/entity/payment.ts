@@ -1,6 +1,6 @@
 export interface Payment {
   id: string;
-  amount: string;
+  amount: number;
   paymentDate: string;
   method: string;
   label: string;
@@ -11,6 +11,8 @@ export interface Payment {
   type: string;
   category: string;
   agreement: string;
+  property: string;
+  owner: string;
   payementFrequency: string;
   tenant: string;
   apartment: string;

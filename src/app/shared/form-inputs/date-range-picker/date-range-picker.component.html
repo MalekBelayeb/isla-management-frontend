@@ -1,6 +1,9 @@
 <div class="row">
   <div
-    class="col-md-6"
+    [ngClass]="{
+      'col-md-12': useSingleInputDate,
+      'col-md-6': !useSingleInputDate,
+    }"
     style="cursor: pointer"
     (click)="openDatePicker('startDateInput')"
   >
@@ -17,7 +20,7 @@
         </div>
 
         <input
-          id="startDateInput"
+          :id="startDateInput-{{ id }}"
           class="form-control"
           style="cursor: pointer"
           type="date"
@@ -37,6 +40,7 @@
     </div>
   </div>
   <div
+    *ngIf="!useSingleInputDate"
     class="col-md-6"
     style="cursor: pointer"
     (click)="openDatePicker('endDateInput')"
@@ -54,7 +58,7 @@
         </div>
 
         <input
-          id="endDateInput"
+          :id="endDateInput-{{ id }}"
           class="form-control"
           type="date"
           value=""

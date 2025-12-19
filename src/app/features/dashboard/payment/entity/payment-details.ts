@@ -4,15 +4,18 @@ export interface PaymentDetails {
   paymentDate: string;
   method: string;
   label: string;
-  rentStartDate: Date;
-  rentEndDate: Date;
+  rentStartDate?: Date;
+  rentEndDate?: Date;
   type: string;
   category: string;
-  agreement: string;
-  agreementId: string;
-  payementFrequency: string;
-  tenant: string;
+  agreement?: string;
+  agreementId?: string;
+  matriculeProperty?: string;
+  payementFrequency?: string;
+  tenant?: string;
   notes: string;
-  apartment: string;
+  property: string;
+  apartment?: string;
   createdAt: string;
+  owner?: string;
 }

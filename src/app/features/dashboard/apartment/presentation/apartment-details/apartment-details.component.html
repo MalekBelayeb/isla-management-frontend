@@ -51,7 +51,7 @@
       <div class="row">
         <div class="col-lg-3">
           <div class="form-group">
-            <h5 class="card-title text-uppercase text-muted mb-0">Bien</h5>
+            <h5 class="card-title text-uppercase text-muted mb-0">Propriété (Bien)</h5>
 
             <h5 class="h2 font-weight-bold mb-0 mt-1">
               {{ apartmentDetails?.property }}
@@ -222,7 +222,7 @@
             <th scope="col">Matricule</th>
             <th scope="col">Locataire</th>
             <th scope="col">Montant</th>
-            <th scope="col">Periode de validité</th>
+            <th scope="col">Date d'effet du contrat</th>
           </tr>
         </thead>
         <div
@@ -249,8 +249,7 @@
             </td>
             <td>
               <h4>
-                {{ agreement.startDate | date: "dd/MM/yyyy" }} -
-                {{ agreement.expireDate | date: "dd/MM/yyyy" }}
+                {{ agreement.startDate | date: "dd/MM/yyyy" }}
               </h4>
             </td>
           </tr>

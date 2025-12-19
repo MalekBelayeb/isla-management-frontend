@@ -23,7 +23,7 @@ import { TenantService } from '@dashboard/tenant/service/tenant.service';
 import { DataTypes } from '@models/data';
 import { SearchResult } from '@shared/search-input/search-input.component';
 import { ToastAlertService } from '@shared/toast-alert/toast-alert.service';
-import { defaultSearchLimit } from 'src/app/variables/consts';
+import { defaultSearchLimit, propertyPrefix } from 'src/app/variables/consts';
 
 @Component({
   selector: 'app-upsert-payment',
@@ -31,7 +31,9 @@ import { defaultSearchLimit } from 'src/app/variables/consts';
   styleUrl: './upsert-payment.component.css',
 })
 export class UpsertPaymentComponent implements OnInit {
-  formGroup: FormGroup;
+  incomeFormGroup: FormGroup;
+  expenseFormGroup: FormGroup;
+
   submitted = false;
   isLoading = false;
   focus1 = false;
@@ -41,10 +43,13 @@ export class UpsertPaymentComponent implements OnInit {
   focus5 = false;
   focus6 = false;
   focus7 = false;
+  focus8 = false;
 
   @Input() paymentDetails?: PaymentDetails;
 
   agreement?: Agreement;
+
+  paymentType: 'income' | 'expense' = 'income';
 
   constructor(
     private formBuilder: FormBuilder,
@@ -55,14 +60,45 @@ export class UpsertPaymentComponent implements OnInit {
     private toastAlertService: ToastAlertService,
     private tenantMapper: TenantMapper,
   ) {
-    this.formGroup = this.formBuilder.group({
+    this.incomeFormGroup = this.formBuilder.group({});
+    this.expenseFormGroup = this.formBuilder.group({});
+    this.setFormToDefaultState();
+  }
+
+  paymentMethodTypeList: SearchResult[] = DataTypes.paymentMethodTypeList;
+  propertyPrefix: string = propertyPrefix;
+  paymentTypeList: SearchResult[] = DataTypes.paymentTypeList;
+
+  incomePaymentCategoryList: SearchResult[] =
+    DataTypes.incomePaymentCategoryList;
+
+  expensePaymentCategoryList: SearchResult[] =
+    DataTypes.expensePaymentCategoryList;
+
+  searchIncomePaymentCategoryValue: string =
+    this.incomePaymentCategoryList[0].title;
+
+  searchExpensePaymentCategoryValue: string =
+    this.expensePaymentCategoryList[0].title;
+
+  agreementOptions: SearchResult[] = [];
+
+  searchAgreementValue: string = '';
+
+  searchTypeValue: string = this.paymentTypeList[0].title;
+
+  searchIncomePaymentMethodValue: string = this.paymentMethodTypeList[0].title;
+  searchExpensePaymentMethodValue: string = this.paymentMethodTypeList[0].title;
+
+  setFormToDefaultState() {
+    this.incomeFormGroup = this.formBuilder.group({
       amount: new FormControl('', Validators.required),
       label: new FormControl(''),
       rentStartDate: new FormControl(''),
       rentEndDate: new FormControl(''),
-      type: new FormControl(this.paymentTypeList[0].id, Validators.required),
+      paymentDate: new FormControl(''),
       category: new FormControl(
-        this.paymentCategoryList[0].id,
+        this.incomePaymentCategoryList[0].id,
         Validators.required,
       ),
       method: new FormControl(
@@ -72,75 +108,150 @@ export class UpsertPaymentComponent implements OnInit {
       agreementId: new FormControl('', Validators.required),
       notes: new FormControl(''),
     });
+
+    this.expenseFormGroup = this.formBuilder.group({
+      amount: new FormControl('', Validators.required),
+      label: new FormControl(''),
+      paymentDate: new FormControl(''),
+      category: new FormControl(
+        this.expensePaymentCategoryList[0].id,
+        Validators.required,
+      ),
+      method: new FormControl(
+        this.paymentMethodTypeList[0].id,
+        Validators.required,
+      ),
+      matriculeProperty: new FormControl('', Validators.required),
+      notes: new FormControl(''),
+    });
+
+    this.setDefaultStartDateAndEndDate();
   }
-  paymentMethodTypeList: SearchResult[] = DataTypes.paymentMethodTypeList;
-
-  paymentTypeList: SearchResult[] = DataTypes.paymentTypeList;
-  paymentCategoryList: SearchResult[] = DataTypes.paymentCategoryList;
-
-  agreementOptions: SearchResult[] = [];
-  searchAgreementValue: string = '';
-  searchTypeValue: string = this.paymentTypeList[0].title;
-  searchCategoryValue: string = this.paymentCategoryList[0].title;
-  searchMethodValue: string = this.paymentMethodTypeList[0].title;
-
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['paymentDetails'] && !changes['paymentDetails'].firstChange) {
       this.paymentDetails = changes['paymentDetails'].currentValue;
+
       if (this.paymentDetails) {
-        console.log(this.paymentDetails);
-        this.formGroup.get('amount')?.setValue(this.paymentDetails?.amount);
-        this.formGroup.get('method')?.setValue(this.paymentDetails?.method);
-        this.formGroup.get('label')?.setValue(this.paymentDetails?.label);
-        this.formGroup
-          .get('rentStartDate')
-          ?.setValue(
-            this.paymentDetails?.rentStartDate?.toString().split('T')[0],
-          );
-        this.formGroup
-          .get('rentEndDate')
-          ?.setValue(
-            this.paymentDetails?.rentEndDate?.toString().split('T')[0],
-          );
-        this.formGroup.get('type')?.setValue(this.paymentDetails?.type);
-        this.formGroup.get('category')?.setValue(this.paymentDetails?.category);
-        this.formGroup
-          .get('agreementId')
-          ?.setValue(this.paymentDetails?.agreementId);
+        this.paymentType =
+          this.paymentDetails.type === 'income' ? 'income' : 'expense';
+        const categoryId =
+          DataTypes.incomePaymentCategoryList.find((item) => {
+            return item.title === this.paymentDetails?.category;
+          })?.id ?? '';
+        const paymentMethodId =
+          DataTypes.paymentMethodTypeList.find((item) => {
+            return item.title === this.paymentDetails?.method;
+          })?.id ?? '';
+        if (this.paymentDetails.type === 'income') {
+          this.incomeFormGroup
+            .get('amount')
+            ?.setValue(this.paymentDetails?.amount);
+          this.incomeFormGroup.get('method')?.setValue(paymentMethodId);
+          this.incomeFormGroup
+            .get('label')
+            ?.setValue(this.paymentDetails?.label);
+          this.incomeFormGroup
+            .get('rentStartDate')
+            ?.setValue(
+              this.paymentDetails?.rentStartDate?.toString().split('T')[0],
+            );
+          this.incomeFormGroup
+            .get('rentEndDate')
+            ?.setValue(
+              this.paymentDetails?.rentEndDate?.toString().split('T')[0],
+            );
+          this.incomeFormGroup.get('type')?.setValue(this.paymentDetails?.type);
+          this.incomeFormGroup.get('category')?.setValue(categoryId);
+          this.incomeFormGroup
+            .get('agreementId')
+            ?.setValue(this.paymentDetails?.agreementId);
 
-        this.formGroup.get('notes')?.setValue(this.paymentDetails?.notes);
-        console.log(this.paymentDetails);
-        this.searchCategoryValue =
-          DataTypes.paymentCategoryList.find(
-            (item) => item.id === this.paymentDetails?.category,
-          )?.title ?? '';
-        this.searchTypeValue =
-          DataTypes.paymentTypeList.find(
-            (item) => item.id === this.paymentDetails?.type,
-          )?.title ?? '';
+          this.incomeFormGroup
+            .get('paymentDate')
+            ?.setValue(
+              this.paymentDetails?.paymentDate.toString().split('T')[0],
+            );
+          this.incomeFormGroup
+            .get('notes')
+            ?.setValue(this.paymentDetails?.notes);
 
-        this.searchMethodValue =
-          DataTypes.paymentMethodTypeList.find(
-            (item) => item.id === this.paymentDetails?.method,
-          )?.title ?? '';
+          this.searchIncomePaymentCategoryValue = this.paymentDetails?.category;
 
-        this.searchAgreementValue = this.paymentDetails.agreement;
+          this.searchIncomePaymentMethodValue =
+            this.paymentDetails?.method ?? '';
+
+          this.searchAgreementValue = this.paymentDetails.agreement ?? '';
+        }
+
+        if (this.paymentDetails.type === 'expense') {
+          console.log('sqdqssdqq=>', this.paymentDetails);
+          const categoryId =
+            DataTypes.expensePaymentCategoryList.find((item) => {
+              return item.title === this.paymentDetails?.category;
+            })?.id ?? '';
+
+          this.expenseFormGroup
+            .get('amount')
+            ?.setValue(this.paymentDetails?.amount);
+          this.expenseFormGroup.get('method')?.setValue(paymentMethodId);
+          this.expenseFormGroup
+            .get('label')
+            ?.setValue(this.paymentDetails?.label);
+
+          this.expenseFormGroup
+            .get('type')
+            ?.setValue(this.paymentDetails?.type);
+          this.expenseFormGroup.get('category')?.setValue(categoryId);
+          this.expenseFormGroup
+            .get('matriculeProperty')
+            ?.setValue(this.paymentDetails?.matriculeProperty);
+          this.expenseFormGroup
+            .get('paymentDate')
+            ?.setValue(
+              this.paymentDetails?.paymentDate.toString().split('T')[0],
+            );
+          this.expenseFormGroup
+            .get('notes')
+            ?.setValue(this.paymentDetails?.notes);
+
+          this.searchExpensePaymentCategoryValue = this.paymentDetails.category;
+          this.searchExpensePaymentMethodValue = this.paymentDetails.method;
+        }
       }
     }
   }
-  selectedPaymentType(resultItem: SearchResult) {
-    this.formGroup.get('type')?.setValue(resultItem.id);
-  }
 
   selectedPaymentCategory(resultItem: SearchResult) {
-    this.formGroup.get('category')?.setValue(resultItem.id);
+    this.activeForm.get('category')?.setValue(resultItem.id);
+    if (resultItem.id !== 'rent') {
+      console.log(resultItem);
+      this.activeForm.get('rentStartDate')?.setValue(undefined);
+      this.activeForm.get('rentEndDate')?.setValue(undefined);
+    } else {
+      this.setDefaultRentStartDateAndRentEndDate();
+    }
   }
 
   selectedPaymentMethod(resultItem: SearchResult) {
-    this.formGroup.get('method')?.setValue(resultItem.id);
+    this.activeForm.get('method')?.setValue(resultItem.id);
   }
 
-  setDefaultStartDateAndEndDate() {
+  onChangePaymentType($event: 'income' | 'expense') {
+    this.paymentType = $event;
+    this.submitted = false;
+    this.setFormToDefaultState();
+    if (this.paymentType === 'income') {
+      this.setAgreementByTenant();
+    }
+  }
+
+  get activeForm(): FormGroup {
+    return this.paymentType === 'income'
+      ? this.incomeFormGroup
+      : this.expenseFormGroup;
+  }
+
+  setDefaultRentStartDateAndRentEndDate() {
     const now = new Date();
 
     const startDate = new Date(
@@ -161,15 +272,34 @@ export class UpsertPaymentComponent implements OnInit {
     ).toLocaleDateString('en-CA', {
       timeZone: 'Africa/Tunis',
     });
+    this.incomeFormGroup
+      .get('rentStartDate')
+      ?.setValue(startDate.split('T')[0]);
 
-    this.formGroup.get('rentStartDate')?.setValue(startDate.split('T')[0]);
+    this.incomeFormGroup.get('rentEndDate')?.setValue(endDate.split('T')[0]);
+  }
 
-    this.formGroup.get('rentEndDate')?.setValue(endDate.split('T')[0]);
+  setDefaultPaymentDate() {
+    const now = new Date();
+    const todayDate = now.toLocaleDateString('en-CA', {
+      timeZone: 'Africa/Tunis',
+    });
+    this.incomeFormGroup.get('paymentDate')?.setValue(todayDate.split('T')[0]);
+    this.expenseFormGroup.get('paymentDate')?.setValue(todayDate.split('T')[0]);
+  }
+
+  setDefaultStartDateAndEndDate() {
+    this.setDefaultRentStartDateAndRentEndDate();
+    this.setDefaultPaymentDate();
   }
 
   ngOnInit(): void {
     this.setDefaultStartDateAndEndDate();
 
+    this.setAgreementByTenant();
+  }
+
+  setAgreementByTenant() {
     const idTenant = this.route.snapshot.paramMap.get('idTenant') ?? '';
     if (idTenant) {
       this.tenantService.getTenant(idTenant).subscribe({
@@ -178,25 +308,32 @@ export class UpsertPaymentComponent implements OnInit {
             value.body,
           ).agreement;
           this.searchAgreementValue = this.agreement?.matricule ?? '';
-          this.formGroup.get('agreementId')?.setValue(this.agreement?.id ?? '');
+          this.incomeFormGroup
+            .get('agreementId')
+            ?.setValue(this.agreement?.id ?? '');
         },
       });
     }
   }
 
   get upsertPaymentForm() {
-    return this.formGroup.controls;
+    return this.incomeFormGroup.controls;
   }
   onStartDateChange($event: Date) {
-    this.formGroup
+    this.incomeFormGroup
       .get('rentStartDate')
       ?.setValue($event.toISOString().split('T')[0]);
   }
 
-  onEndDateChange($event: Date) {
+  onPaymentDateChange($event: Date) {
+    console.log($event);
+    this.activeForm
+      .get('paymentDate')
+      ?.setValue($event.toISOString().split('T')[0]);
+  }
 
-    console.log($event)
-    this.formGroup
+  onEndDateChange($event: Date) {
+    this.incomeFormGroup
       .get('rentEndDate')
       ?.setValue($event?.toISOString().split('T')[0]);
   }
@@ -221,28 +358,78 @@ export class UpsertPaymentComponent implements OnInit {
     });
   }
   onSelectedAgreementSearchItem(searchResult: SearchResult) {
-    this.formGroup.get('agreementId')?.setValue(searchResult.id);
+    this.incomeFormGroup.get('agreementId')?.setValue(searchResult.id);
   }
 
   upsertPayment() {
     this.submitted = true;
-    console.log(this.formGroup.controls);
-    if (this.formGroup.invalid) return;
+
+    if (this.activeForm.invalid) return;
     this.isLoading = true;
+    let incomeBody = {};
+    let expenseBody = {};
+
+    const getPaymentDate = () => {
+      console.log(this.expenseFormGroup.get('paymentDate')?.value);
+      const d = new Date(this.activeForm.get('paymentDate')?.value);
+      const n = new Date();
+      d.setHours(
+        n.getHours(),
+        n.getMinutes(),
+        n.getSeconds(),
+        n.getMilliseconds(),
+      );
+      return d;
+    }; // add current time to date (for exact sorting)
+
+    if (this.paymentType === 'income') {
+      incomeBody = {
+        type: 'income',
+        amount: this.incomeFormGroup.get('amount')?.value,
+        category: this.incomeFormGroup.get('category')?.value,
+        label: this.incomeFormGroup.get('label')?.value,
+        ...(this.paymentType === 'income' && {
+          rentStartDate: this.incomeFormGroup.get('rentStartDate')?.value
+            ? new Date(this.incomeFormGroup.get('rentStartDate')?.value)
+            : null,
+        }),
+        ...(this.paymentType === 'income' && {
+          rentEndDate: this.incomeFormGroup.get('rentEndDate')?.value
+            ? new Date(this.incomeFormGroup.get('rentEndDate')?.value)
+            : null,
+        }),
+        method: this.incomeFormGroup.get('method')?.value,
+        agreementId: this.incomeFormGroup.get('agreementId')?.value,
+        paymentDate: getPaymentDate(),
+        ...(this.incomeFormGroup.get('notes')?.value && {
+          notes: this.incomeFormGroup.get('notes')?.value,
+        }),
+      };
+    }
+    if (this.paymentType === 'expense') {
+      expenseBody = {
+        type: 'expense',
+        amount: this.expenseFormGroup.get('amount')?.value,
+        category: this.expenseFormGroup.get('category')?.value,
+        label: this.expenseFormGroup.get('label')?.value,
+        method: this.expenseFormGroup.get('method')?.value,
+        matriculeProperty:
+          this.expenseFormGroup.get('matriculeProperty')?.value,
+        paymentDate: getPaymentDate(),
+        ...(this.expenseFormGroup.get('notes')?.value && {
+          notes: this.expenseFormGroup.get('notes')?.value,
+        }),
+        rentStartDate: null,
+        rentEndDate: null,
+      };
+    }
+
     let body: any = {
       ...(this.paymentDetails && { id: this.paymentDetails.id }),
-      amount: this.formGroup.get('amount')?.value,
-      label: this.formGroup.get('label')?.value,
-      rentStartDate: new Date(this.formGroup.get('rentStartDate')?.value),
-      rentEndDate: new Date(this.formGroup.get('rentEndDate')?.value),
-      type: this.formGroup.get('type')?.value,
-      category: this.formGroup.get('category')?.value,
-      method: this.formGroup.get('method')?.value,
-      agreementId: this.formGroup.get('agreementId')?.value,
-      ...(this.formGroup.get('notes')?.value && {
-        notes: this.formGroup.get('notes')?.value,
-      }),
+      ...(this.paymentType === 'income' && { ...incomeBody }),
+      ...(this.paymentType === 'expense' && { ...expenseBody }),
     };
+    console.log(body);
     if (this.paymentDetails) {
       this.paymentService
         .updatePayment(this.paymentDetails.id, body)

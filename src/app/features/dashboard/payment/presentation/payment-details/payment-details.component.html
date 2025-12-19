@@ -2,12 +2,12 @@
   <div class="card-header">
     <div class="row align-items-center">
       <div class="col-8">
-        <h3 class="mb-0">Détails Paiement</h3>
+        <h3 class="mb-0">Détails du mouvement</h3>
       </div>
     </div>
   </div>
 
-  <div class="card-body">
+  <div *ngIf="paymentDetails?.type === 'income'" class="card-body">
     <div class="pl-lg-4">
       <div class="row">
         <div class="col-lg-3">
@@ -15,7 +15,7 @@
             <h5 class="card-title text-uppercase text-muted mb-0">Type</h5>
 
             <h5 class="h2 font-weight-bold mb-0 mt-1">
-              {{ paymentDetails?.type }}
+              Recette - {{ paymentDetails?.category }}
             </h5>
           </div>
         </div>
@@ -26,33 +26,11 @@
             </h5>
 
             <h5 class="h2 font-weight-bold mb-0 mt-1">
-              {{ paymentDetails?.amount }}
+              <i class="fas fa-arrow-up text-success mr-1"> </i>
+              {{ paymentDetails?.amount }} DT - {{ paymentDetails?.method }}
             </h5>
           </div>
         </div>
-        <div class="col-lg-3">
-          <div class="form-group">
-            <h5 class="card-title text-uppercase text-muted mb-0">Méthode</h5>
-
-            <h5 class="h2 font-weight-bold mb-0 mt-1">
-              {{ paymentDetails?.method }}
-            </h5>
-          </div>
-        </div>
-        <div class="col-lg-3">
-          <div class="form-group">
-            <h5 class="card-title text-uppercase text-muted mb-0">
-              Fréquence de paiement
-            </h5>
-
-            <h5 class="h5 font-weight-bold mb-0 mt-1">
-              {{ paymentDetails?.payementFrequency }}
-            </h5>
-          </div>
-        </div>
-      </div>
-
-      <div class="row">
         <div class="col-lg-3">
           <div class="form-group">
             <h5 class="card-title text-uppercase text-muted mb-0">Locataire</h5>
@@ -71,9 +49,164 @@
             </h5>
           </div>
         </div>
+      </div>
+
+      <div class="row">
         <div class="col-lg-3">
           <div class="form-group">
-            <h5 class="card-title text-uppercase text-muted mb-0">Crée le</h5>
+            <h5 class="card-title text-uppercase text-muted mb-0">
+              Propriété (Bien)
+            </h5>
+
+            <h5 class="h2 font-weight-bold mb-0 mt-1">
+              {{ paymentDetails?.property }}
+            </h5>
+          </div>
+        </div>
+        <div class="col-lg-3">
+          <div class="form-group">
+            <h5 class="card-title text-uppercase text-muted mb-0">
+              Propriétaire
+            </h5>
+
+            <h5 class="h2 font-weight-bold mb-0 mt-1">
+              {{ paymentDetails?.owner }}
+            </h5>
+          </div>
+        </div>
+        <div class="col-lg-3">
+          <div class="form-group">
+            <h5 class="card-title text-uppercase text-muted mb-0">Libellé</h5>
+
+            <h5 class="h2 font-weight-bold mb-0 mt-1">
+              {{ paymentDetails?.label }}
+            </h5>
+          </div>
+        </div>
+        <div class="col-lg-3" *ngIf="paymentDetails?.category === 'Loyer'">
+          <div class="form-group">
+            <h5 class="card-title text-uppercase text-muted mb-0">
+              Période couverte
+            </h5>
+
+            <h5 class="h2 font-weight-bold mb-0 mt-1">
+              {{ paymentDetails?.rentStartDate | date: "dd/MM/yyyy" }} -
+              {{ paymentDetails?.rentEndDate | date: "dd/MM/yyyy" }}
+            </h5>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-3">
+          <div class="form-group">
+            <h5 class="card-title text-uppercase text-muted mb-0">
+              Date de paiement
+            </h5>
+
+            <h5 class="h2 font-weight-bold mb-0 mt-1">
+              {{ paymentDetails?.paymentDate | date: "dd/MM/yyyy" }}
+            </h5>
+          </div>
+        </div>
+        <div class="col-lg-3">
+          <div class="form-group">
+            <h5 class="card-title text-uppercase text-muted mb-0">
+              Date de création
+            </h5>
+
+            <h5 class="h2 font-weight-bold mb-0 mt-1">
+              {{ paymentDetails?.createdAt | date: "dd/MM/yyyy" }}
+            </h5>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="paymentDetails?.type === 'expense'" class="card-body">
+    <div class="pl-lg-4">
+      <div class="row">
+        <div class="col-lg-3">
+          <div class="form-group">
+            <h5 class="card-title text-uppercase text-muted mb-0">Type</h5>
+
+            <h5 class="h2 font-weight-bold mb-0 mt-1">
+              Dépense - {{ paymentDetails?.category }}
+            </h5>
+          </div>
+        </div>
+        <div class="col-lg-3">
+          <div class="form-group">
+            <h5 class="card-title text-uppercase text-muted mb-0">
+              Montant en DT
+            </h5>
+
+            <h5 class="h2 font-weight-bold mb-0 mt-1">
+              <i class="fas fa-arrow-down text-warning mr-1"> </i>
+              {{ paymentDetails?.amount }} DT - {{ paymentDetails?.method }}
+            </h5>
+          </div>
+        </div>
+        <div class="col-lg-3">
+          <div class="form-group">
+            <h5 class="card-title text-uppercase text-muted mb-0">
+              Propriétaire
+            </h5>
+
+            <h5 class="h2 font-weight-bold mb-0 mt-1">
+              {{ paymentDetails?.owner }}
+            </h5>
+          </div>
+        </div>
+        <div class="col-lg-3">
+          <div class="form-group">
+            <h5 class="card-title text-uppercase text-muted mb-0">
+              Propriété (Bien)
+            </h5>
+
+            <h5 class="h2 font-weight-bold mb-0 mt-1">
+              {{ paymentDetails?.property }}
+            </h5>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-lg-3">
+          <div class="form-group">
+            <h5 class="card-title text-uppercase text-muted mb-0">Libellé</h5>
+
+            <h5 class="h2 font-weight-bold mb-0 mt-1">
+              {{ paymentDetails?.label }}
+            </h5>
+          </div>
+        </div>
+
+        <div class="col-lg-3" *ngIf="paymentDetails?.category === 'Loyer'">
+          <div class="form-group">
+            <h5 class="card-title text-uppercase text-muted mb-0">
+              Période courvré
+            </h5>
+
+            <h5 class="h2 font-weight-bold mb-0 mt-1">
+              {{ paymentDetails?.rentStartDate | date: "dd/MM/yyyy" }} -
+              {{ paymentDetails?.rentEndDate | date: "dd/MM/yyyy" }}
+            </h5>
+          </div>
+        </div>
+        <div class="col-lg-3">
+          <div class="form-group">
+            <h5 class="card-title text-uppercase text-muted mb-0">Date de paiement</h5>
+
+            <h5 class="h2 font-weight-bold mb-0 mt-1">
+              {{ paymentDetails?.paymentDate | date: "dd/MM/yyyy" }}
+            </h5>
+          </div>
+        </div>
+        <div class="col-lg-3">
+          <div class="form-group">
+            <h5 class="card-title text-uppercase text-muted mb-0">
+              Date de création
+            </h5>
 
             <h5 class="h2 font-weight-bold mb-0 mt-1">
               {{ paymentDetails?.createdAt | date: "dd/MM/yyyy" }}

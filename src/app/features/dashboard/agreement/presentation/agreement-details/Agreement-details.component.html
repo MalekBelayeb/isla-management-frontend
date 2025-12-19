@@ -42,11 +42,11 @@
         <div class="col-lg-3">
           <div class="form-group">
             <h5 class="card-title text-uppercase text-muted mb-0">
-              Montant loyer
+              Propriété (Bien)
             </h5>
 
-            <h5 class="h5 font-weight-bold mb-0 mt-1">
-              {{ agreementDetails?.rentAmount }} DT
+            <h5 class="h2 font-weight-bold mb-0 mt-1">
+              {{ agreementDetails?.property }}
             </h5>
           </div>
         </div>
@@ -56,10 +56,11 @@
         <div class="col-lg-3">
           <div class="form-group">
             <h5 class="card-title text-uppercase text-muted mb-0">
-              Fréquence de paiement
+              Montant loyer
             </h5>
 
-            <h5 class="h2 font-weight-bold mb-0 mt-1">
+            <h5 class="h5 font-weight-bold mb-0 mt-1">
+              {{ agreementDetails?.rentAmount }} DT -
               {{ agreementDetails?.paymentFrequency }}
             </h5>
           </div>
@@ -73,21 +74,26 @@
             </h5>
           </div>
         </div>
+
         <div class="col-lg-3">
           <div class="form-group">
-            <h5 class="card-title text-uppercase text-muted mb-0">Crée le</h5>
+            <h5 class="card-title text-uppercase text-muted mb-0">
+              Propriétaire
+            </h5>
 
             <h5 class="h2 font-weight-bold mb-0 mt-1">
-              {{ agreementDetails?.createdAt | date: "dd/MM/yyyy" }}
+              {{ agreementDetails?.owner }}
             </h5>
           </div>
         </div>
         <div class="col-lg-3">
           <div class="form-group">
-            <h5 class="card-title text-uppercase text-muted mb-0">Signé le:</h5>
+            <h5 class="card-title text-uppercase text-muted mb-0">
+              Date de création
+            </h5>
 
             <h5 class="h2 font-weight-bold mb-0 mt-1">
-              {{ agreementDetails?.signedAt | date: "dd/MM/yyyy" }}
+              {{ agreementDetails?.createdAt | date: "dd/MM/yyyy" }}
             </h5>
           </div>
         </div>
@@ -97,3 +103,61 @@
 </div>
 
 <app-upsert-agreement [agreementDetails]="agreementDetails" />
+
+<div class="card">
+  <div class="card-header">
+    <div class="row align-items-center">
+      <div class="col-8">
+        <h3 class="mb-0">Suspension du contrat</h3>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-body">
+    <div class="pl-lg-4">
+      <div class="row">
+        <h4>
+          <span>État actuel:</span>
+        </h4>
+      </div>
+      <div *ngIf="agreementDetails?.status === 'ACTIVE'" class="row">
+        <span class="badge badge-lg badge-success"> ACTIVE </span>
+      </div>
+      <div *ngIf="agreementDetails?.status === 'SUSPENDED'" class="row">
+        <span class="badge badge-lg badge-warning"> SUSPENDU </span>
+      </div>
+      <div *ngIf="agreementDetails?.status === 'ACTIVE'" class="row mt-4">
+        <small>
+          La suspension du contrat implique que toutes les activités liées à ce
+          contrat sont temporairement interrompues et ne sont plus considérées
+          comme acceptables jusqu’à la reprise.</small
+        >
+      </div>
+    </div>
+    <div class="mt-5 d-flex w-100 flex-row justify-content-end">
+      <div
+          *ngIf="isSuspendAgreementLoading"
+          class="spinner-border text-primary mr-5"
+          role="status"
+        ></div>
+      <button
+        *ngIf="!isSuspendAgreementLoading && agreementDetails?.status === 'ACTIVE'"
+        class="btn btn-danger"
+        (click)="toogleAgreementStatus(agreementDetails?.id ?? '')"
+        type="submit"
+      >
+        Suspendre maintenant
+      </button>
+      <button
+        *ngIf="!isSuspendAgreementLoading && agreementDetails?.status === 'SUSPENDED'"
+        class="btn btn-primary"
+        (click)="toogleAgreementStatus(agreementDetails?.id ?? '')"
+        type="submit"
+      >
+        Activer maintenant
+      </button>
+    </div>
+  </div>
+
+  <div class="card-footer"></div>
+</div>

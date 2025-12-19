@@ -3,12 +3,13 @@ export interface Agreement {
   matricule: string;
   rentAmount: number;
   startDate: Date;
-  expireDate: Date;
   status: string;
   signedAt: string;
   createdAt: string;
   paymentFrequency: string;
   apartment: string;
   tenant: string;
+  property: string;
+  owner: string;
   nbDaysOfTolerance: number;
 }

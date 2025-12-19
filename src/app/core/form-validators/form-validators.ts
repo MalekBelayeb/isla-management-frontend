@@ -16,6 +16,14 @@ export const cinValidator: ValidatorFn = (
   return regex.test(control.value.cin) ? null : { cinIncorrect: true };
 };
 
+export const ribValidator: ValidatorFn = (
+  control: AbstractControl,
+): ValidationErrors | null => {
+  if (!control.value.rib) return null;
+  const regex = /^\d{20}$/;
+  return regex.test(control.value.rib) ? null : { ribIncorrect: true };
+};
+
 export const phoneNumberTnValidator: ValidatorFn = (
   control: AbstractControl,
 ): ValidationErrors | null => {
@@ -25,14 +33,4 @@ export const phoneNumberTnValidator: ValidatorFn = (
   return regex.test(control.value.phoneNumber)
     ? null
     : { phoneNumberIncorrect: true };
-};
-
-export const agreementPeriodDateValidator: ValidatorFn = (
-  control: AbstractControl,
-): ValidationErrors | null => {
-  if (!control.value.startDate || !control.value.expireDate) return null;
-
-  return new Date(control.value.startDate) > new Date(control.value.expireDate)
-    ? { agreementPeriodIncorrect: true }
-    : null;
 };

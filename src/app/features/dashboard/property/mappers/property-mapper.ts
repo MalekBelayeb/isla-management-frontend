@@ -17,6 +17,7 @@ export class PropertyMapper {
       ownerId: data.owner.id,
       idNumber: `${propertyPrefix}${data.matricule}`,
       createdAt: data.createdAt,
+      profitInPercentage: data.profitInPercentage,
       apartments: [],
     };
   }
