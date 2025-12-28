@@ -22,6 +22,7 @@ export class GetOwnerDetailsMapper {
       nationality: data.nationality,
       phoneNumber: data.phoneNumber,
       rib: data.rib,
+      bank: data.bank,
       type: data.type == 'natural' ? 'natural' : 'legal',
       createdAt: new Date(data.createdAt),
       nbPremises: 0,

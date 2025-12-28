@@ -36,7 +36,7 @@ export class PropertyDetailsComponent implements OnInit {
     isAnimated: true,
     containerClass: 'theme-red',
   };
-
+  filterDateType: 'dateToDate' | 'quarterly' = 'quarterly';
   trimestersOptions: SearchResult[] = [];
   trimesterSearchValue?: SearchResult;
 
@@ -44,6 +44,8 @@ export class PropertyDetailsComponent implements OnInit {
   financialBalance?: FinancialBalance;
   formGroup: FormGroup;
   isLoadingFetchingApartments = false;
+
+  filtersFormGroup: FormGroup;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -58,7 +60,10 @@ export class PropertyDetailsComponent implements OnInit {
   ) {
     this.maxDate.setDate(this.maxDate.getDate() + 7);
     this.bsRangeValue = [this.bsValue, this.maxDate];
-
+    this.filtersFormGroup = this.formBuilder.group({
+      startDate: new FormControl(''),
+      endDate: new FormControl(''),
+    });
     this.formGroup = this.formBuilder.group({
       apartmentId: new FormControl('', Validators.required),
     });
@@ -76,14 +81,14 @@ export class PropertyDetailsComponent implements OnInit {
     this.trimestersOptions = this.getTrimesters().map(
       (item): SearchResult => ({
         id: item.name,
-        title: `${item.name} - ${item.start.toISOString().split('T')[0]} - ${item.end.toISOString().split('T')[0]}`,
+        title: `${item.name} - ${item.start.toLocaleDateString('fr-FR')} - ${item.end.toLocaleDateString('fr-FR')}`,
       }),
     );
     const currrentTrimstre = this.getCurrentTrimestre();
     if (currrentTrimstre) {
       this.trimesterSearchValue = {
         id: currrentTrimstre.name,
-        title: `${currrentTrimstre.name} - ${currrentTrimstre.start.toISOString().split('T')[0]} - ${currrentTrimstre.end.toISOString().split('T')[0]}`,
+        title: `${currrentTrimstre.name} - ${currrentTrimstre.start.toLocaleDateString('fr-FR')} - ${currrentTrimstre.end.toLocaleDateString('fr-FR')}`,
       };
     }
     this.getPropertyDetails();
@@ -110,18 +115,63 @@ export class PropertyDetailsComponent implements OnInit {
   onSelectedTrimesterSearchItem($event: SearchResult) {
     const id = $event.id;
     const trimester = this.getTrimesters().find((item) => item.name === id);
+    this.filtersFormGroup
+      .get('startDate')
+      ?.setValue(trimester?.start.toISOString().split('T')[0]);
+    this.filtersFormGroup
+      .get('endDate')
+      ?.setValue(trimester?.end.toISOString().split('T')[0]);
+  }
+
+  filterFinancialBalance() {
     this.getFinancialBalance(
-      trimester?.start.toISOString().split('T')[0],
-      trimester?.end.toISOString().split('T')[0],
+      this.filtersFormGroup.get('startDate')?.value,
+      this.filtersFormGroup.get('endDate')?.value,
     );
   }
+  onStartDateChange($event: Date) {
+    this.filtersFormGroup
+      .get('startDate')
+      ?.setValue($event.toISOString().split('T')[0]);
+  }
+  setDefaultRentStartDateAndRentEndDate() {
+    const now = new Date();
+
+    const startDate = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      1,
+    ).toLocaleDateString('en-CA', {
+      timeZone: 'Africa/Tunis',
+    });
+
+    const endDate = new Date(
+      now.getFullYear(),
+      now.getMonth() + 1,
+      0,
+      23,
+      59,
+      59,
+    ).toLocaleDateString('en-CA', {
+      timeZone: 'Africa/Tunis',
+    });
+    this.filtersFormGroup.get('startDate')?.setValue(startDate.split('T')[0]);
+
+    this.filtersFormGroup.get('endDate')?.setValue(endDate.split('T')[0]);
+  }
+  onEndDateChange($event: Date) {
+    this.filtersFormGroup
+      .get('endDate')
+      ?.setValue($event?.toISOString().split('T')[0]);
+  }
+
   getFinancialBalance(startDate?: string, endDate?: string) {
     const params = {
       propertyId: this.getPropertyId(),
       ...(startDate && { startDate }),
       ...(endDate && { endDate }),
     };
-    
+
     if (endDate) {
       this.endDate = new Date(endDate);
     }
@@ -190,8 +240,6 @@ export class PropertyDetailsComponent implements OnInit {
     return Array.from({ length: 4 }, (_, i) => {
       const start = new Date(year, i * 3, 1);
       const end = new Date(year, (i + 1) * 3, 0);
-      start.setDate(start.getDate() + 1);
-      end.setDate(end.getDate() + 1);
 
       return {
         name: `T${i + 1}`,

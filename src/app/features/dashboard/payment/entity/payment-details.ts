@@ -1,6 +1,7 @@
 export interface PaymentDetails {
   id: string;
   amount: string;
+  tva?: string;
   paymentDate: string;
   method: string;
   label: string;
@@ -8,6 +9,9 @@ export interface PaymentDetails {
   rentEndDate?: Date;
   type: string;
   category: string;
+  bank: string;
+  checkNumber: string;
+  transferNumber: string;
   agreement?: string;
   agreementId?: string;
   matriculeProperty?: string;

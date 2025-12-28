@@ -34,3 +34,43 @@ export const phoneNumberTnValidator: ValidatorFn = (
     ? null
     : { phoneNumberIncorrect: true };
 };
+
+export const bankFieldRequiredIfMethodIsCheckValidator: ValidatorFn = (
+  control: AbstractControl,
+): ValidationErrors | null => {
+  if (control.value.method != 'check') return null;
+
+  return control.value.bank
+    ? null
+    : { bankFieldIsRequired: true };
+};
+
+export const checkNumberFieldRequiredIfMethodIsCheckValidator: ValidatorFn = (
+  control: AbstractControl,
+): ValidationErrors | null => {
+  if (control.value.method != 'check') return null;
+  const regex = /^(0|[1-9]\d*)$/;
+  return regex.test(control.value.checkNumber)
+    ? null
+    : { checkNumberFieldIsIncorrect: true };
+};
+
+export const transferNumberFieldRequiredIfMethodIsTransferValidator: ValidatorFn = (
+  control: AbstractControl,
+): ValidationErrors | null => {
+  if (control.value.method != 'transfer') return null;
+  const regex = /^(0|[1-9]\d*)$/;
+  return regex.test(control.value.transferNumber)
+    ? null
+    : { transferNumberFieldIsIncorrect: true };
+};
+
+
+export const agreementIdFieldRequiredIfcategoryIsRentValidator: ValidatorFn = (
+  control: AbstractControl,
+): ValidationErrors | null => {
+  if (control.value.category != 'rent') return null;
+  return control.value.agreementId
+    ? null
+    : { transferNumberFieldIsRequired: true };
+};

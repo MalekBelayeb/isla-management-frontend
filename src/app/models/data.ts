@@ -105,9 +105,9 @@ export class DataTypes {
 
   static paymentFrequencyTypeList: SearchResult[] = [
     { id: 'MONTHLY', title: 'Mensuel' },
-    { id: 'DAILY', title: 'Quotidien' },
+    /*{ id: 'DAILY', title: 'Quotidien' },
     { id: 'QUARTERLY', title: 'Trimestriel' },
-    { id: 'YEARLY', title: 'Annuel' },
+    { id: 'YEARLY', title: 'Annuel' },*/
   ];
 
   static paymentMethodTypeList: SearchResult[] = [

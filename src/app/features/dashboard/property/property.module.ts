@@ -10,6 +10,7 @@ import { UpsertPropertyComponent } from './presentation/upsert-property/upsert-p
 import { PropertyDetailsComponent } from './presentation/property-details/property-details.component';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { SearchInputModule } from '@shared/search-input/search-input.module';
+import { DateRangePickerModule } from '@shared/form-inputs/date-range-picker/date-range-picker.module';
 
 @NgModule({
   declarations: [
@@ -26,6 +27,7 @@ import { SearchInputModule } from '@shared/search-input/search-input.module';
     PaginationModule.forRoot(),
     BsDatepickerModule.forRoot(),
     SearchInputModule,
+    DateRangePickerModule,
   ],
 })
 export class PropertyModule {}

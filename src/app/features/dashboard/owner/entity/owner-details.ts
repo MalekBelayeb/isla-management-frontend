@@ -14,6 +14,7 @@ export interface OwnerDetails {
   society?: string;
   taxId?: string; // matricule
   rib: string;
+  bank: string;
   nbProperty: number;
   nbPremises: number;
 }

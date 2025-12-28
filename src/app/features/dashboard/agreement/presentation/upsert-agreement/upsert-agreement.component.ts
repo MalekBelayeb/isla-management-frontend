@@ -64,7 +64,8 @@ export class UpsertAgreementComponent implements OnInit {
   apartmentOptions: SearchResult[] = [];
   searchTenantValue: string = '';
   searchApartmentValue: string = '';
-  paymentFrequencySearchValue: string = '';
+  paymentFrequencySearchValue: string =
+    DataTypes.paymentFrequencyTypeList[0].title;
 
   onStartDateChange($event: Date) {
     this.formGroup

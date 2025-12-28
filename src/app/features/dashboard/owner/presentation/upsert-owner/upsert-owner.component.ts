@@ -44,6 +44,7 @@ export class UpsertOwnerComponent implements OnInit, OnChanges {
   focus8 = false;
   focus9 = false;
   focus10 = false;
+  focus11 = false;
   canChangeType: boolean = true;
   default = {
     keyboard: true,
@@ -65,6 +66,7 @@ export class UpsertOwnerComponent implements OnInit, OnChanges {
       nationality: new FormControl(DataTypes.nationalityTypeList[0].id),
       cin: new FormControl(''),
       rib: new FormControl(''),
+      bank: new FormControl(''),
       phoneNumber: new FormControl('', Validators.required),
       gender: new FormControl('M'),
       type: new FormControl('natural'),
@@ -83,6 +85,7 @@ export class UpsertOwnerComponent implements OnInit, OnChanges {
         this.formGroup.get('email')?.setValue(this.ownerDetails?.email);
         this.formGroup.get('cin')?.setValue(this.ownerDetails?.cin);
         this.formGroup.get('rib')?.setValue(this.ownerDetails?.rib);
+        this.formGroup.get('bank')?.setValue(this.ownerDetails?.bank);
         this.formGroup
           .get('phoneNumber')
           ?.setValue(this.ownerDetails?.phoneNumber);
@@ -115,7 +118,7 @@ export class UpsertOwnerComponent implements OnInit, OnChanges {
       'phoneNumber',
       'society',
       'taxId',
-      'rib',
+      'bank',
       'email',
     ].forEach((key) => {
       this.formGroup.get(key)?.setValue('');
@@ -137,8 +140,8 @@ export class UpsertOwnerComponent implements OnInit, OnChanges {
     const type = this.formGroup.get('type')?.value;
     requiredControls =
       type == 'natural'
-        ? ['firstname', 'lastname', 'cin', 'rib', 'phoneNumber']
-        : ['society', 'taxId', 'rib', 'phoneNumber'];
+        ? ['firstname', 'lastname', 'cin', 'rib', 'phoneNumber', 'bank']
+        : ['society', 'taxId', 'rib', 'phoneNumber', 'bank'];
 
     requiredControls.forEach((key) => {
       this.formGroup.get(key)?.addValidators(Validators.required);
@@ -175,6 +178,7 @@ export class UpsertOwnerComponent implements OnInit, OnChanges {
       }),
       cin: `${this.formGroup.get('cin')?.value}`,
       rib: `${this.formGroup.get('rib')?.value}`,
+      bank: `${this.formGroup.get('bank')?.value}`,
       society: this.formGroup.get('society')?.value,
       taxId: `${this.formGroup.get('taxId')?.value}`,
       type: this.formGroup.get('type')?.value,

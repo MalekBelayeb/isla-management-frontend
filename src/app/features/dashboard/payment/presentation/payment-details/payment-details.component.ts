@@ -21,6 +21,8 @@ export class PaymentDetailsComponent implements OnInit {
 
   paymentDetails?: PaymentDetails;
   propertyPrefix: string = propertyPrefix;
+
+  exportReceiptIsLoading: boolean = false;
   ngOnInit() {
     this.getPaymentDetails();
   }
@@ -41,5 +43,28 @@ export class PaymentDetailsComponent implements OnInit {
         console.log(err);
       },
     });
+  }
+  generateReceipt(paymentId: string) {
+    this.paymentService.generateReceipt(paymentId).subscribe({
+      next: (value) => {
+        const time = new Date().getTime();
+        const link = document.createElement('a');
+        link.href = window.URL.createObjectURL(value);
+        link.download = `quittance_de_paiement_${time}.docx`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        this.exportReceiptIsLoading = false;
+      },
+      error: (err) => {
+        console.log(err);
+        this.exportReceiptIsLoading = false;
+      },
+    });
+  }
+  exportPaymentReceipt() {
+    this.exportReceiptIsLoading = true;
+    if (!this.paymentDetails?.id) return;
+    this.generateReceipt(this.paymentDetails?.id);
   }
 }

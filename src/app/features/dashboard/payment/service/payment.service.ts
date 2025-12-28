@@ -27,6 +27,15 @@ export class PaymentService {
     });
   }
 
+  generateReceipt(paymentId: string) {
+    return this.httpClient.get<any>(
+      `${conts.generateReceiptUrl}/${paymentId}`,
+      {
+        responseType: 'blob' as 'json',
+      },
+    );
+  }
+
   getPayment(id: string) {
     return this.httpClient.get<any>(`${conts.getPaymentUrl}/${id}`, {
       observe: 'response',

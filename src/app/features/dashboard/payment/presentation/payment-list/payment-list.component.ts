@@ -6,6 +6,8 @@ import { AgreeementMapper } from '@dashboard/agreement/mappers/agreement.mapper'
 import { AgreementService } from '@dashboard/agreement/service/agreement.service';
 import { ApartmentMapper } from '@dashboard/apartment/mappers/apartment-mapper';
 import { ApartmentService } from '@dashboard/apartment/service/apartment.service';
+import { GetAllOwnersMapper } from '@dashboard/owner/mappers/get-all-owners-mapper';
+import { OwnerService } from '@dashboard/owner/service/owner.service';
 import { Payment } from '@dashboard/payment/entity/payment';
 import { PaymentMapper } from '@dashboard/payment/mappers/payment-mapper';
 import { PaymentService } from '@dashboard/payment/service/payment.service';
@@ -41,11 +43,13 @@ export class PaymentListComponent implements OnInit {
   focus3: boolean = false;
   agreementPrefix: string = agreementPrefix;
   propertyPrefix: string = propertyPrefix;
-  groupSearchResult: SearchResult[] = [];
-  activitySearchResult: SearchResult[] = [];
-  siteSearchResult: SearchResult[] = [];
 
   paymentMethodTypeSearchValue: SearchResult = { id: 'all', title: 'Tout' };
+  paymentTypes: SearchResult[] = [
+    { id: 'all', title: 'Tout' },
+    ...DataTypes.paymentTypeList,
+  ];
+  paymentTypeSearchValue: SearchResult = { id: 'all', title: 'Tout' };
   paymentMethodsType: SearchResult[] = [
     { id: 'all', title: 'Tout' },
     ...DataTypes.paymentMethodTypeList,
@@ -61,7 +65,7 @@ export class PaymentListComponent implements OnInit {
     private modalService: BsModalService,
     private confirmDialogService: ConfirmDialogService,
     private queryStringBuilder: QueryStringBuilder,
-    private apartmentService: ApartmentService,
+    private ownerService: OwnerService,
     private agreementService: AgreementService,
     private tenantService: TenantService,
     private tenantMapper: TenantMapper,
@@ -69,12 +73,13 @@ export class PaymentListComponent implements OnInit {
   ) {
     this.filtersFormGroup = this.formBuilder.group({
       searchTerm: new FormControl(''),
-      apartmentId: new FormControl(''),
+      ownerId: new FormControl(''),
       agreementId: new FormControl(''),
       tenantId: new FormControl(''),
       paymentAgreement: new FormControl(''),
       paymentProperty: new FormControl(''),
       paymentMethod: new FormControl(this.paymentMethodsType[0].id),
+      paymentType: new FormControl(this.paymentTypes[0].id),
       startDate: new FormControl(''),
       endDate: new FormControl(''),
     });
@@ -82,11 +87,11 @@ export class PaymentListComponent implements OnInit {
 
   selectedUsers: string[] = [];
   showCheckboxSelection = false;
-  apartmentOptions: SearchResult[] = [];
+  ownerOptions: SearchResult[] = [];
   agreementOptions: SearchResult[] = [];
   tenantOptions: SearchResult[] = [];
 
-  searchApartmentValue: string = '';
+  searchOwnerValue: string = '';
   searchAgreementValue: string = '';
   searchTenantValue: string = '';
 
@@ -120,7 +125,7 @@ export class PaymentListComponent implements OnInit {
 
   clearInputValue = false;
 
-  onSearchApartmentValueChanged(searchValue?: string) {
+  onSearchOwnerValueChanged(searchValue?: string) {
     const params = {
       ...(searchValue && { searchTerm: searchValue }),
       limit: `${defaultSearchLimit}`,
@@ -128,19 +133,19 @@ export class PaymentListComponent implements OnInit {
 
     const queryString = new URLSearchParams(params).toString();
 
-    this.apartmentService.getAllApartments(`?${queryString}`).subscribe({
+    this.ownerService.getAllOwners(`?${queryString}`).subscribe({
       next: (value) => {
-        const apartments = ApartmentMapper.mapApartments(value.body.apartments);
-        this.apartmentOptions = apartments.map((item) => ({
+        const owners = GetAllOwnersMapper.fromResponse(value.body.owners);
+        this.ownerOptions = owners.map((item) => ({
           id: item.id,
-          title: `${apartmentPrefix}${item.matricule} - ${item.address}`,
+          title: `${item.name}`,
         }));
       },
     });
   }
 
-  onSelectedApartmentSearchItem(searchResult: SearchResult) {
-    this.filtersFormGroup.get('apartmentId')?.setValue(searchResult.id);
+  onSelectedOwnerSearchItem(searchResult: SearchResult) {
+    this.filtersFormGroup.get('ownerId')?.setValue(searchResult.id);
   }
 
   onSearchAgreementValueChanged(searchValue?: string) {
@@ -169,6 +174,10 @@ export class PaymentListComponent implements OnInit {
 
   onSelectedPaymentMethodTypeSearchItem(event: SearchResult) {
     this.filtersFormGroup.get('paymentMethod')?.setValue(event.id);
+  }
+
+  onSelectedPaymentTypeSearchItem(event: SearchResult) {
+    this.filtersFormGroup.get('paymentType')?.setValue(event.id);
   }
 
   onSearchTenantValueChanged(searchValue?: string) {
@@ -225,6 +234,9 @@ export class PaymentListComponent implements OnInit {
     console.log(this.filtersFormGroup.get('paymentMethod')?.value);
     if (this.filtersFormGroup.get('paymentMethod')?.value === 'all') {
       this.filtersFormGroup.get('paymentMethod')?.setValue('');
+    }
+    if (this.filtersFormGroup.get('paymentType')?.value === 'all') {
+      this.filtersFormGroup.get('paymentType')?.setValue('');
     }
     const urlParameters = this.queryStringBuilder.create(
       { page, limit },

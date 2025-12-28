@@ -4,8 +4,18 @@
     <ng-container *ngIf="paymentDetails && paymentDetails.type === 'income'">
       <small> <i class="fas fa-arrow-up text-success mr-1"> </i> Recette</small>
     </ng-container>
+    <ng-container
+      *ngIf="paymentDetails && paymentDetails.type === 'expense_agency'"
+    >
+      <small>
+        <i class="fas fa-arrow-down text-warning mr-1"> </i> Dépense
+        agence</small
+      >
+    </ng-container>
     <ng-container *ngIf="paymentDetails && paymentDetails.type === 'expense'">
-      <small><i class="fas fa-arrow-down text-warning mr-1"> </i> Dépense</small>
+      <small
+        ><i class="fas fa-arrow-down text-warning mr-1"> </i> Dépense</small
+      >
     </ng-container>
     <h3 *ngIf="!paymentDetails" class="mb-0">Créer un mouvement de caisse</h3>
   </div>
@@ -80,7 +90,7 @@
           class="col-md-2 col-form-label form-control-label"
           for="example-text-input"
         >
-          Montant en DT <span class="text-danger">*</span>
+          Montant total en DT (TTC) <span class="text-danger">*</span>
         </label>
 
         <div class="col-md-10">
@@ -221,13 +231,130 @@
           ></app-search-input>
         </div>
       </div>
+      <div
+        *ngIf="incomeFormGroup.get('method')?.value == 'check'"
+        class="form-group row"
+      >
+        <label
+          class="col-md-2 col-form-label form-control-label"
+          for="example-text-input"
+        >
+          Banque <span class="text-danger">*</span>
+        </label>
 
+        <div class="col-md-10">
+          <div class="input-group input-group-merge">
+            <input
+              formControlName="bank"
+              class="form-control"
+              id="example-text-input"
+              placeholder=""
+              type="text"
+              [ngClass]="{
+                focused: focus1 === true,
+                'is-invalid':
+                  submitted && activeForm.errors?.['bankFieldIsRequired'],
+              }"
+              (focus)="focus10 = true"
+              (blur)="focus10 = false"
+            />
+          </div>
+
+          <div
+            *ngIf="submitted && activeForm.errors?.['bankFieldIsRequired']"
+            class="error-text"
+          >
+            Champs incorrect, Banque est obligatoire.
+          </div>
+        </div>
+      </div>
+      <div
+        *ngIf="incomeFormGroup.get('method')?.value == 'check'"
+        class="form-group row"
+      >
+        <label
+          class="col-md-2 col-form-label form-control-label"
+          for="example-text-input"
+        >
+          Numéro de chéque <span class="text-danger">*</span>
+        </label>
+
+        <div class="col-md-10">
+          <div class="input-group input-group-merge">
+            <input
+              formControlName="checkNumber"
+              class="form-control"
+              id="example-text-input"
+              type="text"
+              [ngClass]="{
+                focused: focus1 === true,
+                'is-invalid':
+                  submitted &&
+                  activeForm.errors?.['checkNumberFieldIsIncorrect'],
+              }"
+              (focus)="focus9 = true"
+              (blur)="focus9 = false"
+            />
+          </div>
+          <div
+            *ngIf="
+              submitted && activeForm.errors?.['checkNumberFieldIsIncorrect']
+            "
+            class="error-text"
+          >
+            Champs incorrect, Numéro de chéque est incorrect.
+          </div>
+        </div>
+      </div>
+      <div
+        *ngIf="incomeFormGroup.get('method')?.value == 'transfer'"
+        class="form-group row"
+      >
+        <label
+          class="col-md-2 col-form-label form-control-label"
+          for="example-text-input"
+        >
+          Numéro de virement <span class="text-danger">*</span>
+        </label>
+
+        <div class="col-md-10">
+          <div class="input-group input-group-merge">
+            <input
+              formControlName="transferNumber"
+              class="form-control"
+              id="example-text-input"
+              type="text"
+              [ngClass]="{
+                focused: focus1 === true,
+                'is-invalid':
+                  submitted &&
+                  activeForm.errors?.['transferNumberFieldIsIncorrect'],
+              }"
+              (focus)="focus11 = true"
+              (blur)="focus11 = false"
+            />
+          </div>
+          <div
+            *ngIf="
+              submitted && activeForm.errors?.['transferNumberFieldIsIncorrect']
+            "
+            class="error-text"
+          >
+            Champs incorrect, Numéro de virement est incorrect.
+          </div>
+        </div>
+      </div>
       <div class="row mb-4">
         <label
           class="col-md-2 col-form-label form-control-label"
           for="example-time-input"
         >
-          Contrat <span class="text-danger">*</span>
+          Contrat
+          <span
+            *ngIf="this.activeForm.get('category')?.value === 'rent'"
+            class="text-danger"
+            >*</span
+          >
         </label>
         <div class="col-md-10">
           <app-search-input
@@ -274,7 +401,87 @@
           ></app-date-range-picker>
         </div>
       </div>
+      <div class="form-group row">
+        <label
+          class="col-md-2 col-form-label form-control-label"
+          for="example-text-input"
+        >
+          TVA
+        </label>
 
+        <div class="col-md-10">
+          <div class="input-group">
+            <div class="row ml-1 mb-1">
+              <div
+                style="cursor: pointer"
+                class="custom-control custom-radio mb-3"
+                (click)="onChangeWithTaxType(true)"
+              >
+                <input
+                  class="custom-control-input"
+                  id="customRadio13"
+                  [checked]="withTax"
+                  type="radio"
+                />
+
+                <label
+                  class="custom-control-label"
+                  style="padding-left: 12px; padding-top: 12px"
+                  for="customRadio13"
+                >
+                  Avec TVA
+                </label>
+              </div>
+
+              <div
+                style="cursor: pointer"
+                class="custom-control custom-radio ml-4 mb-3"
+                (click)="onChangeWithTaxType(false)"
+              >
+                <input
+                  class="custom-control-input"
+                  id="customRadio12"
+                  [checked]="!withTax"
+                  type="radio"
+                />
+
+                <label
+                  class="custom-control-label"
+                  style="padding-left: 12px; padding-top: 12px"
+                  for="customRadio12"
+                >
+                  Sans TVA
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="withTax" class="form-group row">
+        <label
+          class="col-md-2 col-form-label form-control-label"
+          for="example-text-input"
+        >
+          Taux TVA (%)
+        </label>
+
+        <div class="col-md-10">
+          <div class="input-group input-group-merge">
+            <input
+              formControlName="tva"
+              class="form-control"
+              id="example-text-input"
+              placeholder=""
+              type="number"
+              min="1"
+              value=""
+              (focus)="focus1 = true"
+              (blur)="focus1 = false"
+            />
+          </div>
+        </div>
+      </div>
       <div class="form-group row mt-4">
         <label
           class="col-md-2 col-form-label form-control-label"
@@ -314,7 +521,7 @@
     </form>
 
     <form
-      *ngIf="paymentType === 'expense'"
+      *ngIf="paymentType === 'expense' || paymentType === 'expense_agency'"
       [formGroup]="expenseFormGroup"
       (ngSubmit)="upsertPayment()"
     >
@@ -435,8 +642,121 @@
           ></app-search-input>
         </div>
       </div>
+      <div
+        *ngIf="expenseFormGroup.get('method')?.value == 'check'"
+        class="form-group row"
+      >
+        <label
+          class="col-md-2 col-form-label form-control-label"
+          for="example-text-input"
+        >
+          Banque <span class="text-danger">*</span>
+        </label>
 
-      <div class="form-group row mt-4">
+        <div class="col-md-10">
+          <div class="input-group input-group-merge">
+            <input
+              formControlName="bank"
+              class="form-control"
+              id="example-text-input"
+              placeholder=""
+              type="text"
+              value=""
+              [ngClass]="{
+                focused: focus1 === true,
+                'is-invalid':
+                  submitted && activeForm.errors?.['bankFieldIsRequired'],
+              }"
+              (focus)="focus1 = true"
+              (blur)="focus1 = false"
+            />
+          </div>
+          <div
+            *ngIf="submitted && activeForm.errors?.['bankFieldIsRequired']"
+            class="error-text"
+          >
+            Champs incorrect, Banque est obligatoire.
+          </div>
+        </div>
+      </div>
+      <div
+        *ngIf="expenseFormGroup.get('method')?.value == 'check'"
+        class="form-group row"
+      >
+        <label
+          class="col-md-2 col-form-label form-control-label"
+          for="example-text-input"
+        >
+          Numéro de chéque <span class="text-danger">*</span>
+        </label>
+
+        <div class="col-md-10">
+          <div class="input-group input-group-merge">
+            <input
+              formControlName="checkNumber"
+              class="form-control"
+              id="example-text-input"
+              type="text"
+              value=""
+              [ngClass]="{
+                focused: focus1 === true,
+                'is-invalid':
+                  submitted &&
+                  activeForm.errors?.['checkNumberFieldIsIncorrect'],
+              }"
+              (focus)="focus1 = true"
+              (blur)="focus1 = false"
+            />
+          </div>
+          <div
+            *ngIf="
+              submitted && activeForm.errors?.['checkNumberFieldIsIncorrect']
+            "
+            class="error-text"
+          >
+            Champs incorrect, Numéro de chéque est incorrect.
+          </div>
+        </div>
+      </div>
+      <div
+        *ngIf="expenseFormGroup.get('method')?.value == 'transfer'"
+        class="form-group row"
+      >
+        <label
+          class="col-md-2 col-form-label form-control-label"
+          for="example-text-input"
+        >
+          Numéro de virement <span class="text-danger">*</span>
+        </label>
+
+        <div class="col-md-10">
+          <div class="input-group input-group-merge">
+            <input
+              formControlName="transferNumber"
+              class="form-control"
+              id="example-text-input"
+              type="text"
+              [ngClass]="{
+                focused: focus1 === true,
+                'is-invalid':
+                  submitted &&
+                  activeForm.errors?.['transferNumberFieldIsIncorrect'],
+              }"
+              (focus)="focus1 = true"
+              (blur)="focus1 = false"
+            />
+          </div>
+          <div
+            *ngIf="
+              submitted && activeForm.errors?.['transferNumberFieldIsIncorrect']
+            "
+            class="error-text"
+          >
+            Champs incorrect, Numéro de virement est incorrect.
+          </div>
+        </div>
+      </div>
+      <div *ngIf="paymentType === 'expense'" class="form-group row mt-4">
         <label
           class="col-md-2 col-form-label form-control-label"
           for="example-text-input"
@@ -461,6 +781,11 @@
                 class="form-control"
                 [ngClass]="{
                   focused: focus8 === true,
+                  'is-invalid':
+                    submitted &&
+                    activeForm.controls['matriculeProperty']?.errors?.[
+                      'required'
+                    ],
                 }"
                 type="number"
                 min="1"

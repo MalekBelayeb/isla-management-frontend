@@ -13,6 +13,12 @@ import {
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import {
+  agreementIdFieldRequiredIfcategoryIsRentValidator,
+  bankFieldRequiredIfMethodIsCheckValidator,
+  checkNumberFieldRequiredIfMethodIsCheckValidator,
+  transferNumberFieldRequiredIfMethodIsTransferValidator,
+} from '@core/form-validators/form-validators';
 import { Agreement } from '@dashboard/agreement/entity/agreement';
 import { AgreeementMapper } from '@dashboard/agreement/mappers/agreement.mapper';
 import { AgreementService } from '@dashboard/agreement/service/agreement.service';
@@ -44,12 +50,17 @@ export class UpsertPaymentComponent implements OnInit {
   focus6 = false;
   focus7 = false;
   focus8 = false;
+  focus9 = false;
+  focus10 = false;
+  focus11 = false;
+
+  withTax: boolean = false;
 
   @Input() paymentDetails?: PaymentDetails;
 
   agreement?: Agreement;
 
-  paymentType: 'income' | 'expense' = 'income';
+  paymentType: 'income' | 'expense' | 'expense_agency' = 'income';
 
   constructor(
     private formBuilder: FormBuilder,
@@ -91,39 +102,68 @@ export class UpsertPaymentComponent implements OnInit {
   searchExpensePaymentMethodValue: string = this.paymentMethodTypeList[0].title;
 
   setFormToDefaultState() {
-    this.incomeFormGroup = this.formBuilder.group({
-      amount: new FormControl('', Validators.required),
-      label: new FormControl(''),
-      rentStartDate: new FormControl(''),
-      rentEndDate: new FormControl(''),
-      paymentDate: new FormControl(''),
-      category: new FormControl(
-        this.incomePaymentCategoryList[0].id,
-        Validators.required,
-      ),
-      method: new FormControl(
-        this.paymentMethodTypeList[0].id,
-        Validators.required,
-      ),
-      agreementId: new FormControl('', Validators.required),
-      notes: new FormControl(''),
-    });
+    this.incomeFormGroup = this.formBuilder.group(
+      {
+        amount: new FormControl('', Validators.required),
+        label: new FormControl(''),
+        rentStartDate: new FormControl(''),
+        rentEndDate: new FormControl(''),
+        paymentDate: new FormControl(''),
+        category: new FormControl(
+          this.incomePaymentCategoryList[0].id,
+          Validators.required,
+        ),
+        method: new FormControl(
+          this.paymentMethodTypeList[0].id,
+          Validators.required,
+        ),
+        agreementId: new FormControl('', Validators.required),
+        tva: new FormControl(19),
+        notes: new FormControl(''),
+        bank: new FormControl(''),
+        checkNumber: new FormControl(''),
+        transferNumber: new FormControl(''),
+      },
+      {
+        validators: [
+          agreementIdFieldRequiredIfcategoryIsRentValidator,
+          bankFieldRequiredIfMethodIsCheckValidator,
+          checkNumberFieldRequiredIfMethodIsCheckValidator,
+          transferNumberFieldRequiredIfMethodIsTransferValidator,
+        ],
+      },
+    );
 
-    this.expenseFormGroup = this.formBuilder.group({
-      amount: new FormControl('', Validators.required),
-      label: new FormControl(''),
-      paymentDate: new FormControl(''),
-      category: new FormControl(
-        this.expensePaymentCategoryList[0].id,
-        Validators.required,
-      ),
-      method: new FormControl(
-        this.paymentMethodTypeList[0].id,
-        Validators.required,
-      ),
-      matriculeProperty: new FormControl('', Validators.required),
-      notes: new FormControl(''),
-    });
+    this.expenseFormGroup = this.formBuilder.group(
+      {
+        amount: new FormControl('', Validators.required),
+        label: new FormControl(''),
+        paymentDate: new FormControl(''),
+        category: new FormControl(
+          this.expensePaymentCategoryList[0].id,
+          Validators.required,
+        ),
+        method: new FormControl(
+          this.paymentMethodTypeList[0].id,
+          Validators.required,
+        ),
+        matriculeProperty: new FormControl(
+          '',
+          this.paymentType === 'expense' ? Validators.required : null,
+        ),
+        notes: new FormControl(''),
+        bank: new FormControl(''),
+        checkNumber: new FormControl(''),
+        transferNumber: new FormControl(''),
+      },
+      {
+        validators: [
+          bankFieldRequiredIfMethodIsCheckValidator,
+          checkNumberFieldRequiredIfMethodIsCheckValidator,
+          transferNumberFieldRequiredIfMethodIsTransferValidator,
+        ],
+      },
+    );
 
     this.setDefaultStartDateAndEndDate();
   }
@@ -132,8 +172,7 @@ export class UpsertPaymentComponent implements OnInit {
       this.paymentDetails = changes['paymentDetails'].currentValue;
 
       if (this.paymentDetails) {
-        this.paymentType =
-          this.paymentDetails.type === 'income' ? 'income' : 'expense';
+        this.paymentType = this.paymentDetails.type as typeof this.paymentType;
         const categoryId =
           DataTypes.incomePaymentCategoryList.find((item) => {
             return item.title === this.paymentDetails?.category;
@@ -142,7 +181,7 @@ export class UpsertPaymentComponent implements OnInit {
           DataTypes.paymentMethodTypeList.find((item) => {
             return item.title === this.paymentDetails?.method;
           })?.id ?? '';
-        if (this.paymentDetails.type === 'income') {
+        if (this.paymentType === 'income') {
           this.incomeFormGroup
             .get('amount')
             ?.setValue(this.paymentDetails?.amount);
@@ -161,6 +200,15 @@ export class UpsertPaymentComponent implements OnInit {
               this.paymentDetails?.rentEndDate?.toString().split('T')[0],
             );
           this.incomeFormGroup.get('type')?.setValue(this.paymentDetails?.type);
+          this.incomeFormGroup.get('tva')?.setValue(this.paymentDetails?.tva);
+          this.incomeFormGroup.get('bank')?.setValue(this.paymentDetails?.bank);
+          this.incomeFormGroup
+            .get('checkNumber')
+            ?.setValue(this.paymentDetails?.checkNumber ?? '');
+          this.incomeFormGroup
+            .get('transferNumber')
+            ?.setValue(this.paymentDetails?.transferNumber ?? '');
+
           this.incomeFormGroup.get('category')?.setValue(categoryId);
           this.incomeFormGroup
             .get('agreementId')
@@ -180,11 +228,14 @@ export class UpsertPaymentComponent implements OnInit {
           this.searchIncomePaymentMethodValue =
             this.paymentDetails?.method ?? '';
 
+          this.withTax = !!this.paymentDetails.tva;
           this.searchAgreementValue = this.paymentDetails.agreement ?? '';
         }
 
-        if (this.paymentDetails.type === 'expense') {
-          console.log('sqdqssdqq=>', this.paymentDetails);
+        if (
+          this.paymentType === 'expense' ||
+          this.paymentType === 'expense_agency'
+        ) {
           const categoryId =
             DataTypes.expensePaymentCategoryList.find((item) => {
               return item.title === this.paymentDetails?.category;
@@ -197,14 +248,25 @@ export class UpsertPaymentComponent implements OnInit {
           this.expenseFormGroup
             .get('label')
             ?.setValue(this.paymentDetails?.label);
+          this.expenseFormGroup
+            .get('bank')
+            ?.setValue(this.paymentDetails?.bank);
+          this.expenseFormGroup
+            .get('checkNumber')
+            ?.setValue(this.paymentDetails?.checkNumber ?? '');
+          this.expenseFormGroup
+            .get('transferNumber')
+            ?.setValue(this.paymentDetails?.transferNumber ?? '');
 
           this.expenseFormGroup
             .get('type')
             ?.setValue(this.paymentDetails?.type);
           this.expenseFormGroup.get('category')?.setValue(categoryId);
-          this.expenseFormGroup
-            .get('matriculeProperty')
-            ?.setValue(this.paymentDetails?.matriculeProperty);
+          if (this.paymentType === 'expense') {
+            this.expenseFormGroup
+              .get('matriculeProperty')
+              ?.setValue(this.paymentDetails?.matriculeProperty);
+          }
           this.expenseFormGroup
             .get('paymentDate')
             ?.setValue(
@@ -224,7 +286,6 @@ export class UpsertPaymentComponent implements OnInit {
   selectedPaymentCategory(resultItem: SearchResult) {
     this.activeForm.get('category')?.setValue(resultItem.id);
     if (resultItem.id !== 'rent') {
-      console.log(resultItem);
       this.activeForm.get('rentStartDate')?.setValue(undefined);
       this.activeForm.get('rentEndDate')?.setValue(undefined);
     } else {
@@ -234,6 +295,7 @@ export class UpsertPaymentComponent implements OnInit {
 
   selectedPaymentMethod(resultItem: SearchResult) {
     this.activeForm.get('method')?.setValue(resultItem.id);
+    this.submitted = false;
   }
 
   onChangePaymentType($event: 'income' | 'expense') {
@@ -243,6 +305,10 @@ export class UpsertPaymentComponent implements OnInit {
     if (this.paymentType === 'income') {
       this.setAgreementByTenant();
     }
+  }
+
+  onChangeWithTaxType($event: boolean) {
+    this.withTax = $event;
   }
 
   get activeForm(): FormGroup {
@@ -326,7 +392,6 @@ export class UpsertPaymentComponent implements OnInit {
   }
 
   onPaymentDateChange($event: Date) {
-    console.log($event);
     this.activeForm
       .get('paymentDate')
       ?.setValue($event.toISOString().split('T')[0]);
@@ -361,13 +426,24 @@ export class UpsertPaymentComponent implements OnInit {
     this.incomeFormGroup.get('agreementId')?.setValue(searchResult.id);
   }
 
+  getTVAValue() {
+    if (this.withTax) {
+      return this.incomeFormGroup.get('tva')?.value;
+    }
+
+    return null;
+  }
+
+  
+
   upsertPayment() {
     this.submitted = true;
-
+    console.log(this.activeForm);
     if (this.activeForm.invalid) return;
     this.isLoading = true;
     let incomeBody = {};
     let expenseBody = {};
+    let expenseAgencyBody = {};
 
     const getPaymentDate = () => {
       console.log(this.expenseFormGroup.get('paymentDate')?.value);
@@ -404,8 +480,13 @@ export class UpsertPaymentComponent implements OnInit {
         ...(this.incomeFormGroup.get('notes')?.value && {
           notes: this.incomeFormGroup.get('notes')?.value,
         }),
+        tva: this.getTVAValue(),
+        bank: this.incomeFormGroup.get('bank')?.value,
+        checkNumber: `${this.incomeFormGroup.get('checkNumber')?.value}`,
+        transferNumber: `${this.incomeFormGroup.get('transferNumber')?.value}`,
       };
     }
+
     if (this.paymentType === 'expense') {
       expenseBody = {
         type: 'expense',
@@ -421,6 +502,28 @@ export class UpsertPaymentComponent implements OnInit {
         }),
         rentStartDate: null,
         rentEndDate: null,
+        bank: this.expenseFormGroup.get('bank')?.value,
+        checkNumber: `${this.expenseFormGroup.get('checkNumber')?.value}`,
+        transferNumber: `${this.expenseFormGroup.get('transferNumber')?.value}`,
+      };
+    }
+
+    if (this.paymentType === 'expense_agency') {
+      expenseAgencyBody = {
+        type: 'expense_agency',
+        amount: this.expenseFormGroup.get('amount')?.value,
+        category: this.expenseFormGroup.get('category')?.value,
+        label: this.expenseFormGroup.get('label')?.value,
+        method: this.expenseFormGroup.get('method')?.value,
+        paymentDate: getPaymentDate(),
+        ...(this.expenseFormGroup.get('notes')?.value && {
+          notes: this.expenseFormGroup.get('notes')?.value,
+        }),
+        rentStartDate: null,
+        rentEndDate: null,
+        bank: this.expenseFormGroup.get('bank')?.value,
+        checkNumber: `${this.expenseFormGroup.get('checkNumber')?.value}`,
+        transferNumber: `${this.expenseFormGroup.get('transferNumber')?.value}`,
       };
     }
 
@@ -428,13 +531,15 @@ export class UpsertPaymentComponent implements OnInit {
       ...(this.paymentDetails && { id: this.paymentDetails.id }),
       ...(this.paymentType === 'income' && { ...incomeBody }),
       ...(this.paymentType === 'expense' && { ...expenseBody }),
+      ...(this.paymentType === 'expense_agency' && { ...expenseAgencyBody }),
     };
-    console.log(body);
+
     if (this.paymentDetails) {
       this.paymentService
         .updatePayment(this.paymentDetails.id, body)
         .subscribe({
           next: (value) => {
+            console.log(value.body);
             this.toastAlertService.showSuccessNotification(
               'Paiement modifié avec succés',
               'Paiement a été modifier avec succés',

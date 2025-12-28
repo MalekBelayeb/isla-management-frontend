@@ -116,6 +116,7 @@
             <tr>
               <th scope="col">Matricule du contrat</th>
               <th scope="col">Montant payé en DT</th>
+              <th scope="col">Periode couvré</th>
               <th scope="col">Méthode</th>
               <th scope="col">Type</th>
               <th scope="col">Catégorie</th>
@@ -144,6 +145,12 @@
 
               <td>
                 <h4>{{ payment.amount }} DT</h4>
+              </td>
+              <td>
+                <h4>
+                  {{ payment.rentStartDate | date: "dd/MM/yyyy" }} -
+                  {{ payment.rentEndDate | date: "dd/MM/yyyy" }}
+                </h4>
               </td>
               <td>
                 <h4>{{ payment.method }}</h4>

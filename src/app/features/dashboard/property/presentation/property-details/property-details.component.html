@@ -189,33 +189,98 @@
   </div>
 
   <div class="card-body">
-    <div class="row mb-5 mt-3">
-      <div class="col">
-        <div class="form-group">
-          <app-search-input
-            [clearInput]="false"
-            [prefixIcon]="'fas fa-search'"
-            [searchPlaceholder]="'Filtrer par trimestre'"
-            [searchLabel]="'Résultats'"
-            [prefixText]="'Trimestre'"
-            [maxSize]="4"
-            [searchInputValue]="trimesterSearchValue?.title ?? ''"
-            (selectedResultItem)="onSelectedTrimesterSearchItem($event)"
-            [searchResult]="trimestersOptions"
-            [isEditable]="false"
-          ></app-search-input>
+    <div class="form-group row">
+      <div class="col-md-10">
+        <div class="input-group">
+          <div class="row ml-1 mb-1">
+            <div
+              style="cursor: pointer"
+              class="custom-control custom-radio mb-3"
+            >
+              <input
+                class="custom-control-input"
+                id="customRadio5"
+                value="quarterly"
+                [(ngModel)]="filterDateType"
+                type="radio"
+              />
+
+              <label
+                class="custom-control-label"
+                style="padding-left: 12px; padding-top: 12px"
+                for="customRadio5"
+              >
+                Trimestriel
+              </label>
+            </div>
+
+            <div
+              style="cursor: pointer"
+              class="custom-control custom-radio ml-4 mb-3"
+            >
+              <input
+                class="custom-control-input"
+                id="customRadio4"
+                value="dateToDate"
+                [(ngModel)]="filterDateType"
+                type="radio"
+              />
+
+              <label
+                class="custom-control-label"
+                style="padding-left: 12px; padding-top: 12px"
+                for="customRadio4"
+              >
+                Interval de date
+              </label>
+            </div>
+          </div>
         </div>
       </div>
     </div>
+    <form [formGroup]="filtersFormGroup" (ngSubmit)="filterFinancialBalance()">
+      <div *ngIf="filterDateType === 'dateToDate'" class="row mb-5 mt-3">
+        <div class="col-md-12">
+          <app-date-range-picker
+            [startDateValue]="filtersFormGroup.controls['startDate']?.value"
+            [endDateValue]="filtersFormGroup.controls['endDate']?.value"
+            (startDate)="onStartDateChange($event)"
+            (endDate)="onEndDateChange($event)"
+          ></app-date-range-picker>
+        </div>
+      </div>
+      <div *ngIf="filterDateType === 'quarterly'" class="row mb-5 mt-3">
+        <div class="col">
+          <div class="form-group">
+            <app-search-input
+              [clearInput]="false"
+              [prefixIcon]="'fas fa-search'"
+              [searchPlaceholder]="'Filtrer par trimestre'"
+              [searchLabel]="'Résultats'"
+              [prefixText]="'Trimestre'"
+              [maxSize]="4"
+              [searchInputValue]="trimesterSearchValue?.title ?? ''"
+              (selectedResultItem)="onSelectedTrimesterSearchItem($event)"
+              [searchResult]="trimestersOptions"
+              [isEditable]="false"
+            ></app-search-input>
+          </div>
+        </div>
+      </div>
+      <div class="d-flex w-100 justify-content-end">
+        <button class="btn btn-secondary" type="submit">Filtrer</button>
+      </div>
+    </form>
+
     <div class="table-responsive">
       <div class="my-3 pr-2 d-flex w-100 flex-row justify-content-end">
-        <button class="btn btn-icon btn-secondary" type="button">
+        <!-- <button class="btn btn-icon btn-secondary" type="button">
           <span class="btn-inner--icon">
             <i class="ni ni-cloud-download-95"> </i>
           </span>
 
           <span class="btn-inner--text"> Exporter </span>
-        </button>
+        </button> -->
       </div>
       <table class="table align-items-center table-bordered table-hover">
         <thead>
@@ -239,7 +304,7 @@
                   <h4>{{ payment.tenant }}</h4>
                 </div>
                 <div class="col-6">
-                  <h4>{{ payment.reason }}</h4>
+                  <h4 style="white-space: normal">{{ payment.reason }}</h4>
                 </div>
               </div>
               <div *ngIf="payment.type == 'expense'" class="row">

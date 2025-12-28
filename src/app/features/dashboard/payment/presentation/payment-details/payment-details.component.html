@@ -122,7 +122,13 @@
       </div>
     </div>
   </div>
-  <div *ngIf="paymentDetails?.type === 'expense'" class="card-body">
+  <div
+    *ngIf="
+      paymentDetails?.type === 'expense' ||
+      paymentDetails?.type === 'expense_agency'
+    "
+    class="card-body"
+  >
     <div class="pl-lg-4">
       <div class="row">
         <div class="col-lg-3">
@@ -146,7 +152,7 @@
             </h5>
           </div>
         </div>
-        <div class="col-lg-3">
+        <div *ngIf="paymentDetails?.type === 'expense'" class="col-lg-3">
           <div class="form-group">
             <h5 class="card-title text-uppercase text-muted mb-0">
               Propriétaire
@@ -157,7 +163,7 @@
             </h5>
           </div>
         </div>
-        <div class="col-lg-3">
+        <div *ngIf="paymentDetails?.type === 'expense'" class="col-lg-3">
           <div class="form-group">
             <h5 class="card-title text-uppercase text-muted mb-0">
               Propriété (Bien)
@@ -195,7 +201,9 @@
         </div>
         <div class="col-lg-3">
           <div class="form-group">
-            <h5 class="card-title text-uppercase text-muted mb-0">Date de paiement</h5>
+            <h5 class="card-title text-uppercase text-muted mb-0">
+              Date de paiement
+            </h5>
 
             <h5 class="h2 font-weight-bold mb-0 mt-1">
               {{ paymentDetails?.paymentDate | date: "dd/MM/yyyy" }}
@@ -219,3 +227,37 @@
 </div>
 
 <app-upsert-payment [paymentDetails]="paymentDetails" />
+
+<div class="card">
+  <div class="card-header">
+    <div class="row align-items-center">
+      <div class="col-8">
+        <h3 class="mb-0">Extraction du reçu</h3>
+      </div>
+    </div>
+  </div>
+  <div class="card-body">
+    <p>
+      En cliquant sur "Exporter pour impression", vous téléchargerez un document
+      qui contient le quittence de paiement
+    </p>
+  </div>
+
+  <div class="card-footer">
+    <div class="d-flex w-100 flex-row justify-content-end">
+      <button
+        *ngIf="!exportReceiptIsLoading"
+        class="btn btn-primary"
+        type="submit"
+        (click)="exportPaymentReceipt()"
+      >
+        Exporter pour impression
+      </button>
+      <div
+        *ngIf="exportReceiptIsLoading"
+        class="spinner-border text-primary mr-5"
+        role="status"
+      ></div>
+    </div>
+  </div>
+</div>

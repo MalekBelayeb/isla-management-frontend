@@ -102,33 +102,29 @@
             <app-search-input
               [clearInput]="false"
               [prefixIcon]="'fas fa-search'"
-              [searchPlaceholder]="'Filtrer par local (adresse ou num local)'"
+              [searchPlaceholder]="'Filtrer par locataire'"
               [searchLabel]="'Résultats'"
-              [maxSize]="5"
               [triggerSearchOnOpen]="true"
-              (searchValue)="onSearchApartmentValueChanged($event)"
-              [searchInputValue]="searchApartmentValue"
-              (selectedResultItem)="onSelectedApartmentSearchItem($event)"
-              [searchResult]="apartmentOptions"
+              (searchValue)="onSearchTenantValueChanged($event)"
+              [searchInputValue]="searchTenantValue"
+              (selectedResultItem)="onSelectedTenantSearchItem($event)"
+              [searchResult]="tenantOptions"
             ></app-search-input>
           </div>
         </div>
-
         <div class="col-md-3">
           <div class="form-group">
             <app-search-input
               [clearInput]="false"
               [prefixIcon]="'fas fa-search'"
-              [searchPlaceholder]="'Filtrer par type de paiement'"
+              [searchPlaceholder]="'Filtrer par propriètaire'"
               [searchLabel]="'Résultats'"
-              [prefixText]="'Méthode:'"
-              [maxSize]="4"
-              [searchInputValue]="paymentMethodTypeSearchValue.title"
-              (selectedResultItem)="
-                onSelectedPaymentMethodTypeSearchItem($event)
-              "
-              [searchResult]="paymentMethodsType"
-              [isEditable]="false"
+              [maxSize]="5"
+              [triggerSearchOnOpen]="true"
+              (searchValue)="onSearchOwnerValueChanged($event)"
+              [searchInputValue]="searchOwnerValue"
+              (selectedResultItem)="onSelectedOwnerSearchItem($event)"
+              [searchResult]="ownerOptions"
             ></app-search-input>
           </div>
         </div>
@@ -141,18 +137,37 @@
             (endDate)="onEndDateChange($event)"
           ></app-date-range-picker>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-3">
           <div class="form-group">
             <app-search-input
               [clearInput]="false"
               [prefixIcon]="'fas fa-search'"
-              [searchPlaceholder]="'Filtrer par locataire'"
+              [searchPlaceholder]="'Filtrer par type de paiement'"
               [searchLabel]="'Résultats'"
-              [triggerSearchOnOpen]="true"
-              (searchValue)="onSearchTenantValueChanged($event)"
-              [searchInputValue]="searchTenantValue"
-              (selectedResultItem)="onSelectedTenantSearchItem($event)"
-              [searchResult]="tenantOptions"
+              [prefixText]="'Type:'"
+              [maxSize]="4"
+              [searchInputValue]="paymentTypeSearchValue.title"
+              (selectedResultItem)="onSelectedPaymentTypeSearchItem($event)"
+              [searchResult]="paymentTypes"
+              [isEditable]="false"
+            ></app-search-input>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-group">
+            <app-search-input
+              [clearInput]="false"
+              [prefixIcon]="'fas fa-search'"
+              [searchPlaceholder]="'Filtrer par méthode de paiement'"
+              [searchLabel]="'Résultats'"
+              [prefixText]="'Méthode:'"
+              [maxSize]="4"
+              [searchInputValue]="paymentMethodTypeSearchValue.title"
+              (selectedResultItem)="
+                onSelectedPaymentMethodTypeSearchItem($event)
+              "
+              [searchResult]="paymentMethodsType"
+              [isEditable]="false"
             ></app-search-input>
           </div>
         </div>

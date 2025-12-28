@@ -22,6 +22,10 @@ export class PaymentMapper {
         ? `${apartmentPrefix}${data.agreement?.apartment?.matricule} - ${data.agreement?.apartment?.type} - ${data.agreement?.apartment?.address}`
         : '-',
       amount: data.amount,
+      tva: data.tva,
+      bank: data.bank,
+      transferNumber: data.transferNumber,
+      checkNumber: data.checkNumber,
       method:
         DataTypes.paymentMethodTypeList.find(
           (method) => method.id === data.method,
