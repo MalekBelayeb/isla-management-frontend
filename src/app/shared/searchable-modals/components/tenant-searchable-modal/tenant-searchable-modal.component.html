@@ -1,0 +1,245 @@
+<div class="navbar-search navbar-search-light" id="navbar-search-main">
+  <div class="form-group mb-0 search-wrapper">
+    <div class="input-group input-group-alternative input-group-merge">
+      <div class="input-group-prepend">
+        <span class="input-group-text">
+          <i class="fas fa-search"></i>
+        </span>
+      </div>
+      <input
+        class="form-control search-input"
+        (click)="showModal()"
+        placeholder="Chercher un locataire..."
+        readonly
+        type="text"
+      />
+    </div>
+  </div>
+</div>
+<ng-template #modalSearch>
+  <div class="modal-header pb-3">
+    <div class="d-flex flex-column w-100">
+      <h3 class="mb-0">{{ title }}</h3>
+      <div [ngClass]="{ 'mt-4': title !== '' }">
+        <div class="form-group mb-0">
+          <div
+            class="input-group input-group-merge"
+            [ngClass]="{ focused: focus === true }"
+          >
+            <div *ngIf="prefixIcon" class="input-group-prepend">
+              <span class="input-group-text">
+                <i class="{{ prefixIcon }}"></i>
+              </span>
+            </div>
+
+            <input
+              (focus)="focus = true"
+              (blur)="focus = false"
+              [value]="searchInputValue"
+              [placeholder]="searchPlaceholder"
+              (keyup)="debounceValueChange($event)"
+              class="form-control"
+              type="text"
+            />
+
+            <div
+              *ngIf="suffixIcon"
+              class="input-group-append"
+              [ngClass]="{ focused: focus === true }"
+            >
+              <span class="input-group-text">
+                <i class="{{ suffixIcon }}"></i>
+              </span>
+            </div>
+          </div>
+
+          <div class="d-flex align-items-center mt-3">
+            <ng-container *ngIf="!isLoadingFetchingTenants">
+              <small *ngIf="totalLength > 0" class="text-muted">
+                <i class="ni ni-single-02 mr-1"></i>
+                {{ totalLength }} locataire(s) trouvé(s)
+              </small>
+              <small *ngIf="totalLength === 0" class="text-muted">
+                Aucun élément trouvé
+              </small>
+            </ng-container>
+            <div
+              *ngIf="isLoadingFetchingTenants"
+              class="spinner-border spinner-border-sm text-primary"
+              role="status"
+            ></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-body p-0" style="height: 50vh; overflow-y: auto">
+    <table class="table table-hover table-sm mb-0">
+      <thead
+        style="
+          position: sticky;
+          top: 0;
+          z-index: 1;
+          background: #fff;
+          box-shadow: 0 1px 0 #e9ecef;
+        "
+      >
+        <tr>
+          <th
+            class="pl-4 text-uppercase text-muted"
+            style="font-size: 0.65rem; font-weight: 700"
+          >
+            Identifiant
+          </th>
+          <th
+            class="text-uppercase text-muted"
+            style="font-size: 0.65rem; font-weight: 700"
+          >
+            Prénom et nom
+          </th>
+          <th
+            class="text-uppercase text-muted"
+            style="font-size: 0.65rem; font-weight: 700"
+          >
+            Téléphone
+          </th>
+          <th
+            class="text-uppercase text-muted"
+            style="font-size: 0.65rem; font-weight: 700"
+          >
+            CIN
+          </th>
+          <th
+            class="text-uppercase text-muted"
+            style="font-size: 0.65rem; font-weight: 700"
+          >
+            Statut
+          </th>
+          <th
+            class="text-uppercase text-muted"
+            style="font-size: 0.65rem; font-weight: 700"
+          >
+            Contrat
+          </th>
+          <th
+            class="text-uppercase text-muted"
+            style="font-size: 0.65rem; font-weight: 700"
+          >
+            Local
+          </th>
+          <th
+            class="text-uppercase text-muted"
+            style="font-size: 0.65rem; font-weight: 700"
+          >
+            Créé le
+          </th>
+          <th
+            class="text-uppercase text-muted"
+            style="font-size: 0.65rem; font-weight: 700"
+          >
+            Actions
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          *ngFor="let tenant of tenants"
+          style="cursor: pointer; vertical-align: middle"
+        >
+          <td class="pl-4">
+            <span class="font-weight-bold text-dark">{{
+              tenant.matricule
+            }}</span>
+          </td>
+          <td>{{ tenant.fullname }}</td>
+          <td>{{ tenant.phoneNumber }}</td>
+          <td>{{ tenant.cin }}</td>
+          <td>
+            <span
+              class="badge"
+              [ngClass]="{
+                'badge-secondary': tenant.status === 'NO_AGREEMENT',
+                'badge-warning':
+                  tenant.status === 'NO_RENT' ||
+                  tenant.status === 'AGREEMENT_SUSPENDED',
+                'badge-danger': tenant.status === 'PAYMENT_DEFAULT',
+                'badge-success': tenant.status === 'IN_GOOD_STANDING',
+              }"
+            >
+              <ng-container [ngSwitch]="tenant.status">
+                <ng-container *ngSwitchCase="'NO_AGREEMENT'"
+                  >Pas de contrat</ng-container
+                >
+                <ng-container *ngSwitchCase="'NO_RENT'"
+                  >Aucun paiement</ng-container
+                >
+                <ng-container *ngSwitchCase="'AGREEMENT_SUSPENDED'"
+                  >Contrat suspendu</ng-container
+                >
+                <ng-container *ngSwitchCase="'PAYMENT_DEFAULT'"
+                  >Retard de paiement</ng-container
+                >
+                <ng-container *ngSwitchCase="'IN_GOOD_STANDING'"
+                  >En règle</ng-container
+                >
+              </ng-container>
+            </span>
+          </td>
+          <td>
+            {{ tenant.agreement || "—" }}
+          </td>
+          <td>
+            {{ tenant.apartment || "—" }}
+          </td>
+          <td class="text-muted" style="white-space: nowrap">
+            {{ tenant.createdAt | date: "dd/MM/yyyy" }}
+          </td>
+          <td class="pr-3" style="white-space: nowrap">
+            <li class="nav-item dropdown" dropdown placement="bottom-right">
+              <button
+                dropdownToggle
+                type="button"
+                class="btn btn-sm btn-icon-only action-menu-btn"
+              >
+                <i class="fas fa-ellipsis-v"></i>
+              </button>
+              <div
+                class="dropdown-menu dropdown-menu-arrow dropdown-menu-right user-dropdown"
+                *dropdownMenu
+              >
+                <a
+                  routerLinkActive="active"
+                  class="dropdown-item"
+                  style="cursor: pointer"
+                  (click)="moveToTenantDetails(tenant.id)"
+                >
+                  <i class="ni ni-single-02 text-primary"></i>
+                  <span>Voir détails</span>
+                </a>
+
+                <a
+                  routerLinkActive="active"
+                  class="dropdown-item"
+                  style="cursor: pointer"
+                  (click)="moveToPaymentDetails(tenant.id)"
+                >
+                  <i class="ni ni-money-coins text-success"></i>
+                  <span>Ajouter un paiement de loyer</span>
+                </a>
+              </div>
+            </li>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="modal-footer">
+    <div
+      class="d-flex w-100 flex-wrap align-content-stretch justify-content-end"
+    >
+      <button class="btn btn-secondary" (click)="onCancel()">Annuler</button>
+    </div>
+  </div>
+</ng-template>

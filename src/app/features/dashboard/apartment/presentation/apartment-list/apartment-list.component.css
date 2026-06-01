@@ -1,0 +1,209 @@
+/* ============================================================
+   CARD
+   ============================================================ */
+.apartments-card {
+  border: none;
+  border-radius: 0.75rem;
+  box-shadow: 0 2px 16px rgba(50, 50, 93, 0.08), 0 1px 4px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+.apartments-header {
+  padding: 1.25rem 1.5rem;
+  background: #ffffff;
+}
+
+.apartments-header-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #fb6340 0%, #fbb140 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.apartments-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #32325d;
+  letter-spacing: 0.01em;
+}
+
+.apartments-count-badge {
+  display: inline-block;
+  background: #fff0e6;
+  color: #c95a1a;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.2em 0.6em;
+  border-radius: 999px;
+  letter-spacing: 0.02em;
+}
+
+.add-btn {
+  white-space: nowrap;
+  margin-top: 0.5rem;
+}
+
+@media (min-width: 576px) {
+  .add-btn {
+    margin-top: 0;
+  }
+}
+
+/* ============================================================
+   FILTERS
+   ============================================================ */
+.apartments-filter-section {
+  padding: 1rem 1.5rem 1.25rem;
+  border-bottom: 1px solid #f0f2f8;
+  background: #fafbff;
+}
+
+.filter-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #8898aa;
+  margin-bottom: 0.4rem;
+  display: block;
+}
+
+.search-group .input-group-text.search-prefix {
+  background: #ffffff;
+  border-right: none;
+  color: #adb5bd;
+  font-size: 0.85rem;
+}
+
+.search-input {
+  border-left: none;
+  background: #ffffff;
+  font-size: 0.875rem;
+  color: #32325d;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.search-input:focus {
+  border-color: #f5cba7;
+  box-shadow: 0 0 0 3px rgba(251, 99, 64, 0.12);
+}
+
+.prefix-text {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #525f7f;
+  background: #f6f9fc;
+  white-space: nowrap;
+}
+
+.filter-btn {
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+/* ============================================================
+   TABLE WRAPPER
+   ============================================================ */
+.apartments-table-wrapper {
+  min-height: 200px;
+}
+
+.apartments-table--hidden {
+  display: none !important;
+}
+
+/* ============================================================
+   EMPTY STATE
+   ============================================================ */
+.apartments-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3.5rem 1.5rem;
+  text-align: center;
+}
+
+.empty-icon-wrapper {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: #f0f2f8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: #adb5bd;
+  margin-bottom: 1rem;
+}
+
+.empty-title {
+  font-size: 0.975rem;
+  font-weight: 700;
+  color: #32325d;
+  margin-bottom: 0.35rem;
+}
+
+.empty-subtitle {
+  font-size: 0.85rem;
+  color: #8898aa;
+  margin-bottom: 1.25rem;
+  max-width: 340px;
+}
+
+/* ============================================================
+   PAGINATION FOOTER
+   ============================================================ */
+.apartments-footer {
+  background: #ffffff;
+  border-top: 1px solid #f0f2f8;
+}
+
+.pagination-info {
+  font-size: 0.8rem;
+}
+
+/* ============================================================
+   SKELETON LOADING
+   ============================================================ */
+@keyframes skeleton-shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+
+.skel {
+  border-radius: 4px;
+  background: linear-gradient(
+    90deg,
+    #edf0f7 25%,
+    #f5f7fc 50%,
+    #edf0f7 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s ease-in-out infinite;
+}
+
+.skel-text {
+  height: 13px;
+}
+
+.skel-badge {
+  height: 22px;
+  border-radius: 999px;
+}
+
+.skeleton-row td {
+  padding: 0.95rem 1rem;
+  border-top: 1px solid #f6f9fc;
+  vertical-align: middle;
+}

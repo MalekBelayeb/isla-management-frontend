@@ -1,107 +1,87 @@
-<div class="card">
-  <div class="card-header border-0">
-    <div class="row">
-      <div class="col-6">
-        <h3 class="mb-0">Liste des mouvements ({{ totalLength }})</h3>
+<div class="card payments-card">
+  <!-- Card Header -->
+  <div class="card-header border-0 payments-header">
+    <div class="d-flex align-items-center justify-content-between flex-wrap">
+      <div class="d-flex align-items-center">
+        <div class="payments-header-icon mr-3">
+          <i class="fas fa-exchange-alt"></i>
+        </div>
+        <div>
+          <h3 class="mb-0 payments-title">Liste des mouvements</h3>
+          <p class="text-muted text-sm mb-0 mt-1">
+            <span class="payments-count-badge">{{ totalLength }}</span>
+            mouvement(s) de caisse au total
+          </p>
+        </div>
       </div>
-    </div>
-  </div>
-
-  <div class="px-4 pt-2 pb-4">
-    <div class="row justify-content-end px-3">
       <a
-        class="btn btn-sm btn-primary btn-round btn-icon"
+        class="btn btn-primary btn-sm btn-round btn-icon add-btn"
         href="javascript:void(0)"
         routerLink="../create-payment"
       >
-        <span class="btn-inner--icon">
-          <i class="ni ni-fat-add"> </i>
-        </span>
-        <span class="btn-inner--text"> Créer un mouvement de caisse </span>
+        <span class="btn-inner--icon"><i class="ni ni-fat-add"></i></span>
+        <span class="btn-inner--text">Créer un mouvement de caisse</span>
       </a>
     </div>
+  </div>
 
-    <div class="row justify-content-end my-4">
-      <div *ngIf="showClearFilterBtn" class="col-6 text-right">
-        <a
-          class="btn btn-sm btn-secondary btn-round btn-icon"
-          (click)="clearFilter()"
-          href="javascript:void(0)"
-          tooltip="Edit product"
-          placement="top"
-        >
-          <span class="btn-inner--icon">
-            <i class="fas fa-times"> </i>
-          </span>
-
-          <span class="btn-inner--text"> Effacer les filtres</span>
-        </a>
-      </div>
-    </div>
-
+  <!-- Filters Section -->
+  <div class="payments-filter-section">
     <form [formGroup]="filtersFormGroup" (ngSubmit)="filterPayments()">
+      <!-- Row 1 -->
       <div class="row">
         <div class="col-md-3">
-          <div
-            class="form-group"
-            [ngClass]="{
-              focused: focus2 === true,
-            }"
-          >
+          <div class="form-group" [ngClass]="{ focused: focus2 === true }">
+            <label class="filter-label">N° Contrat</label>
             <div class="input-group input-group-merge">
               <div class="input-group-prepend">
-                <span class="input-group-text text-sm">
-                  {{ agreementPrefix }}
-                </span>
+                <span class="input-group-text prefix-text">{{
+                  agreementPrefix
+                }}</span>
               </div>
               <input
                 class="form-control"
-                [ngClass]="{
-                  focused: focus2 === true,
-                }"
+                [ngClass]="{ focused: focus2 === true }"
                 type="number"
                 min="1"
                 formControlName="paymentAgreement"
-                placeholder="Chercher par num contrat"
+                placeholder="Num contrat"
                 (focus)="focus2 = true"
                 (blur)="focus2 = false"
               />
             </div>
           </div>
         </div>
+
         <div class="col-md-3">
-          <div
-            class="form-group"
-            [ngClass]="{
-              focused: focus3 === true,
-            }"
-          >
+          <div class="form-group" [ngClass]="{ focused: focus3 === true }">
+            <label class="filter-label">N° Dossier</label>
             <div class="input-group input-group-merge">
               <div class="input-group-prepend">
-                <span class="input-group-text text-sm">
-                  {{ propertyPrefix }}
-                </span>
+                <span class="input-group-text prefix-text">{{
+                  propertyPrefix
+                }}</span>
               </div>
               <input
                 class="form-control"
-                [ngClass]="{
-                  focused: focus3 === true,
-                }"
+                [ngClass]="{ focused: focus3 === true }"
                 type="number"
                 min="1"
                 formControlName="paymentProperty"
-                placeholder="Chercher par num dossier"
+                placeholder="Num dossier"
                 (focus)="focus3 = true"
                 (blur)="focus3 = false"
               />
             </div>
           </div>
         </div>
+
         <div class="col-md-3">
           <div class="form-group">
+            <label class="filter-label">Locataire</label>
             <app-search-input
               [clearInput]="false"
-              [prefixIcon]="'fas fa-search'"
+              [prefixIcon]="'fas fa-user'"
               [searchPlaceholder]="'Filtrer par locataire'"
               [searchLabel]="'Résultats'"
               [triggerSearchOnOpen]="true"
@@ -112,12 +92,14 @@
             ></app-search-input>
           </div>
         </div>
+
         <div class="col-md-3">
           <div class="form-group">
+            <label class="filter-label">Propriétaire</label>
             <app-search-input
               [clearInput]="false"
-              [prefixIcon]="'fas fa-search'"
-              [searchPlaceholder]="'Filtrer par propriètaire'"
+              [prefixIcon]="'fas fa-user-tie'"
+              [searchPlaceholder]="'Filtrer par propriétaire'"
               [searchLabel]="'Résultats'"
               [maxSize]="5"
               [triggerSearchOnOpen]="true"
@@ -130,19 +112,25 @@
         </div>
       </div>
 
-      <div class="row mb-4">
+      <!-- Row 2 -->
+      <div class="row">
         <div class="col-md-6">
-          <app-date-range-picker
-            (startDate)="onStartDateChange($event)"
-            (endDate)="onEndDateChange($event)"
-          ></app-date-range-picker>
+          <div class="form-group">
+            <label class="filter-label">Période</label>
+            <app-date-range-picker
+              (startDate)="onStartDateChange($event)"
+              (endDate)="onEndDateChange($event)"
+            ></app-date-range-picker>
+          </div>
         </div>
+
         <div class="col-md-3">
           <div class="form-group">
+            <label class="filter-label">Type de paiement</label>
             <app-search-input
               [clearInput]="false"
-              [prefixIcon]="'fas fa-search'"
-              [searchPlaceholder]="'Filtrer par type de paiement'"
+              [prefixIcon]="'fas fa-tags'"
+              [searchPlaceholder]="'Filtrer par type'"
               [searchLabel]="'Résultats'"
               [prefixText]="'Type:'"
               [maxSize]="4"
@@ -153,12 +141,14 @@
             ></app-search-input>
           </div>
         </div>
+
         <div class="col-md-3">
           <div class="form-group">
+            <label class="filter-label">Méthode de paiement</label>
             <app-search-input
               [clearInput]="false"
-              [prefixIcon]="'fas fa-search'"
-              [searchPlaceholder]="'Filtrer par méthode de paiement'"
+              [prefixIcon]="'fas fa-credit-card'"
+              [searchPlaceholder]="'Filtrer par méthode'"
               [searchLabel]="'Résultats'"
               [prefixText]="'Méthode:'"
               [maxSize]="4"
@@ -173,14 +163,45 @@
         </div>
       </div>
 
-      <div class="d-flex w-100 justify-content-end">
-        <button class="btn btn-secondary" type="submit">Filtrer</button>
+      <!-- Filter actions -->
+      <div class="d-flex justify-content-end">
+        <button class="btn btn-primary filter-btn" type="submit">
+          <i class="fas fa-filter mr-2"></i>Filtrer
+        </button>
       </div>
     </form>
   </div>
 
-  <div class="table-responsive">
-    <table class="table align-items-center table-flush table-hover">
+  <!-- Table Section -->
+  <div class="table-responsive payments-table-wrapper">
+    <!-- Empty State -->
+    <div
+      *ngIf="payments.length === 0 && !isLoadingFetchingPayments"
+      class="payments-empty-state"
+    >
+      <div class="empty-icon-wrapper">
+        <i class="fas fa-exchange-alt"></i>
+      </div>
+      <h5 class="empty-title">Aucun mouvement trouvé</h5>
+      <p class="empty-subtitle">
+        Modifiez vos critères de recherche ou créez un nouveau mouvement de
+        caisse.
+      </p>
+      <a
+        class="btn btn-outline-primary btn-sm btn-round"
+        href="javascript:void(0)"
+        routerLink="../create-payment"
+      >
+        <i class="ni ni-fat-add mr-1"></i>Créer un mouvement
+      </a>
+    </div>
+
+    <table
+      class="table align-items-center table-flush table-hover"
+      [class.payments-table--hidden]="
+        payments.length === 0 && !isLoadingFetchingPayments
+      "
+    >
       <thead class="thead-light">
         <tr>
           <th>Num contrat</th>
@@ -197,20 +218,33 @@
           <th>Fréquence de paiement</th>
           <th>Date de paiement</th>
           <th>Date de création</th>
-
           <th></th>
         </tr>
       </thead>
-      <div
-        *ngIf="isLoadingFetchingPayments"
-        class="spinner-border text-primary mt-4 ml-4"
-        role="status"
-      ></div>
-      <div *ngIf="payments.length === 0 && !isLoadingFetchingPayments" class="">
-        <p class="ml-4 mb-0">Liste vide, aucun element trouvé.</p>
-      </div>
 
-      <tbody>
+      <!-- Skeleton rows while loading -->
+      <tbody *ngIf="isLoadingFetchingPayments">
+        <tr *ngFor="let i of [1, 2, 3, 4, 5, 6, 7, 8]" class="skeleton-row">
+          <td><div class="skel skel-text" style="width: 70px"></div></td>
+          <td><div class="skel skel-text" style="width: 100px"></div></td>
+          <td><div class="skel skel-text" style="width: 110px"></div></td>
+          <td><div class="skel skel-text" style="width: 100px"></div></td>
+          <td><div class="skel skel-text" style="width: 100px"></div></td>
+          <td><div class="skel skel-text" style="width: 100px"></div></td>
+          <td><div class="skel skel-text" style="width: 85px"></div></td>
+          <td><div class="skel skel-badge" style="width: 72px"></div></td>
+          <td><div class="skel skel-text" style="width: 90px"></div></td>
+          <td><div class="skel skel-text" style="width: 150px"></div></td>
+          <td><div class="skel skel-text" style="width: 70px"></div></td>
+          <td><div class="skel skel-text" style="width: 80px"></div></td>
+          <td><div class="skel skel-text" style="width: 80px"></div></td>
+          <td><div class="skel skel-text" style="width: 80px"></div></td>
+          <td></td>
+        </tr>
+      </tbody>
+
+      <!-- Real rows -->
+      <tbody *ngIf="!isLoadingFetchingPayments">
         <tr *ngFor="let payment of payments">
           <td style="cursor: pointer" (click)="redirectToDetails(payment.id)">
             <span class=""> {{ payment.agreement }} </span>
@@ -297,16 +331,6 @@
           </td>
 
           <td class="table-actions">
-            <!-- <a
-              class="table-action"
-              routerLink="../create-aggrement"
-              href="javascript:void(0)"
-              tooltip="Edit product"
-              placement="top"
-            >
-              <i class="fas fa-user-edit"> </i>
-            </a> -->
-
             <a
               (click)="deletePayment(payment.id, '')"
               class="table-action table-action-delete"
@@ -322,35 +346,35 @@
     </table>
   </div>
 
-  <div class="card-footer py-4">
-    <nav aria-label="...">
-      <pagination
-        [totalItems]="totalLength"
-        [itemsPerPage]="pageSize"
-        [rotate]="false"
-        [boundaryLinks]="true"
-        [(ngModel)]="page"
-        firstText="&laquo;"
-        lastText="&raquo;"
-        [maxSize]="5"
-        class="justify-content-end mb-0"
-        [customPreviousTemplate]="prevTemplate"
-        (pageChanged)="pageChange($event)"
-        [customNextTemplate]="nextTemplate"
-      >
-      </pagination>
+  <!-- Pagination Footer -->
+  <div class="card-footer payments-footer py-4">
+    <div class="d-flex align-items-center justify-content-between flex-wrap">
+      <span class="pagination-info text-muted">
+        Total : <strong>{{ totalLength }}</strong> mouvement(s)
+      </span>
+      <nav aria-label="Pagination des mouvements">
+        <pagination
+          [totalItems]="totalLength"
+          [itemsPerPage]="pageSize"
+          [rotate]="false"
+          [boundaryLinks]="true"
+          [(ngModel)]="page"
+          firstText="&laquo;"
+          lastText="&raquo;"
+          [maxSize]="5"
+          class="justify-content-end mb-0"
+          [customPreviousTemplate]="prevTemplate"
+          (pageChanged)="pageChange($event)"
+          [customNextTemplate]="nextTemplate"
+        ></pagination>
+      </nav>
+    </div>
 
-      <ng-template #nextTemplate let-currentPage="currentPage">
-        <ng-container>
-          <i class="fas fa-angle-right"></i>
-        </ng-container>
-      </ng-template>
-
-      <ng-template #prevTemplate let-currentPage="currentPage">
-        <ng-container>
-          <i class="fas fa-angle-left"></i>
-        </ng-container>
-      </ng-template>
-    </nav>
+    <ng-template #nextTemplate let-currentPage="currentPage">
+      <ng-container><i class="fas fa-angle-right"></i></ng-container>
+    </ng-template>
+    <ng-template #prevTemplate let-currentPage="currentPage">
+      <ng-container><i class="fas fa-angle-left"></i></ng-container>
+    </ng-template>
   </div>
 </div>

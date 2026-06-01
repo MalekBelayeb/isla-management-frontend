@@ -10,9 +10,10 @@ import { SearchInputModule } from './search-input/search-input.module';
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { ConfirmDialogService } from './confirm-dialog/confirm-dialog.service';
-import { SearchableModalModule } from './searchable-modal/searchable-modal.module';
 import { DateShiftPipe } from '@core/pipes/date-shift.pipe';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { TenantSearchableModalComponent } from './searchable-modals/components/tenant-searchable-modal/tenant-searchable-modal.component';
+import { AgreementSearchableModalComponent } from './searchable-modals/components/agreement-searchable-modal/agreement-searchable-modal.component';
 
 @NgModule({
   declarations: [
@@ -21,8 +22,17 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     NavbarComponent,
     SidebarComponent,
     ConfirmDialogComponent,
+    TenantSearchableModalComponent,
+    AgreementSearchableModalComponent,
   ],
-  exports: [FooterComponent, NavbarComponent, SidebarComponent, DateShiftPipe],
+  exports: [
+    FooterComponent,
+    NavbarComponent,
+    SidebarComponent,
+    DateShiftPipe,
+    TenantSearchableModalComponent,
+    AgreementSearchableModalComponent,
+  ],
   imports: [
     RouterModule,
     CommonModule,
@@ -32,7 +42,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     CollapseModule.forRoot(),
     BsDropdownModule.forRoot(),
     ModalModule.forChild(),
-    SearchableModalModule,
   ],
   providers: [ConfirmDialogService],
 })

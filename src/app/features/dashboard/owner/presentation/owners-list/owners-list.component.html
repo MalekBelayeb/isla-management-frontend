@@ -1,75 +1,131 @@
-<div class="card">
-  <div class="card-header border-0">
-    <div class="row">
-      <div class="col-6">
-        <h3 class="mb-0">Liste des propriétaires ({{ totalLength }})</h3>
+<div class="card owners-card">
+  <!-- Card Header -->
+  <div class="card-header border-0 owners-header">
+    <div class="d-flex align-items-center justify-content-between flex-wrap">
+      <div class="d-flex align-items-center">
+        <div class="owners-header-icon mr-3">
+          <i class="fas fa-users"></i>
+        </div>
+        <div>
+          <h3 class="mb-0 owners-title">Liste des propriétaires</h3>
+          <p class="text-muted text-sm mb-0 mt-1">
+            <span class="owners-count-badge">{{ totalLength }}</span>
+            propriétaire(s) au total
+          </p>
+        </div>
       </div>
-    </div>
-  </div>
-
-  <div class="px-4 pt-2 pb-4">
-    <div class="row justify-content-end px-3 pb-4">
       <a
-        class="btn btn-sm btn-primary btn-round btn-icon"
+        class="btn btn-primary btn-sm btn-round btn-icon add-btn"
         href="javascript:void(0)"
         routerLink="../create-owner"
       >
-        <span class="btn-inner--icon">
-          <i class="ni ni-fat-add"> </i>
-        </span>
-        <span class="btn-inner--text"> Ajouter un propriétaire </span>
+        <span class="btn-inner--icon"><i class="ni ni-fat-add"></i></span>
+        <span class="btn-inner--text">Ajouter un propriétaire</span>
       </a>
     </div>
+  </div>
 
+  <!-- Filters Section -->
+  <div class="owners-filter-section">
     <form [formGroup]="filtersFormGroup" (ngSubmit)="filterEmployees()">
-      <div class="row">
-        <div class="col-md-12">
-          <div class="form-group">
-            <input
-              class="form-control"
-              id="example2cols1Input"
-              formControlName="searchTerm"
-              placeholder="Propriètaire, tél, cin & mail"
-            />
+      <div class="row align-items-end">
+        <div class="col">
+          <div class="form-group mb-0">
+            <div class="input-group input-group-merge search-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text search-prefix">
+                  <i class="fas fa-search"></i>
+                </span>
+              </div>
+              <input
+                class="form-control search-input"
+                formControlName="searchTerm"
+                placeholder="Rechercher par nom, téléphone, CIN ou email..."
+                autocomplete="off"
+              />
+            </div>
           </div>
         </div>
-      </div>
-
-      <div class="d-flex w-100 justify-content-end">
-        <button class="btn btn-secondary" type="submit">Filtrer</button>
+        <div class="d-flex justify-content-end">
+          <button class="btn btn-primary filter-btn" type="submit">
+            <i class="fas fa-filter mr-2"></i>Filtrer
+          </button>
+        </div>
       </div>
     </form>
   </div>
 
-  <div class="table-responsive">
-    <table class="table align-items-center table-flush table-hover">
+  <!-- Table Section -->
+  <div class="table-responsive owners-table-wrapper">
+    <!-- Empty State -->
+    <div
+      *ngIf="owners.length === 0 && !isLoadingFetchingOwners"
+      class="owners-empty-state"
+    >
+      <div class="empty-icon-wrapper">
+        <i class="fas fa-user-slash"></i>
+      </div>
+      <h5 class="empty-title">Aucun propriétaire trouvé</h5>
+      <p class="empty-subtitle">
+        Modifiez vos critères de recherche ou ajoutez un nouveau propriétaire.
+      </p>
+      <a
+        class="btn btn-outline-primary btn-sm btn-round"
+        href="javascript:void(0)"
+        routerLink="../create-owner"
+      >
+        <i class="ni ni-fat-add mr-1"></i>Ajouter un propriétaire
+      </a>
+    </div>
+
+    <table
+      class="table align-items-center table-flush table-hover"
+      [class.owners-table--hidden]="
+        owners.length === 0 && !isLoadingFetchingOwners
+      "
+    >
       <thead class="thead-light">
         <tr>
-          <th>Num propriètaire</th>
-          <th>Propriétaire</th>
-
-          <th>Téléphone</th>
-          <th>CIN</th>
-          <th>Nationalté</th>
-
-          <th>Type</th>
-          <th>Nb propriétés</th>
-          <th>Nb locaux</th>
-          <th>Date de création</th>
-
-          <th></th>
+          <th scope="col">N° Propriétaire</th>
+          <th scope="col">Propriétaire</th>
+          <th scope="col">Téléphone</th>
+          <th scope="col">CIN</th>
+          <th scope="col">Nationalité</th>
+          <th scope="col">Type</th>
+          <th scope="col" class="text-center">Propriétés</th>
+          <th scope="col" class="text-center">Locaux</th>
+          <th scope="col">Date de création</th>
+          <th scope="col"></th>
         </tr>
       </thead>
-      <div
-        *ngIf="isLoadingFetchingOwners"
-        class="spinner-border text-primary mt-4 ml-4"
-        role="status"
-      ></div>
-      <div *ngIf="owners.length === 0 && !isLoadingFetchingOwners" class="">
-        <p class="ml-4 mb-0">Liste vide, aucun element trouvé.</p>
-      </div>
 
-      <tbody>
+      <!-- Skeleton rows while loading -->
+      <tbody *ngIf="isLoadingFetchingOwners">
+        <tr *ngFor="let i of [1, 2, 3, 4, 5, 6, 7, 8]" class="skeleton-row">
+          <td><div class="skel skel-text" style="width: 72px"></div></td>
+          <td>
+            <div class="d-flex align-items-center">
+              <div class="skel skel-avatar mr-2"></div>
+              <div class="skel skel-text" style="width: 110px"></div>
+            </div>
+          </td>
+          <td><div class="skel skel-text" style="width: 100px"></div></td>
+          <td><div class="skel skel-text" style="width: 88px"></div></td>
+          <td><div class="skel skel-text" style="width: 60px"></div></td>
+          <td><div class="skel skel-badge" style="width: 90px"></div></td>
+          <td class="text-center">
+            <div class="skel skel-circle mx-auto"></div>
+          </td>
+          <td class="text-center">
+            <div class="skel skel-circle mx-auto"></div>
+          </td>
+          <td><div class="skel skel-text" style="width: 80px"></div></td>
+          <td></td>
+        </tr>
+      </tbody>
+
+      <!-- Real rows -->
+      <tbody *ngIf="!isLoadingFetchingOwners">
         <tr *ngFor="let owner of owners">
           <td
             style="cursor: pointer"
@@ -83,9 +139,8 @@
             (click)="redirectToDetails(owner.id)"
             class="table-user"
           >
-            <b> {{ owner.name }} </b>
+            <span> {{ owner.name }} </span>
           </td>
-
           <td style="cursor: pointer" (click)="redirectToDetails(owner.id)">
             <span class=""> {{ owner.phoneNumber }} </span>
           </td>
@@ -97,12 +152,10 @@
           <td style="cursor: pointer" (click)="redirectToDetails(owner.id)">
             <span class="status"> {{ owner.nationality }} </span>
           </td>
-
           <td style="cursor: pointer" (click)="redirectToDetails(owner.id)">
             <span class="font-weight-bold" *ngIf="owner.type == 'natural'">
               P. Physique
             </span>
-
             <span class="font-weight-bold" *ngIf="owner.type == 'legal'">
               P. Morale
             </span>
@@ -127,16 +180,6 @@
             </span>
           </td>
           <td class="table-actions">
-            <!-- <a
-              class="table-action"
-              routerLink="../create-owner"
-              href="javascript:void(0)"
-              tooltip="Edit product"
-              placement="top"
-            >
-              <i class="fas fa-user-edit"> </i>
-            </a> -->
-
             <a
               (click)="deleteEmployee(owner.id, owner.name)"
               class="table-action table-action-delete"
@@ -152,120 +195,116 @@
     </table>
   </div>
 
-  <div class="card-footer py-4">
-    <nav aria-label="...">
-      <pagination
-        [totalItems]="totalLength"
-        [itemsPerPage]="pageSize"
-        [rotate]="false"
-        [boundaryLinks]="true"
-        [(ngModel)]="page"
-        firstText="&laquo;"
-        lastText="&raquo;"
-        [maxSize]="5"
-        class="justify-content-end mb-0"
-        [customPreviousTemplate]="prevTemplate"
-        (pageChanged)="pageChange($event)"
-        [customNextTemplate]="nextTemplate"
-      >
-      </pagination>
+  <!-- Pagination Footer -->
 
-      <ng-template #nextTemplate let-currentPage="currentPage">
-        <ng-container>
-          <i class="fas fa-angle-right"></i>
-        </ng-container>
-      </ng-template>
+  <div class="card-footer owners-footer py-4">
+    <div class="d-flex align-items-center justify-content-between flex-wrap">
+      <span class="pagination-info text-muted">
+        Total : <strong>{{ totalLength }}</strong> propriétaire(s)
+      </span>
+      <nav aria-label="Pagination des propriétaires">
+        <pagination
+          [totalItems]="totalLength"
+          [itemsPerPage]="pageSize"
+          [rotate]="false"
+          [boundaryLinks]="true"
+          [(ngModel)]="page"
+          firstText="&laquo;"
+          lastText="&raquo;"
+          [maxSize]="5"
+          class="justify-content-end mb-0"
+          [customPreviousTemplate]="prevTemplate"
+          (pageChanged)="pageChange($event)"
+          [customNextTemplate]="nextTemplate"
+        ></pagination>
+      </nav>
+    </div>
 
-      <ng-template #prevTemplate let-currentPage="currentPage">
-        <ng-container>
-          <i class="fas fa-angle-left"></i>
-        </ng-container>
-      </ng-template>
-    </nav>
+    <ng-template #nextTemplate let-currentPage="currentPage">
+      <ng-container><i class="fas fa-angle-right"></i></ng-container>
+    </ng-template>
+    <ng-template #prevTemplate let-currentPage="currentPage">
+      <ng-container><i class="fas fa-angle-left"></i></ng-container>
+    </ng-template>
   </div>
 </div>
 
+<!-- Properties Modal -->
 <ng-template #modalProperties>
-  <div class="modal-header">
-    <div class="d-flex flex-column w-100 justify-content-start">
-      <h3 class="mb-0">Liste des propriétés</h3>
+  <div class="modal-header modal-header--owners">
+    <div class="d-flex align-items-center">
+      <div class="modal-header-icon mr-3">
+        <i class="fas fa-building"></i>
+      </div>
+      <div>
+        <h4 class="mb-0 modal-title-text">Liste des propriétés</h4>
+        <p class="text-muted text-sm mb-0">
+          Propriétés associées à ce propriétaire
+        </p>
+      </div>
     </div>
   </div>
-  <div class="modal-body">
-    <table class="table align-items-center table-flush table-hover">
-      <thead class="thead-light">
-        <tr>
-          <th>Identifiant</th>
-          <th>Propriètaire</th>
 
-          <th>Adresse</th>
-          <th>Type</th>
-
-          <th>Nb locaux</th>
-
-          <th></th>
-        </tr>
-      </thead>
-
-      <tbody>
-        <tr *ngFor="let property of selectedProperties">
-          <td
-            style="cursor: pointer"
-            (click)="redirectToDetails(property.id)"
-            class="table-user"
-          >
-            <b> {{ property.id }} </b>
-          </td>
-          <td
-            style="cursor: pointer"
-            (click)="redirectToDetails(property.id)"
-            class="table-user"
-          >
-            <b> {{ property.owner }} </b>
-          </td>
-
-          <td
-            style="cursor: pointer"
-            (click)="redirectToDetails(property.id)"
-            class="table-user"
-          >
-            <b> {{ property.address }} </b>
-          </td>
-
-          <td
-            style="cursor: pointer"
-            (click)="redirectToDetails(property.id)"
-            class="table-user"
-          >
-            <b> {{ property.type }} </b>
-          </td>
-
-          <td style="cursor: pointer" (click)="redirectToDetails(property.id)">
-            <div class="col-auto">0</div>
-          </td>
-          <td class="table-actions">
-            <a
-              class="table-action"
-              routerLink="../create-property"
-              href="javascript:void(0)"
-              tooltip="Edit product"
-              placement="top"
-            >
-              <i class="fas fa-user-edit"> </i>
-            </a>
-
-            <a
-              class="table-action table-action-delete"
-              tooltip="Delete product"
-              placement="top"
-              href="javascript:void(0)"
-            >
-              <i class="fas fa-trash"> </i>
-            </a>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+  <div class="modal-body px-0 pb-0">
+    <div class="table-responsive">
+      <table class="table align-items-center table-flush modal-table">
+        <thead class="thead-light">
+          <tr>
+            <th scope="col">Identifiant</th>
+            <th scope="col">Propriétaire</th>
+            <th scope="col">Adresse</th>
+            <th scope="col">Type</th>
+            <th scope="col" class="text-center">Nb locaux</th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let property of selectedProperties" class="modal-row">
+            <td (click)="redirectToDetails(property.id)" class="modal-id-cell">
+              <span class="matricule-tag">{{ property.id }}</span>
+            </td>
+            <td (click)="redirectToDetails(property.id)">
+              <span class="cell-text font-weight-600">{{
+                property.owner
+              }}</span>
+            </td>
+            <td (click)="redirectToDetails(property.id)">
+              <span class="cell-text">
+                <i class="fas fa-map-marker-alt cell-icon mr-1"></i
+                >{{ property.address }}
+              </span>
+            </td>
+            <td (click)="redirectToDetails(property.id)">
+              <span class="cell-text">{{ property.type }}</span>
+            </td>
+            <td (click)="redirectToDetails(property.id)" class="text-center">
+              <span class="count-bubble count-premise">0</span>
+            </td>
+            <td class="table-actions">
+              <a
+                class="action-edit-btn"
+                routerLink="../create-property"
+                href="javascript:void(0)"
+                tooltip="Modifier"
+                placement="top"
+                aria-label="Modifier"
+              >
+                <i class="fas fa-edit"></i>
+              </a>
+              <a
+                class="action-delete-btn ml-2"
+                tooltip="Supprimer"
+                placement="top"
+                href="javascript:void(0)"
+                aria-label="Supprimer"
+              >
+                <i class="fas fa-trash"></i>
+              </a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
-  <div class="modal-footer"></div>
+  <div class="modal-footer modal-footer--owners"></div>
 </ng-template>

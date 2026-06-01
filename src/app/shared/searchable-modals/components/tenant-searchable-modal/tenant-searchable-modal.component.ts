@@ -6,18 +6,27 @@ import {
   OnInit,
   Output,
   SimpleChanges,
+  TemplateRef,
+  ViewChild,
 } from '@angular/core';
-import { SearchResult } from '../search-input/search-input.component';
+import { SearchResult } from '../../../search-input/search-input.component';
 import { TenantService } from '@dashboard/tenant/service/tenant.service';
 import { TenantMapper } from '@dashboard/tenant/mappers/tenant-mapper';
 import { Tenant } from '@dashboard/tenant/entity/tenant';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { BsDropdownDirective } from 'ngx-bootstrap/dropdown';
+import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-searchable-modal',
-  templateUrl: './searchable-modal.component.html',
-  styleUrls: ['./searchable-modal.component.css'],
+  selector: 'app-tenant-searchable-modal',
+  templateUrl: './tenant-searchable-modal.component.html',
+  styleUrls: ['./tenant-searchable-modal.component.scss'],
+  providers: [BsDropdownDirective],
 })
-export class SearchableModalComponent implements OnInit, OnChanges {
+export class TenantSearchableModalComponent implements OnInit, OnChanges {
+  @ViewChild('modalSearch') modalSearch?: TemplateRef<void>;
+  searchModal?: BsModalRef;
+
   @Input() title = 'Chercher des locataires';
   focus = false;
   isEmptyResult = false;
@@ -26,6 +35,7 @@ export class SearchableModalComponent implements OnInit, OnChanges {
   @Input() searchInputValue = '';
   @Input() suffixIcon?: string;
   @Input() searchResult: SearchResult[] = [];
+
   @Output() cancelClicked = new EventEmitter<void>();
   @Output() tenantClicked = new EventEmitter<string>();
 
@@ -40,19 +50,19 @@ export class SearchableModalComponent implements OnInit, OnChanges {
 
   totalLength = 0;
   page = 1;
-  pageSize = 20;
+  pageSize = 10;
 
   tenants: Tenant[] = [];
 
   constructor(
     private tenantService: TenantService,
     private tenantMapper: TenantMapper,
+    private modalService: BsModalService,
+    private router: Router,
   ) {}
   isLoadingFetchingTenants = false;
 
-  ngOnInit(): void {
-    this.getAllTenants(this.page, this.pageSize);
-  }
+  ngOnInit(): void {}
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['searchResult'] && !changes['searchResult'].firstChange) {
       this.searchResult = changes['searchResult'].currentValue;
@@ -65,8 +75,31 @@ export class SearchableModalComponent implements OnInit, OnChanges {
     }
   }
 
-  moveToDetails(id: string) {
-    this.tenantClicked.emit(id);
+  showModal() {
+    this.searchModal = this.modalService.show(this.modalSearch!, {
+      class: 'modal-xl',
+    });
+    this.getAllTenants(this.page, this.pageSize);
+  }
+
+  hideModal() {
+    this.searchModal?.hide();
+  }
+
+  moveToTenantDetails(id: string) {
+    const url = this.router.serializeUrl(
+      this.router.createUrlTree([`/dashboard/tenant/tenant-details/${id}`]),
+    );
+
+    window.open(url, '_blank');
+  }
+
+  moveToPaymentDetails(id: string) {
+    const url = this.router.serializeUrl(
+      this.router.createUrlTree([`/dashboard/payment/create-payment/${id}`]),
+    );
+
+    window.open(url, '_blank');
   }
 
   debounceValueChange(newValue: any) {
@@ -83,6 +116,7 @@ export class SearchableModalComponent implements OnInit, OnChanges {
 
   onCancel() {
     this.cancelClicked.emit();
+    this.hideModal();
   }
 
   searchValueChanged(searchValue: string) {

@@ -1,0 +1,250 @@
+<div class="navbar-search navbar-search-light" id="navbar-search-main">
+  <div class="form-group mb-0 search-wrapper">
+    <div class="input-group input-group-alternative input-group-merge">
+      <div class="input-group-prepend">
+        <span class="input-group-text">
+          <i class="fas fa-search"></i>
+        </span>
+      </div>
+      <input
+        class="form-control search-input"
+        (click)="showModal()"
+        placeholder="Chercher un contrat..."
+        readonly
+        [(ngModel)]="searchInputValue"
+        [ngClass]="'focused is-invalid'"
+        type="text"
+      />
+    </div>
+    <div *ngIf="errorText" class="error-text">{{ errorText }}.</div>
+  </div>
+</div>
+<ng-template #modalSearch>
+  <div class="modal-header pb-3">
+    <div class="d-flex flex-column w-100">
+      <h3 class="mb-0">{{ title }}</h3>
+      <div [ngClass]="{ 'mt-4': title !== '' }">
+        <div class="form-group mb-0">
+          <div
+            class="input-group input-group-merge modal-search-group"
+            [class.is-focused]="focus === true"
+          >
+            <div *ngIf="prefixIcon" class="input-group-prepend">
+              <span class="input-group-text modal-search-icon">
+                <i class="{{ prefixIcon }}"></i>
+              </span>
+            </div>
+
+            <input
+              (focus)="focus = true"
+              (blur)="focus = false"
+              [value]="searchInputValue"
+              [placeholder]="searchPlaceholder"
+              (keyup)="debounceValueChange($event)"
+              class="form-control modal-search-input"
+              type="text"
+              autocomplete="off"
+            />
+
+            <div *ngIf="suffixIcon" class="input-group-append">
+              <span class="input-group-text modal-search-icon">
+                <i class="{{ suffixIcon }}"></i>
+              </span>
+            </div>
+          </div>
+
+          <div
+            class="filter-checkboxes d-flex align-items-center flex-wrap mt-3"
+            style="gap: 0.6rem"
+          >
+            <form [formGroup]="criteriaFormGroup">
+              <label class="filter-chip">
+                <input formControlName="searchByTenant" type="checkbox" />
+                <span>Chercher par locataire</span>
+              </label>
+              <label class="filter-chip">
+                <input formControlName="searchByApartment" type="checkbox" />
+                <span>Chercher par adresse locale</span>
+              </label>
+              <label class="filter-chip">
+                <input formControlName="searchByOwner" type="checkbox" />
+                <span>Chercher par propriétaire</span>
+              </label>
+            </form>
+          </div>
+
+          <div class="d-flex align-items-center mt-3">
+            <ng-container *ngIf="!isLoadingFetchingAgreements">
+              <small *ngIf="totalLength > 0" class="text-muted">
+                <i class="ni ni-single-02 mr-1"></i>
+                {{ totalLength }} contrat(s) trouvé(s)
+              </small>
+              <small *ngIf="totalLength === 0" class="text-muted">
+                Aucun élément trouvé
+              </small>
+            </ng-container>
+            <div
+              *ngIf="isLoadingFetchingAgreements"
+              class="spinner-border spinner-border-sm text-primary"
+              role="status"
+            ></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-body p-0" style="height: 50vh; overflow-y: auto">
+    <table class="table table-hover table-sm mb-0">
+      <thead
+        style="
+          position: sticky;
+          top: 0;
+          z-index: 1;
+          background: #fff;
+          box-shadow: 0 1px 0 #e9ecef;
+        "
+      >
+        <tr>
+          <th
+            class="pl-4 text-uppercase text-muted"
+            style="font-size: 0.65rem; font-weight: 700"
+          >
+            Num contrat
+          </th>
+          <th
+            class="text-uppercase text-muted"
+            style="font-size: 0.65rem; font-weight: 700"
+          >
+            Locataire
+          </th>
+          <th
+            class="text-uppercase text-muted"
+            style="font-size: 0.65rem; font-weight: 700"
+          >
+            Local
+          </th>
+          <th
+            class="text-uppercase text-muted"
+            style="font-size: 0.65rem; font-weight: 700"
+          >
+            Propriété
+          </th>
+          <th
+            class="text-uppercase text-muted"
+            style="font-size: 0.65rem; font-weight: 700"
+          >
+            Propriétaire
+          </th>
+          <th
+            class="text-uppercase text-muted"
+            style="font-size: 0.65rem; font-weight: 700"
+          >
+            Status
+          </th>
+          <th
+            class="text-uppercase text-muted"
+            style="font-size: 0.65rem; font-weight: 700"
+          >
+            Date d'effet
+          </th>
+          <th
+            class="text-uppercase text-muted"
+            style="font-size: 0.65rem; font-weight: 700"
+          >
+            Date de création
+          </th>
+          <th
+            class="text-uppercase text-muted"
+            style="font-size: 0.65rem; font-weight: 700"
+          >
+            Actions
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          *ngFor="let agreement of agreements"
+          style="cursor: pointer; vertical-align: middle"
+        >
+          <td
+            (click)="onItemClick(agreement.id, agreement.matricule)"
+            class="pl-4"
+          >
+            <span class="font-weight-bold">{{ agreement.matricule }}</span>
+          </td>
+          <td (click)="onItemClick(agreement.id, agreement.matricule)">
+            {{ agreement.tenant }}
+          </td>
+          <td (click)="onItemClick(agreement.id, agreement.matricule)">
+            {{ agreement.apartment }}
+          </td>
+          <td (click)="onItemClick(agreement.id, agreement.matricule)">
+            {{ agreement.property }}
+          </td>
+          <td (click)="onItemClick(agreement.id, agreement.matricule)">
+            {{ agreement.owner }}
+          </td>
+          <td (click)="onItemClick(agreement.id, agreement.matricule)">
+            <span
+              *ngIf="agreement.status == 'ACTIVE'"
+              class="badge badge-lg badge-success"
+            >
+              Valide
+            </span>
+
+            <span
+              *ngIf="agreement.status == 'SUSPENDED'"
+              class="badge badge-lg badge-warning"
+            >
+              Suspendu
+            </span>
+          </td>
+          <td (click)="onItemClick(agreement.id, agreement.matricule)">
+            {{ agreement.startDate | date: "dd/MM/yyyy" }}
+          </td>
+
+          <td
+            (click)="onItemClick(agreement.id, agreement.matricule)"
+            style="white-space: nowrap"
+          >
+            {{ agreement.createdAt | date: "dd/MM/yyyy" }}
+          </td>
+          <td class="pr-3" style="white-space: nowrap">
+            <li class="nav-item dropdown" dropdown placement="bottom-right">
+              <button
+                dropdownToggle
+                type="button"
+                class="btn btn-sm btn-icon-only action-menu-btn"
+              >
+                <i class="fas fa-ellipsis-v"></i>
+              </button>
+              <div
+                class="dropdown-menu dropdown-menu-arrow dropdown-menu-right user-dropdown"
+                *dropdownMenu
+              >
+                <a
+                  routerLinkActive="active"
+                  class="dropdown-item"
+                  style="cursor: pointer"
+                  (click)="moveToAgreementDetails(agreement.id)"
+                >
+                  <i class="ni ni-single-02 text-primary"></i>
+                  <span>Voir détails</span>
+                </a>
+              </div>
+            </li>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="modal-footer">
+    <div
+      class="d-flex w-100 flex-wrap align-content-stretch justify-content-end"
+    >
+      <button class="btn btn-secondary" (click)="onCancel()">Annuler</button>
+    </div>
+  </div>
+</ng-template>

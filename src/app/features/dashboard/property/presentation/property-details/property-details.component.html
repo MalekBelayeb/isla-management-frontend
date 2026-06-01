@@ -237,6 +237,15 @@
           </div>
         </div>
       </div>
+      <div class="row d-flex w-100 justify-content-end">
+        <a
+          style="cursor: pointer"
+          class="btn btn-link text-primary p-0"
+          (click)="exportFinancialBalanceToPdf()"
+        >
+          <i class="fas fa-file-export mr-1"></i>Exporter sous format PDF
+        </a>
+      </div>
     </div>
     <form [formGroup]="filtersFormGroup" (ngSubmit)="filterFinancialBalance()">
       <div *ngIf="filterDateType === 'dateToDate'" class="row mb-5 mt-3">
@@ -261,163 +270,197 @@
               [maxSize]="4"
               [searchInputValue]="trimesterSearchValue?.title ?? ''"
               (selectedResultItem)="onSelectedTrimesterSearchItem($event)"
-              [searchResult]="trimestersOptions"
+              [searchResult]="trimestersDropdownOptions"
               [isEditable]="false"
             ></app-search-input>
           </div>
         </div>
       </div>
       <div class="d-flex w-100 justify-content-end">
-        <button class="btn btn-secondary" type="submit">Filtrer</button>
+        <button class="btn btn-primary" type="submit">Filtrer</button>
       </div>
     </form>
 
     <div class="table-responsive">
-      <div class="my-3 pr-2 d-flex w-100 flex-row justify-content-end">
-        <!-- <button class="btn btn-icon btn-secondary" type="button">
-          <span class="btn-inner--icon">
-            <i class="ni ni-cloud-download-95"> </i>
-          </span>
-
-          <span class="btn-inner--text"> Exporter </span>
-        </button> -->
+      <div class="my-3 pr-2 d-flex w-100 flex-row justify-content-end"></div>
+      <div #printSection>
+        <table
+          id="financialBalanceTable"
+          class="table align-items-center table-bordered table-hover"
+        >
+          <thead>
+            <tr>
+              <th scope="col">DATE</th>
+              <th scope="col">COMPTES</th>
+              <th class="text-center" scope="col">LIBELLES</th>
+              <th scope="col">DEBIT</th>
+              <th scope="col">CREDIT</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngIf="
+                financialBalance?.previousPeriodNetBalance && previousEndDate
+              "
+            >
+              <td colspan="2"></td>
+              <td colspan="1">
+                <div class="d-flex justify-content-end">
+                  <h4>
+                    Règlement du solde du compte de loyer au:
+                    {{ previousEndDate | date: "dd/MM/yyyy" }}
+                  </h4>
+                </div>
+              </td>
+              <td colspan="1">
+                <h4 class="text-warning">
+                  <i class="fas fa-arrow-down text-warning mr-3"> </i
+                  >{{
+                    financialBalance?.previousPeriodNetBalance | number: "1.3-3"
+                  }}
+                  TND
+                </h4>
+              </td>
+              <td></td>
+            </tr>
+            <tr *ngFor="let payment of financialBalance?.payments">
+              <th scope="row">
+                <h4>{{ payment.paymentDate | date: "dd/MM/yyyy" }}</h4>
+              </th>
+              <td>
+                <h4>{{ payment.account }}</h4>
+              </td>
+              <td>
+                <div *ngIf="payment.type == 'income'" class="row">
+                  <div class="col-6">
+                    <h4>{{ payment.tenant }}</h4>
+                  </div>
+                  <div class="col-6">
+                    <h4 style="white-space: normal">{{ payment.reason }}</h4>
+                  </div>
+                </div>
+                <div *ngIf="payment.type == 'expense'" class="row">
+                  <div class="col-6">
+                    <h4>{{ payment.reason }}</h4>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <h4 *ngIf="payment.type == 'expense'">
+                  <i class="fas fa-arrow-down text-warning mr-3"> </i>
+                  {{ payment.amount | number: "1.3-3" }} TND
+                </h4>
+              </td>
+              <td>
+                <h4 *ngIf="payment.type == 'income'">
+                  <i class="fas fa-arrow-up text-success mr-3"> </i>
+                  {{ payment.amount | number: "1.3-3" }} TND
+                </h4>
+              </td>
+            </tr>
+            <tr *ngIf="financialBalance?.profit">
+              <th scope="row">
+                <h4>
+                  {{ endDate | date: "dd/MM/yyyy" }}
+                </h4>
+              </th>
+              <td>
+                <h4></h4>
+              </td>
+              <td>
+                <div class="row">
+                  <div class="col-6">
+                    <table class="table table-borderless">
+                      <tr>
+                        <td><h4>RECOUVREMENT AGENCE</h4></td>
+                        <td>
+                          <h4>{{ propertyDetails?.profitInPercentage }}%</h4>
+                        </td>
+                        <td>
+                          <h4>
+                            SUR
+                            {{
+                              financialBalance?.totalIncome | number: "1.3-3"
+                            }}
+                            TND
+                          </h4>
+                        </td>
+                        <td><h4>=</h4></td>
+                        <td>
+                          <h4>
+                            {{
+                              financialBalance?.profit?.grossProfit
+                                | number: "1.3-3"
+                            }}
+                            TND
+                          </h4>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td><h4>TVA</h4></td>
+                        <td><h4>19%</h4></td>
+                        <td></td>
+                        <td><h4>=</h4></td>
+                        <td>
+                          <h4>
+                            {{
+                              financialBalance?.profit?.taxAmount
+                                | number: "1.3-3"
+                            }}
+                            TND
+                          </h4>
+                        </td>
+                      </tr>
+                    </table>
+                  </div>
+                </div>
+                <div class="row"></div>
+              </td>
+              <td>
+                <h4>
+                  <i class="fas fa-arrow-down text-warning mr-3"> </i>
+                  {{
+                    financialBalance?.profit?.profitWithTax | number: "1.3-3"
+                  }}
+                  TND
+                </h4>
+              </td>
+              <td></td>
+            </tr>
+            <tr>
+              <td colspan="3">
+                <div class="d-flex justify-content-end">
+                  <h4>TOTAL:</h4>
+                </div>
+              </td>
+              <td>
+                <h4 class="text-warning">
+                  <i class="fas fa-arrow-down text-warning mr-3"> </i
+                  >{{ financialBalance?.totalExpense | number: "1.3-3" }} TND
+                </h4>
+              </td>
+              <td>
+                <h4 class="text-success">
+                  <i class="fas fa-arrow-up text-success mr-3"> </i>
+                  {{ financialBalance?.totalIncome | number: "1.3-3" }} TND
+                </h4>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="3">
+                <div class="d-flex justify-content-end">
+                  <h4>Solde créditeur:</h4>
+                </div>
+              </td>
+              <td colspan="2">
+                <h4>
+                  {{ financialBalance?.netBalance | number: "1.3-3" }} TND
+                </h4>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
-      <table class="table align-items-center table-bordered table-hover">
-        <thead>
-          <tr>
-            <th scope="col">DATE</th>
-            <th scope="col">COMPTES</th>
-            <th class="text-center" scope="col">LIBELLES</th>
-            <th scope="col">DEBIT</th>
-            <th scope="col">CREDIT</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let payment of financialBalance?.payments">
-            <th scope="row">{{ payment.paymentDate | date: "dd/MM/yyyy" }}</th>
-            <td>
-              <h4>{{ payment.account }}</h4>
-            </td>
-            <td>
-              <div *ngIf="payment.type == 'income'" class="row">
-                <div class="col-6">
-                  <h4>{{ payment.tenant }}</h4>
-                </div>
-                <div class="col-6">
-                  <h4 style="white-space: normal">{{ payment.reason }}</h4>
-                </div>
-              </div>
-              <div *ngIf="payment.type == 'expense'" class="row">
-                <div class="col-6">
-                  <h4>{{ payment.reason }}</h4>
-                </div>
-              </div>
-            </td>
-            <td>
-              <h4 *ngIf="payment.type == 'expense'">
-                <i class="fas fa-arrow-down text-warning mr-3"> </i>
-                {{ payment.amount | number: "1.3-3" }} TND
-              </h4>
-            </td>
-            <td>
-              <h4 *ngIf="payment.type == 'income'">
-                <i class="fas fa-arrow-up text-success mr-3"> </i>
-                {{ payment.amount | number: "1.3-3" }} TND
-              </h4>
-            </td>
-          </tr>
-          <tr *ngIf="financialBalance?.profit">
-            <th scope="row">{{ endDate | date: "dd/MM/yyyy" }}</th>
-            <td>
-              <h4></h4>
-            </td>
-            <td>
-              <div class="row">
-                <div class="col-6">
-                  <table class="table table-borderless">
-                    <tr>
-                      <td><h4>RECOUVREMENT AGENCE</h4></td>
-                      <td>
-                        <h4>{{ propertyDetails?.profitInPercentage }}%</h4>
-                      </td>
-                      <td>
-                        <h4>
-                          SUR
-                          {{ financialBalance?.totalIncome | number: "1.3-3" }}
-                          TND
-                        </h4>
-                      </td>
-                      <td><h4>=</h4></td>
-                      <td>
-                        <h4>
-                          {{
-                            financialBalance?.profit?.grossProfit
-                              | number: "1.3-3"
-                          }}
-                          TND
-                        </h4>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td><h4>TVA</h4></td>
-                      <td><h4>19%</h4></td>
-                      <td></td>
-                      <td><h4>=</h4></td>
-                      <td>
-                        <h4>
-                          {{
-                            financialBalance?.profit?.taxAmount
-                              | number: "1.3-3"
-                          }}
-                          TND
-                        </h4>
-                      </td>
-                    </tr>
-                  </table>
-                </div>
-              </div>
-              <div class="row"></div>
-            </td>
-            <td>
-              <h4>
-                <i class="fas fa-arrow-down text-warning mr-3"> </i>
-                {{ financialBalance?.profit?.profitWithTax | number: "1.3-3" }}
-                TND
-              </h4>
-            </td>
-            <td></td>
-          </tr>
-          <tr>
-            <td colspan="3">
-              <div class="d-flex justify-content-end">
-                <h4>TOTAL:</h4>
-              </div>
-            </td>
-            <td>
-              <h4 class="text-warning">
-                <i class="fas fa-arrow-down text-warning mr-3"> </i
-                >{{ financialBalance?.totalExpense | number: "1.3-3" }} TND
-              </h4>
-            </td>
-            <td>
-              <h4 class="text-success">
-                <i class="fas fa-arrow-up text-success mr-3"> </i>
-                {{ financialBalance?.totalIncome | number: "1.3-3" }} TND
-              </h4>
-            </td>
-          </tr>
-          <tr>
-            <td colspan="3">
-              <div class="d-flex justify-content-end">
-                <h4>Solde créditeur:</h4>
-              </div>
-            </td>
-            <td colspan="2">
-              <h4>{{ financialBalance?.netBalance | number: "1.3-3" }} TND</h4>
-            </td>
-          </tr>
-        </tbody>
-      </table>
     </div>
   </div>
 </div>

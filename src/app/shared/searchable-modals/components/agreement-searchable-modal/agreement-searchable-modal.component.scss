@@ -1,0 +1,182 @@
+$primary: #5e72e4;
+$danger: #f5365c;
+$text-dark: #32325d;
+$text-muted: #8898aa;
+$border: #e9ecef;
+
+.search-wrapper {
+  .input-group {
+    background: #fafbfc;
+    border: 1.5px solid transparent;
+    border-radius: 4px;
+    overflow: hidden;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+
+    .input-group-text {
+      background: transparent;
+      border: none;
+      color: $text-muted;
+      padding-right: 0.35rem;
+    }
+
+    .search-input {
+      background: transparent;
+      border: none;
+      font-size: 0.875rem;
+      color: $text-dark;
+      cursor: pointer;
+      min-width: 210px;
+      padding-left: 8px;
+
+      &::placeholder {
+        color: $text-muted;
+      }
+
+      &:focus {
+        box-shadow: none;
+      }
+    }
+  }
+
+  &.focused .input-group {
+    background: #fff;
+    border-color: $primary;
+    box-shadow: 0 0 0 3px rgba(94, 114, 228, 0.1);
+  }
+}
+
+// ── Modal search input ─────────────────────────────────────────────
+.modal-search-group {
+  background: #f5f7fa;
+  border: 2px solid transparent;
+  border-radius: 12px !important;
+  overflow: hidden;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+
+  &.is-focused {
+    background: #fff;
+    border-color: $primary;
+    box-shadow: 0 0 0 4px rgba(94, 114, 228, 0.1);
+  }
+
+  .modal-search-icon {
+    background: transparent;
+    border: none;
+    padding: 0 0.6rem 0 1rem;
+    color: $text-muted;
+    transition: color 0.2s ease;
+  }
+
+  &.is-focused .modal-search-icon {
+    color: $primary;
+  }
+
+  .modal-search-input {
+    background: transparent;
+    border: none;
+    height: 48px;
+    font-size: 0.95rem;
+    color: $text-dark;
+    padding-left: 0.25rem;
+
+    &::placeholder {
+      color: #b0bac9;
+      font-weight: 400;
+    }
+
+    &:focus {
+      box-shadow: none;
+      background: transparent;
+    }
+  }
+}
+
+/* Scrollbar — horizontal only */
+.modal-body::-webkit-scrollbar {
+  width: 0;        /* hide vertical */
+  height: 4px;     /* show horizontal */
+}
+
+.modal-body::-webkit-scrollbar-track {
+  background: #f1f3ff;
+  border-radius: 10px;
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+  background: $text-muted;
+  border-radius: 10px;
+}
+
+.modal-body::-webkit-scrollbar-thumb:hover {
+  background: #4a5fd4;
+}
+
+// ── Filter chip checkboxes ─────────────────────────────────────────
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.28rem 0.75rem;
+  border: 1.5px solid $border;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: $text-muted;
+  cursor: pointer;
+  user-select: none;
+  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+  margin: 0;
+
+  input[type="checkbox"] {
+    width: 13px;
+    height: 13px;
+    accent-color: $primary;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  &:hover {
+    border-color: rgba(94, 114, 228, 0.4);
+    color: $primary;
+    background: rgba(94, 114, 228, 0.04);
+  }
+
+  &:has(input:checked) {
+    border-color: $primary;
+    background: rgba(94, 114, 228, 0.08);
+    color: $primary;
+    font-weight: 600;
+  }
+}
+
+// ── Row action icon buttons ────────────────────────────────────────
+.action-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: $primary;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.15s ease, transform 0.15s ease;
+
+  i { font-size: 0.9rem; }
+
+  &:hover {
+    background: rgba(94, 114, 228, 0.1);
+    transform: scale(1.1);
+    color: $primary;
+  }
+
+  &--success {
+    color: #2dce89;
+    &:hover {
+      background: rgba(45, 206, 137, 0.1);
+      color: #2dce89;
+    }
+  }
+}

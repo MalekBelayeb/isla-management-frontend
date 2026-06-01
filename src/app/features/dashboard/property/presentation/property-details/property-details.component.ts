@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ConfirmDialogService } from '@shared/confirm-dialog/confirm-dialog.service';
 import { SearchResult } from '@shared/search-input/search-input.component';
 import { ToastAlertService } from '@shared/toast-alert/toast-alert.service';
@@ -10,7 +10,6 @@ import { PropertyMapper } from '@dashboard/property/mappers/property-mapper';
 import { PaymentService } from '@dashboard/payment/service/payment.service';
 import { PaymentMapper } from '@dashboard/payment/mappers/payment-mapper';
 import { FinancialBalance } from '@dashboard/payment/entity/financial-balance';
-import { defaultSearchLimit } from 'src/app/variables/consts';
 import { ApartmentService } from '@dashboard/apartment/service/apartment.service';
 import { ApartmentMapper } from '@dashboard/apartment/mappers/apartment-mapper';
 import {
@@ -21,6 +20,14 @@ import {
 } from '@angular/forms';
 import { PageChangedEvent } from 'ngx-bootstrap/pagination';
 import { Apartment } from '@dashboard/apartment/entity/Apartment';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
+
+type Trimester = {
+  name: string;
+  start: Date;
+  end: Date;
+};
 
 @Component({
   selector: 'app-property-details',
@@ -37,7 +44,7 @@ export class PropertyDetailsComponent implements OnInit {
     containerClass: 'theme-red',
   };
   filterDateType: 'dateToDate' | 'quarterly' = 'quarterly';
-  trimestersOptions: SearchResult[] = [];
+  trimestersDropdownOptions: SearchResult[] = [];
   trimesterSearchValue?: SearchResult;
 
   propertyDetails?: PropertyDetails;
@@ -46,7 +53,7 @@ export class PropertyDetailsComponent implements OnInit {
   isLoadingFetchingApartments = false;
 
   filtersFormGroup: FormGroup;
-
+  trimesters: Trimester[] = [];
   constructor(
     private formBuilder: FormBuilder,
 
@@ -63,6 +70,8 @@ export class PropertyDetailsComponent implements OnInit {
     this.filtersFormGroup = this.formBuilder.group({
       startDate: new FormControl(''),
       endDate: new FormControl(''),
+      previousStartDate: new FormControl(''),
+      previousEndDate: new FormControl(''),
     });
     this.formGroup = this.formBuilder.group({
       apartmentId: new FormControl('', Validators.required),
@@ -76,15 +85,23 @@ export class PropertyDetailsComponent implements OnInit {
   pageSize = 10;
   apartments: Apartment[] = [];
   endDate: Date = new Date();
+  previousEndDate?: Date;
 
   ngOnInit(): void {
-    this.trimestersOptions = this.getTrimesters().map(
+    const year = new Date().getFullYear();
+    const currentYearTrimersters = this.getTrimesters(year);
+    const previousYearTrimesters = this.getTrimesters(year - 1);
+    this.trimesters = [...previousYearTrimesters, ...currentYearTrimersters];
+
+    this.trimestersDropdownOptions = this.trimesters.map(
       (item): SearchResult => ({
         id: item.name,
         title: `${item.name} - ${item.start.toLocaleDateString('fr-FR')} - ${item.end.toLocaleDateString('fr-FR')}`,
       }),
     );
+
     const currrentTrimstre = this.getCurrentTrimestre();
+
     if (currrentTrimstre) {
       this.trimesterSearchValue = {
         id: currrentTrimstre.name,
@@ -114,19 +131,39 @@ export class PropertyDetailsComponent implements OnInit {
 
   onSelectedTrimesterSearchItem($event: SearchResult) {
     const id = $event.id;
-    const trimester = this.getTrimesters().find((item) => item.name === id);
-    this.filtersFormGroup
-      .get('startDate')
-      ?.setValue(trimester?.start.toISOString().split('T')[0]);
-    this.filtersFormGroup
-      .get('endDate')
-      ?.setValue(trimester?.end.toISOString().split('T')[0]);
+
+    const index = this.trimesters.findIndex((item) => item.name === id);
+
+    const currentTrimester = index >= 0 ? this.trimesters[index] : null;
+    const previousTrimester = index > 0 ? this.trimesters[index - 1] : null;
+    this.previousEndDate = previousTrimester?.end;
+    console.log(this.trimesters);
+
+    if (currentTrimester) {
+      this.filtersFormGroup
+        .get('startDate')
+        ?.setValue(currentTrimester?.start.toISOString().split('T')[0]);
+      this.filtersFormGroup
+        .get('endDate')
+        ?.setValue(currentTrimester?.end.toISOString().split('T')[0]);
+    }
+
+    if (previousTrimester) {
+      this.filtersFormGroup
+        .get('previousStartDate')
+        ?.setValue(previousTrimester?.start.toISOString().split('T')[0]);
+      this.filtersFormGroup
+        .get('previousEndDate')
+        ?.setValue(previousTrimester?.end.toISOString().split('T')[0]);
+    }
   }
 
   filterFinancialBalance() {
     this.getFinancialBalance(
       this.filtersFormGroup.get('startDate')?.value,
       this.filtersFormGroup.get('endDate')?.value,
+      this.filtersFormGroup.get('previousStartDate')?.value,
+      this.filtersFormGroup.get('previousEndDate')?.value,
     );
   }
   onStartDateChange($event: Date) {
@@ -165,11 +202,18 @@ export class PropertyDetailsComponent implements OnInit {
       ?.setValue($event?.toISOString().split('T')[0]);
   }
 
-  getFinancialBalance(startDate?: string, endDate?: string) {
+  getFinancialBalance(
+    startDate?: string,
+    endDate?: string,
+    previousStartDate?: string,
+    previousEndDate?: string,
+  ) {
     const params = {
       propertyId: this.getPropertyId(),
       ...(startDate && { startDate }),
       ...(endDate && { endDate }),
+      ...(previousStartDate && { previousStartDate }),
+      ...(previousEndDate && { previousEndDate }),
     };
 
     if (endDate) {
@@ -188,7 +232,6 @@ export class PropertyDetailsComponent implements OnInit {
       next: (value) => {
         const result = value.body;
         const propertyDetails = PropertyMapper.mapPropertyDetails(result);
-        console.log(propertyDetails);
         this.propertyDetails = propertyDetails;
       },
     });
@@ -234,15 +277,13 @@ export class PropertyDetailsComponent implements OnInit {
       });
   }
 
-  getTrimesters() {
-    const year = new Date().getFullYear();
-
+  getTrimesters(year: number): Trimester[] {
     return Array.from({ length: 4 }, (_, i) => {
       const start = new Date(year, i * 3, 1);
       const end = new Date(year, (i + 1) * 3, 0);
 
       return {
-        name: `T${i + 1}`,
+        name: `T${i + 1}-${year.toLocaleString().slice(-2)}`,
         start,
         end,
       };
@@ -250,8 +291,101 @@ export class PropertyDetailsComponent implements OnInit {
   }
 
   getCurrentTrimestre(date = new Date()) {
-    return this.getTrimesters().find(
+    const year = new Date().getFullYear();
+    return this.getTrimesters(year).find(
       (item) => item.start <= date && date <= item.end,
     );
+  }
+  @ViewChild('printSection') printSection!: ElementRef;
+
+  exportFinancialBalanceToPdf() {
+    const content = this.printSection.nativeElement.outerHTML;
+    const printWindow = window.open('', '', 'width=800,height=600');
+    if (printWindow) {
+      printWindow.document.write(`
+        <html>
+          <head>
+            <title>Print</title>
+            <style>
+              
+            * {
+            box-sizing: border-box;
+          }
+          body {
+            font-family: Arial, sans-serif;
+            font-size: 13px;
+            color: #32325d;
+          }
+          table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 1rem;
+          }
+          table.table-bordered th,
+          table.table-bordered td {
+            border: 1px solid #dee2e6;
+            padding: 0.6rem 0.85rem;
+            vertical-align: middle;
+          }
+          table.table-borderless th,
+          table.table-borderless td {
+            border: none;
+            padding: 0.25rem 0.5rem;
+            vertical-align: middle;
+          }
+          thead th {
+            background-color: #f6f9fc;
+            font-size: 0.47rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            font-weight: 700;
+            color: #8898aa;
+            border-bottom: 2px solid #dee2e6;
+          }
+          tbody tr:nth-child(even) {
+            background-color: #fafbff;
+          }
+          h4 {
+            font-size: 0.47rem;
+            font-weight: 600;
+            margin: 0;
+          }
+          .text-warning {
+            color: #fb6340;
+          }
+          .text-success {
+            color: #2dce89;
+          }
+          .d-flex {
+            display: flex;
+          }
+          .justify-content-end {
+            justify-content: flex-end;
+          }
+          .row {
+            display: flex;
+            flex-wrap: wrap;
+            margin-right: -10px;
+            margin-left: -10px;
+          }
+          .col-6 {
+            flex: 0 0 50%;
+            max-width: 50%;
+            padding: 0 10px;
+          }
+          .mr-3 {
+            margin-right: 0.75rem;
+          }
+            
+            </style>
+          </head>
+          <body>${content}</body>
+        </html>
+      `);
+      printWindow.document.close();
+      printWindow.focus();
+      printWindow.print();
+      printWindow.close();
+    }
   }
 }

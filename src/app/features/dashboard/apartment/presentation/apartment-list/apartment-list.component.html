@@ -1,88 +1,93 @@
-<div class="card">
-  <div class="card-header border-0">
-    <div class="row">
-      <div class="col-6">
-        <h3 class="mb-0">Liste des locaux ({{ totalLength }})</h3>
+<div class="card apartments-card">
+  <!-- Card Header -->
+  <div class="card-header border-0 apartments-header">
+    <div class="d-flex align-items-center justify-content-between flex-wrap">
+      <div class="d-flex align-items-center">
+        <div class="apartments-header-icon mr-3">
+          <i class="fas fa-door-open"></i>
+        </div>
+        <div>
+          <h3 class="mb-0 apartments-title">Liste des locaux</h3>
+          <p class="text-muted text-sm mb-0 mt-1">
+            <span class="apartments-count-badge">{{ totalLength }}</span>
+            local/locaux au total
+          </p>
+        </div>
       </div>
-    </div>
-  </div>
-
-  <div class="px-4 pt-2 pb-4">
-    <div class="row justify-content-end px-3 pb-4">
       <a
-        class="btn btn-sm btn-primary btn-round btn-icon"
+        class="btn btn-primary btn-sm btn-round btn-icon add-btn"
         href="javascript:void(0)"
         routerLink="../create-apartment"
       >
-        <span class="btn-inner--icon">
-          <i class="ni ni-fat-add"> </i>
-        </span>
-        <span class="btn-inner--text"> Ajouter un local </span>
+        <span class="btn-inner--icon"><i class="ni ni-fat-add"></i></span>
+        <span class="btn-inner--text">Ajouter un local</span>
       </a>
     </div>
+  </div>
 
+  <!-- Filters Section -->
+  <div class="apartments-filter-section">
     <form [formGroup]="filtersFormGroup" (ngSubmit)="filterEmployees()">
+      <!-- Row 1 -->
       <div class="row">
         <div class="col-md-4">
           <div class="form-group">
-            <input
-              class="form-control"
-              id="example2cols1Input"
-              formControlName="searchTerm"
-              placeholder="Chercher par adresse local"
-            />
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div
-            class="form-group"
-            [ngClass]="{
-              focused: focus2 === true,
-            }"
-          >
-            <div class="input-group input-group-merge">
+            <label class="filter-label">Adresse</label>
+            <div class="input-group input-group-merge search-group">
               <div class="input-group-prepend">
-                <span class="input-group-text text-sm">
-                  {{ propertyPrefix }}
+                <span class="input-group-text search-prefix">
+                  <i class="fas fa-map-marker-alt"></i>
                 </span>
               </div>
               <input
+                class="form-control search-input"
+                formControlName="searchTerm"
+                placeholder="Rechercher par adresse du local..."
+                autocomplete="off"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="form-group" [ngClass]="{ focused: focus2 === true }">
+            <label class="filter-label">N° Dossier</label>
+            <div class="input-group input-group-merge">
+              <div class="input-group-prepend">
+                <span class="input-group-text prefix-text">{{
+                  propertyPrefix
+                }}</span>
+              </div>
+              <input
                 class="form-control"
-                [ngClass]="{
-                  focused: focus2 === true,
-                }"
+                [ngClass]="{ focused: focus2 === true }"
                 type="number"
                 min="1"
                 formControlName="propertyMatricule"
-                placeholder="Chercher par num dossier"
+                placeholder="Rechercher par num dossier"
                 (focus)="focus2 = true"
                 (blur)="focus2 = false"
               />
             </div>
           </div>
         </div>
+
         <div class="col-md-4">
-          <div
-            class="form-group"
-            [ngClass]="{
-              focused: focus1 === true,
-            }"
-          >
+          <div class="form-group" [ngClass]="{ focused: focus1 === true }">
+            <label class="filter-label">N° Local</label>
             <div class="input-group input-group-merge">
               <div class="input-group-prepend">
-                <span class="input-group-text text-sm">
-                  {{ apartmentPrefix }}
-                </span>
+                <span class="input-group-text prefix-text">{{
+                  apartmentPrefix
+                }}</span>
               </div>
               <input
                 class="form-control"
-                [ngClass]="{
-                  focused: focus1 === true,
-                }"
+                [ngClass]="{ focused: focus1 === true }"
                 type="number"
                 min="1"
                 formControlName="matricule"
-                placeholder="Chercher par num local"
+                placeholder="Rechercher par num local"
                 (focus)="focus1 = true"
                 (blur)="focus1 = false"
               />
@@ -90,12 +95,15 @@
           </div>
         </div>
       </div>
+
+      <!-- Row 2 -->
       <div class="row">
         <div class="col-md-4">
           <div class="form-group">
+            <label class="filter-label">Type</label>
             <app-search-input
               [clearInput]="false"
-              [prefixIcon]="'fas fa-search'"
+              [prefixIcon]="'fas fa-tags'"
               [searchPlaceholder]="'Filtrer par type'"
               [searchLabel]="'Résultats'"
               [prefixText]="'Type:'"
@@ -107,11 +115,13 @@
             ></app-search-input>
           </div>
         </div>
+
         <div class="col-md-4">
           <div class="form-group">
+            <label class="filter-label">Propriétaire</label>
             <app-search-input
               [clearInput]="false"
-              [prefixIcon]="'fas fa-search'"
+              [prefixIcon]="'fas fa-user'"
               [searchPlaceholder]="'Filtrer par propriétaire'"
               [searchLabel]="'Résultats'"
               [maxSize]="5"
@@ -123,12 +133,14 @@
             ></app-search-input>
           </div>
         </div>
+
         <div class="col-md-4">
           <div class="form-group">
+            <label class="filter-label">Statut</label>
             <app-search-input
               [clearInput]="false"
-              [prefixIcon]="'fas fa-search'"
-              [searchPlaceholder]="'Filtrer par status'"
+              [prefixIcon]="'fas fa-circle'"
+              [searchPlaceholder]="'Filtrer par statut'"
               [prefixText]="'Status:'"
               [searchLabel]="'Résultats'"
               [maxSize]="4"
@@ -142,14 +154,45 @@
           </div>
         </div>
       </div>
-      <div class="d-flex w-100 justify-content-end">
-        <button class="btn btn-secondary" type="submit">Filtrer</button>
+
+      <!-- Filter action -->
+      <div class="d-flex justify-content-end">
+        <button class="btn btn-primary filter-btn" type="submit">
+          <i class="fas fa-filter mr-2"></i>Filtrer
+        </button>
       </div>
     </form>
   </div>
 
-  <div class="table-responsive">
-    <table class="table align-items-center table-flush table-hover">
+  <!-- Table Section -->
+  <div class="table-responsive apartments-table-wrapper">
+    <!-- Empty State -->
+    <div
+      *ngIf="apartments.length === 0 && !isLoadingFetchingApartments"
+      class="apartments-empty-state"
+    >
+      <div class="empty-icon-wrapper">
+        <i class="fas fa-door-open"></i>
+      </div>
+      <h5 class="empty-title">Aucun local trouvé</h5>
+      <p class="empty-subtitle">
+        Modifiez vos critères de recherche ou ajoutez un nouveau local.
+      </p>
+      <a
+        class="btn btn-outline-primary btn-sm btn-round"
+        href="javascript:void(0)"
+        routerLink="../create-apartment"
+      >
+        <i class="ni ni-fat-add mr-1"></i>Ajouter un local
+      </a>
+    </div>
+
+    <table
+      class="table align-items-center table-flush table-hover"
+      [class.apartments-table--hidden]="
+        apartments.length === 0 && !isLoadingFetchingApartments
+      "
+    >
       <thead class="thead-light">
         <tr>
           <th>Num local</th>
@@ -158,32 +201,36 @@
           <th>Pieces</th>
           <th>Status</th>
           <th>Propriété</th>
-          <th>Propriètaire</th>
+          <th>Propriétaire</th>
           <th>Date de création</th>
-
           <th></th>
         </tr>
       </thead>
-      <div
-        *ngIf="isLoadingFetchingApartments"
-        class="spinner-border text-primary mt-4 ml-4"
-        role="status"
-      ></div>
-      <div
-        *ngIf="apartments.length === 0 && !isLoadingFetchingApartments"
-        class=""
-      >
-        <p class="ml-4 mb-0">Liste vide, aucun element trouvé.</p>
-      </div>
 
-      <tbody>
+      <!-- Skeleton rows while loading -->
+      <tbody *ngIf="isLoadingFetchingApartments">
+        <tr *ngFor="let i of [1, 2, 3, 4, 5, 6, 7, 8]" class="skeleton-row">
+          <td><div class="skel skel-text" style="width: 70px"></div></td>
+          <td><div class="skel skel-text" style="width: 150px"></div></td>
+          <td><div class="skel skel-text" style="width: 80px"></div></td>
+          <td><div class="skel skel-text" style="width: 36px"></div></td>
+          <td><div class="skel skel-badge" style="width: 72px"></div></td>
+          <td><div class="skel skel-text" style="width: 100px"></div></td>
+          <td><div class="skel skel-text" style="width: 110px"></div></td>
+          <td><div class="skel skel-text" style="width: 80px"></div></td>
+          <td></td>
+        </tr>
+      </tbody>
+
+      <!-- Real rows -->
+      <tbody *ngIf="!isLoadingFetchingApartments">
         <tr *ngFor="let apartment of apartments">
           <td
             style="cursor: pointer"
             (click)="redirectToDetails(apartment.id)"
             class="table-user"
           >
-            <span> {{ apartment.idNumber }} </span>
+            <b> {{ apartment.idNumber }} </b>
           </td>
           <td
             style="cursor: pointer"
@@ -192,7 +239,6 @@
           >
             <span> {{ apartment.address }} </span>
           </td>
-
           <td
             style="cursor: pointer"
             (click)="redirectToDetails(apartment.id)"
@@ -207,7 +253,6 @@
           >
             <span> S+{{ apartment.rooms }} </span>
           </td>
-
           <td
             style="cursor: pointer"
             (click)="redirectToDetails(apartment.id)"
@@ -248,16 +293,6 @@
             <span> {{ apartment.createdAt | date }} </span>
           </td>
           <td class="table-actions">
-            <!-- <a
-              class="table-action"
-              routerLink="../create-apartment"
-              href="javascript:void(0)"
-              tooltip="Edit product"
-              placement="top"
-            >
-              <i class="fas fa-user-edit"> </i>
-            </a> -->
-
             <a
               class="table-action table-action-delete"
               tooltip="Delete product"
@@ -273,35 +308,35 @@
     </table>
   </div>
 
-  <div class="card-footer py-4">
-    <nav aria-label="...">
-      <pagination
-        [totalItems]="totalLength"
-        [itemsPerPage]="pageSize"
-        [rotate]="false"
-        [boundaryLinks]="true"
-        [(ngModel)]="page"
-        firstText="&laquo;"
-        lastText="&raquo;"
-        [maxSize]="5"
-        class="justify-content-end mb-0"
-        [customPreviousTemplate]="prevTemplate"
-        (pageChanged)="pageChange($event)"
-        [customNextTemplate]="nextTemplate"
-      >
-      </pagination>
+  <!-- Pagination Footer -->
+  <div class="card-footer apartments-footer py-4">
+    <div class="d-flex align-items-center justify-content-between flex-wrap">
+      <span class="pagination-info text-muted">
+        Total : <strong>{{ totalLength }}</strong> local/locaux
+      </span>
+      <nav aria-label="Pagination des locaux">
+        <pagination
+          [totalItems]="totalLength"
+          [itemsPerPage]="pageSize"
+          [rotate]="false"
+          [boundaryLinks]="true"
+          [(ngModel)]="page"
+          firstText="&laquo;"
+          lastText="&raquo;"
+          [maxSize]="5"
+          class="justify-content-end mb-0"
+          [customPreviousTemplate]="prevTemplate"
+          (pageChanged)="pageChange($event)"
+          [customNextTemplate]="nextTemplate"
+        ></pagination>
+      </nav>
+    </div>
 
-      <ng-template #nextTemplate let-currentPage="currentPage">
-        <ng-container>
-          <i class="fas fa-angle-right"></i>
-        </ng-container>
-      </ng-template>
-
-      <ng-template #prevTemplate let-currentPage="currentPage">
-        <ng-container>
-          <i class="fas fa-angle-left"></i>
-        </ng-container>
-      </ng-template>
-    </nav>
+    <ng-template #nextTemplate let-currentPage="currentPage">
+      <ng-container><i class="fas fa-angle-right"></i></ng-container>
+    </ng-template>
+    <ng-template #prevTemplate let-currentPage="currentPage">
+      <ng-container><i class="fas fa-angle-left"></i></ng-container>
+    </ng-template>
   </div>
 </div>

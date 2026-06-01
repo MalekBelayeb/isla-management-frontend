@@ -1,61 +1,70 @@
-<div class="card">
-  <div class="card-header border-0">
-    <div class="row">
-      <div class="col-6">
-        <h3 class="mb-0">Liste des propriétés (Biens) ({{ totalLength }})</h3>
+<div class="card properties-card">
+  <!-- Card Header -->
+  <div class="card-header border-0 properties-header">
+    <div class="d-flex align-items-center justify-content-between flex-wrap">
+      <div class="d-flex align-items-center">
+        <div class="properties-header-icon mr-3">
+          <i class="fas fa-building"></i>
+        </div>
+        <div>
+          <h3 class="mb-0 properties-title">Liste des propriétés</h3>
+          <p class="text-muted text-sm mb-0 mt-1">
+            <span class="properties-count-badge">{{ totalLength }}</span>
+            bien(s) immobilier(s) au total
+          </p>
+        </div>
       </div>
-    </div>
-  </div>
-
-  <div class="px-4 pt-2 pb-4">
-    <div class="row justify-content-end px-3 pb-4">
       <a
-        class="btn btn-sm btn-primary btn-round btn-icon"
+        class="btn btn-primary btn-sm btn-round btn-icon add-btn"
         href="javascript:void(0)"
         routerLink="../create-property"
       >
-        <span class="btn-inner--icon">
-          <i class="ni ni-fat-add"> </i>
-        </span>
-        <span class="btn-inner--text"> Ajouter une propriété </span>
+        <span class="btn-inner--icon"><i class="ni ni-fat-add"></i></span>
+        <span class="btn-inner--text">Ajouter une propriété</span>
       </a>
     </div>
+  </div>
 
+  <!-- Filters Section -->
+  <div class="properties-filter-section">
     <form [formGroup]="filtersFormGroup" (ngSubmit)="filterProperties()">
+      <!-- Row 1 : address search + matricule -->
       <div class="row">
         <div class="col-md-7">
           <div class="form-group">
-            <input
-              class="form-control"
-              id="example2cols1Input"
-              formControlName="searchTerm"
-              placeholder="Chercher par adresse de propriété (Bien)"
-            />
+            <label class="filter-label">Adresse</label>
+            <div class="input-group input-group-merge search-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text search-prefix">
+                  <i class="fas fa-map-marker-alt"></i>
+                </span>
+              </div>
+              <input
+                class="form-control search-input"
+                formControlName="searchTerm"
+                placeholder="Rechercher par adresse de propriété..."
+                autocomplete="off"
+              />
+            </div>
           </div>
         </div>
 
         <div class="col-md-5">
-          <div
-            class="form-group"
-            [ngClass]="{
-              focused: focus1 === true,
-            }"
-          >
+          <div class="form-group" [ngClass]="{ focused: focus1 === true }">
+            <label class="filter-label">N° Dossier</label>
             <div class="input-group input-group-merge">
               <div class="input-group-prepend">
-                <span class="input-group-text text-sm">
-                  {{ propertyPrefix }}
-                </span>
+                <span class="input-group-text prefix-text">{{
+                  propertyPrefix
+                }}</span>
               </div>
               <input
                 class="form-control"
-                [ngClass]="{
-                  focused: focus1 === true,
-                }"
+                [ngClass]="{ focused: focus1 === true }"
                 type="number"
                 min="1"
                 formControlName="matricule"
-                placeholder="Chercher par num dossier"
+                placeholder="Rechercher par numéro de dossier"
                 (focus)="focus1 = true"
                 (blur)="focus1 = false"
               />
@@ -63,12 +72,15 @@
           </div>
         </div>
       </div>
+
+      <!-- Row 2 : owner search + type filter -->
       <div class="row">
         <div class="col-md-7">
           <div class="form-group">
+            <label class="filter-label">Propriétaire</label>
             <app-search-input
               [clearInput]="false"
-              [prefixIcon]="'fas fa-search'"
+              [prefixIcon]="'fas fa-user'"
               [searchPlaceholder]="'Filtrer par propriétaire'"
               [searchLabel]="'Résultats'"
               [maxSize]="5"
@@ -80,11 +92,13 @@
             ></app-search-input>
           </div>
         </div>
+
         <div class="col-md-5">
           <div class="form-group">
+            <label class="filter-label">Type de bien</label>
             <app-search-input
               [clearInput]="false"
-              [prefixIcon]="'fas fa-search'"
+              [prefixIcon]="'fas fa-tags'"
               [searchPlaceholder]="'Filtrer par type'"
               [searchLabel]="'Résultats'"
               [prefixText]="'Type:'"
@@ -97,48 +111,86 @@
           </div>
         </div>
       </div>
-      <div class="d-flex w-100 justify-content-end">
-        <button class="btn btn-secondary" type="submit">Filtrer</button>
+
+      <!-- Filter action -->
+      <div class="d-flex justify-content-end">
+        <button class="btn btn-primary filter-btn" type="submit">
+          <i class="fas fa-filter mr-2"></i>Filtrer
+        </button>
       </div>
     </form>
   </div>
 
-  <div class="table-responsive">
-    <table class="table align-items-center table-flush table-hover">
+  <!-- Table Section -->
+  <div class="table-responsive properties-table-wrapper">
+    <!-- Empty State -->
+    <div
+      *ngIf="properties.length === 0 && !isLoadingFetchingProperties"
+      class="properties-empty-state"
+    >
+      <div class="empty-icon-wrapper">
+        <i class="fas fa-building"></i>
+      </div>
+      <h5 class="empty-title">Aucune propriété trouvée</h5>
+      <p class="empty-subtitle">
+        Modifiez vos critères de recherche ou ajoutez une nouvelle propriété.
+      </p>
+      <a
+        class="btn btn-outline-primary btn-sm btn-round"
+        href="javascript:void(0)"
+        routerLink="../create-property"
+      >
+        <i class="ni ni-fat-add mr-1"></i>Ajouter une propriété
+      </a>
+    </div>
+
+    <table
+      class="table align-items-center table-flush table-hover"
+      [class.properties-table--hidden]="
+        properties.length === 0 && !isLoadingFetchingProperties
+      "
+    >
       <thead class="thead-light">
         <tr>
-          <th>Num dossier</th>
-          <th>Propriètaire</th>
-
-          <th>Adresse</th>
-          <th>Type</th>
-
-          <th>Nb locaux</th>
-          <th>Date de création</th>
-
-          <th></th>
+          <th scope="col">N° Dossier</th>
+          <th scope="col">Propriétaire</th>
+          <th scope="col">Adresse</th>
+          <th scope="col">Type</th>
+          <th scope="col" class="text-center">Locaux</th>
+          <th scope="col">Date de création</th>
+          <th scope="col"></th>
         </tr>
       </thead>
-      <div
-        *ngIf="isLoadingFetchingProperties"
-        class="spinner-border text-primary mt-4 ml-4"
-        role="status"
-      ></div>
-      <div
-        *ngIf="properties.length === 0 && !isLoadingFetchingProperties"
-        class=""
-      >
-        <p class="ml-4 mb-0">Liste vide, aucun element trouvé.</p>
-      </div>
 
-      <tbody>
+      <!-- Skeleton rows while loading -->
+      <tbody *ngIf="isLoadingFetchingProperties">
+        <tr *ngFor="let i of [1, 2, 3, 4, 5, 6, 7, 8]" class="skeleton-row">
+          <td><div class="skel skel-text" style="width: 72px"></div></td>
+          <td>
+            <div class="d-flex align-items-center">
+              <div class="skel skel-avatar mr-2"></div>
+              <div class="skel skel-text" style="width: 110px"></div>
+            </div>
+          </td>
+          <td><div class="skel skel-text" style="width: 160px"></div></td>
+          <td><div class="skel skel-badge" style="width: 80px"></div></td>
+          <td class="text-center">
+            <div class="skel skel-circle mx-auto"></div>
+          </td>
+          <td><div class="skel skel-text" style="width: 80px"></div></td>
+          <td></td>
+        </tr>
+      </tbody>
+
+      <!-- Real rows -->
+      <tbody *ngIf="!isLoadingFetchingProperties">
         <tr *ngFor="let property of properties">
           <td
             style="cursor: pointer"
             (click)="redirectToDetails(property.id)"
             class="table-user"
           >
-            <span> {{ property.idNumber }} </span>
+            <b> {{ property.idNumber }} </b>
           </td>
           <td
             style="cursor: pointer"
@@ -147,7 +199,6 @@
           >
             <span> {{ property.owner }} </span>
           </td>
-
           <td
             style="cursor: pointer"
             (click)="redirectToDetails(property.id)"
@@ -155,7 +206,6 @@
           >
             <span> {{ property.address }} </span>
           </td>
-
           <td
             style="cursor: pointer"
             (click)="redirectToDetails(property.id)"
@@ -163,7 +213,6 @@
           >
             <span> {{ property.type }} </span>
           </td>
-
           <td style="cursor: pointer" (click)="redirectToDetails(property.id)">
             <div class="col-auto">
               {{ property.nbApartments }}
@@ -175,16 +224,6 @@
             </div>
           </td>
           <td class="table-actions">
-            <!-- <a
-              class="table-action"
-              routerLink="../create-property"
-              href="javascript:void(0)"
-              tooltip="Edit product"
-              placement="top"
-            >
-              <i class="fas fa-user-edit"> </i>
-            </a> -->
-
             <a
               (click)="deleteProperty(property.id, property.address)"
               class="table-action table-action-delete"
@@ -200,35 +239,35 @@
     </table>
   </div>
 
-  <div class="card-footer py-4">
-    <nav aria-label="...">
-      <pagination
-        [totalItems]="totalLength"
-        [itemsPerPage]="pageSize"
-        [rotate]="false"
-        [boundaryLinks]="true"
-        [(ngModel)]="page"
-        firstText="&laquo;"
-        lastText="&raquo;"
-        [maxSize]="5"
-        class="justify-content-end mb-0"
-        [customPreviousTemplate]="prevTemplate"
-        (pageChanged)="pageChange($event)"
-        [customNextTemplate]="nextTemplate"
-      >
-      </pagination>
+  <!-- Pagination Footer -->
+  <div class="card-footer properties-footer py-4">
+    <div class="d-flex align-items-center justify-content-between flex-wrap">
+      <span class="pagination-info text-muted">
+        Total : <strong>{{ totalLength }}</strong> propriété(s)
+      </span>
+      <nav aria-label="Pagination des propriétés">
+        <pagination
+          [totalItems]="totalLength"
+          [itemsPerPage]="pageSize"
+          [rotate]="false"
+          [boundaryLinks]="true"
+          [(ngModel)]="page"
+          firstText="&laquo;"
+          lastText="&raquo;"
+          [maxSize]="5"
+          class="justify-content-end mb-0"
+          [customPreviousTemplate]="prevTemplate"
+          (pageChanged)="pageChange($event)"
+          [customNextTemplate]="nextTemplate"
+        ></pagination>
+      </nav>
+    </div>
 
-      <ng-template #nextTemplate let-currentPage="currentPage">
-        <ng-container>
-          <i class="fas fa-angle-right"></i>
-        </ng-container>
-      </ng-template>
-
-      <ng-template #prevTemplate let-currentPage="currentPage">
-        <ng-container>
-          <i class="fas fa-angle-left"></i>
-        </ng-container>
-      </ng-template>
-    </nav>
+    <ng-template #nextTemplate let-currentPage="currentPage">
+      <ng-container><i class="fas fa-angle-right"></i></ng-container>
+    </ng-template>
+    <ng-template #prevTemplate let-currentPage="currentPage">
+      <ng-container><i class="fas fa-angle-left"></i></ng-container>
+    </ng-template>
   </div>
 </div>

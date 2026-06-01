@@ -28,6 +28,7 @@ import { TenantMapper } from '@dashboard/tenant/mappers/tenant-mapper';
 import { TenantService } from '@dashboard/tenant/service/tenant.service';
 import { DataTypes } from '@models/data';
 import { SearchResult } from '@shared/search-input/search-input.component';
+import { SearchModalResultType } from '@shared/searchable-modals/types/search-modal-result.type';
 import { ToastAlertService } from '@shared/toast-alert/toast-alert.service';
 import { defaultSearchLimit, propertyPrefix } from 'src/app/variables/consts';
 
@@ -65,7 +66,6 @@ export class UpsertPaymentComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
-    private agreementService: AgreementService,
     private paymentService: PaymentService,
     private tenantService: TenantService,
     private toastAlertService: ToastAlertService,
@@ -92,14 +92,12 @@ export class UpsertPaymentComponent implements OnInit {
   searchExpensePaymentCategoryValue: string =
     this.expensePaymentCategoryList[0].title;
 
-  agreementOptions: SearchResult[] = [];
-
-  searchAgreementValue: string = '';
-
   searchTypeValue: string = this.paymentTypeList[0].title;
 
   searchIncomePaymentMethodValue: string = this.paymentMethodTypeList[0].title;
   searchExpensePaymentMethodValue: string = this.paymentMethodTypeList[0].title;
+
+  agreementSearchModalResult?: SearchModalResultType;
 
   setFormToDefaultState() {
     this.incomeFormGroup = this.formBuilder.group(
@@ -227,9 +225,11 @@ export class UpsertPaymentComponent implements OnInit {
 
           this.searchIncomePaymentMethodValue =
             this.paymentDetails?.method ?? '';
-
+          this.agreementSearchModalResult = {
+            id: this.paymentDetails.agreementId ?? '',
+            label: this.paymentDetails.agreement ?? '',
+          };
           this.withTax = !!this.paymentDetails.tva;
-          this.searchAgreementValue = this.paymentDetails.agreement ?? '';
         }
 
         if (
@@ -373,13 +373,18 @@ export class UpsertPaymentComponent implements OnInit {
           this.agreement = this.tenantMapper.mapTenantDetails(
             value.body,
           ).agreement;
-          this.searchAgreementValue = this.agreement?.matricule ?? '';
+
           this.incomeFormGroup
             .get('agreementId')
             ?.setValue(this.agreement?.id ?? '');
         },
       });
     }
+  }
+
+  onAgreementSelected(searchModalResult: SearchModalResultType) {
+    this.incomeFormGroup.get('agreementId')?.setValue(searchModalResult.id);
+    this.agreementSearchModalResult = searchModalResult;
   }
 
   get upsertPaymentForm() {
@@ -402,29 +407,6 @@ export class UpsertPaymentComponent implements OnInit {
       .get('rentEndDate')
       ?.setValue($event?.toISOString().split('T')[0]);
   }
-  onSearchAgreementValueChanged(searchValue?: string) {
-    const params = {
-      ...(searchValue && { searchTerm: searchValue }),
-      limit: `${defaultSearchLimit}`,
-    };
-
-    const queryString = new URLSearchParams(params).toString();
-
-    this.agreementService.getAllAgreement(`?${queryString}`).subscribe({
-      next: (value) => {
-        const agreements = AgreeementMapper.mapAgreements(
-          value.body.agreements,
-        );
-        this.agreementOptions = agreements.map((item) => ({
-          id: item.id,
-          title: `${item.matricule}`,
-        }));
-      },
-    });
-  }
-  onSelectedAgreementSearchItem(searchResult: SearchResult) {
-    this.incomeFormGroup.get('agreementId')?.setValue(searchResult.id);
-  }
 
   getTVAValue() {
     if (this.withTax) {
@@ -433,8 +415,6 @@ export class UpsertPaymentComponent implements OnInit {
 
     return null;
   }
-
-  
 
   upsertPayment() {
     this.submitted = true;

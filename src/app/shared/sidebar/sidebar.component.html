@@ -3,61 +3,58 @@
   class="navbar navbar-vertical fixed-left navbar-expand-xs navbar-light bg-white"
   id="sidenav-main"
 >
-  <div class="">
+  <div class="sidebar-wrapper">
+    <!-- Full sidebar header -->
     <div *ngIf="!isMinimalist" class="sidenav-header d-flex align-items-center">
-      <a class="navbar-brand" [routerLink]="['/dashboards/dashboard']">
+      <a class="navbar-brand p-0" [routerLink]="['/dashboards/dashboard']">
         <div
           *ngIf="user && !getUserIsLoading"
-          class="d-flex flex-row align-items-end mt-3"
+          class="d-flex flex-row align-items-center"
         >
           <img
             *ngIf="user?.societyLogo"
-            style="width: 42px; height: 42px; object-fit: contain"
+            class="sidebar-logo"
             src="../../../assets/img/{{ user.societyLogo }}"
+            alt="Logo"
           />
-          <img />
-
-          <small
-            class="ml-2 display-3 text-uppercase font-weight-bold text-wrap mb-1"
-          >
-            {{ user.societyName }}
-          </small>
+          <span class="sidebar-brand-name ml-2">{{ user.societyName }}</span>
         </div>
       </a>
-
-      <div class="ml-auto"></div>
     </div>
 
-    <div *ngIf="isMinimalist" class="d-flex align-items-center">
-      <a class="p-3" [routerLink]="['/dashboards/dashboard']">
-        <div
-          *ngIf="user && !getUserIsLoading"
-          class="d-flex flex-row align-items-end mt-3"
-        >
+    <!-- Minimalist sidebar header -->
+    <div
+      *ngIf="isMinimalist"
+      class="minimalist-header d-flex align-items-center justify-content-center"
+    >
+      <a
+        [routerLink]="['/dashboards/dashboard']"
+        [title]="user?.societyName || 'Tableau de bord'"
+      >
+        <div *ngIf="user && !getUserIsLoading">
           <img
-            *ngIf="user?.societyLogo"
-            style="width: 42px; height: 42px; object-fit: contain"
+            *ngIf="user.societyLogo"
+            class="sidebar-logo"
             src="../../../assets/img/{{ user.societyLogo }}"
+            alt="Logo"
           />
-          <img />
         </div>
       </a>
-
-      <div class="ml-auto"></div>
     </div>
 
     <div class="navbar-inner">
       <div class="collapse navbar-collapse" id="sidenav-collapse-main">
-        <!-- Collapse header -->
-        <ul *ngIf="!isMinimalist" class="navbar-nav">
+        <!-- Full nav -->
+        <ul *ngIf="!isMinimalist" class="navbar-nav mt-1">
           <li *ngFor="let menuitem of menuItems" class="nav-item">
             <a
               routerLinkActive="active"
               [routerLink]="[menuitem.path]"
               *ngIf="menuitem.type === 'link'"
               class="nav-link"
+              [attr.aria-label]="menuitem.title"
             >
-              <i class="fas {{ menuitem.icontype }} fa-lg"></i>
+              <i class="fas {{ menuitem.icontype }} nav-icon"></i>
               <span class="nav-link-text">{{ menuitem.title }}</span>
             </a>
 
@@ -69,12 +66,12 @@
               [attr.aria-expanded]="!menuitem.isCollapsed"
               [attr.aria-controls]="menuitem.collapse"
               class="nav-link"
+              [attr.aria-label]="menuitem.title"
             >
-              <i class="fas {{ menuitem.icontype }} fa-lg"></i>
+              <i class="fas {{ menuitem.icontype }} nav-icon"></i>
               <span class="nav-link-text">{{ menuitem.title }}</span>
             </a>
 
-            <!--Display the submenu items-->
             <div
               id="{{ menuitem.collapse }}"
               class="collapse"
@@ -87,27 +84,28 @@
                   *ngFor="let childitems of menuitem.children"
                   class="nav-item"
                 >
-                  <!--If is a single link-->
                   <a
                     routerLinkActive="active"
                     [routerLink]="menuitem.path + '/' + childitems.path"
-                    class="nav-link"
+                    class="nav-link sub-nav-link"
                     *ngIf="childitems.type === 'link'"
                   >
+                    <span class="sub-dot"></span>
                     {{ childitems.title }}
                   </a>
-                  <!--If it have a submenu-->
+
                   <a
                     data-toggle="collapse"
                     (click)="childitems.isCollapsed = !childitems.isCollapsed"
                     [attr.aria-expanded]="!childitems.isCollapsed"
                     [attr.aria-controls]="childitems.collapse"
                     *ngIf="childitems.type === 'sub'"
-                    class="nav-link"
+                    class="nav-link sub-nav-link"
                   >
+                    <span class="sub-dot"></span>
                     {{ childitems.title }}
                   </a>
-                  <!--Display the submenu items-->
+
                   <div
                     id="{{ childitems.collapse }}"
                     class="collapse"
@@ -120,7 +118,11 @@
                         *ngFor="let childitem of childitems.children"
                         class="nav-item"
                       >
-                        <a href="javascript:void(0)" class="nav-link">
+                        <a
+                          href="javascript:void(0)"
+                          class="nav-link sub-nav-link"
+                        >
+                          <span class="sub-dot"></span>
                           {{ childitem.title }}
                         </a>
                       </li>
@@ -132,35 +134,32 @@
           </li>
         </ul>
 
-        <ul *ngIf="isMinimalist" class="navbar-nav">
+        <!-- Minimalist nav -->
+        <ul *ngIf="isMinimalist" class="navbar-nav mt-1">
           <li *ngFor="let menuitem of menuItems" class="nav-item">
-            <div
-              *ngIf="!menuitem.children"
-              class="form-group"
-              placement="top-right"
-            >
+            <div *ngIf="!menuitem.children" class="minimalist-item">
               <a
                 routerLinkActive="active"
                 [routerLink]="[menuitem.path]"
-                class="nav-link"
+                class="nav-link minimalist-link"
+                [title]="menuitem.title"
+                [attr.aria-label]="menuitem.title"
               >
-                <i class="display-3 fas {{ menuitem.icontype }} fa-lg"></i>
+                <i class="fas {{ menuitem.icontype }}"></i>
               </a>
             </div>
 
-            <div
-              *ngIf="menuitem.children"
-              class="form-group"
-              placement="top-right"
-            >
+            <div *ngIf="menuitem.children" class="minimalist-item">
               <a
                 routerLinkActive="active"
                 dropdown
                 dropdownToggle
                 [routerLink]="[]"
-                class="nav-link"
+                class="nav-link minimalist-link"
+                [title]="menuitem.title"
+                [attr.aria-label]="menuitem.title"
               >
-                <i class="display-3 fas {{ menuitem.icontype }} fa-lg"></i>
+                <i class="fas {{ menuitem.icontype }}"></i>
                 <div
                   class="dropdown-menu dropdown-menu-arrow dropdown-menu-left minimal-dropdown"
                   *dropdownMenu
@@ -168,10 +167,10 @@
                   <div class="dropdown-header noti-title">
                     <h6 class="text-overflow m-0">{{ menuitem.title }}</h6>
                   </div>
-                  <ul class="nav">
+                  <ul class="nav flex-column px-1">
                     <li
                       *ngFor="let childitem of menuitem.children"
-                      class="dropdown-item w-100 px-3"
+                      class="dropdown-item w-100 p-0"
                       routerLink="{{ menuitem.path }}/{{ childitem.path }}"
                     >
                       <a class="minimal-nav-item-link d-flex w-100">

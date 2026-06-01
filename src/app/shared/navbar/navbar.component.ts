@@ -34,9 +34,6 @@ export class NavbarComponent implements OnInit {
   public listTitles: any[] = [];
   public location: Location;
   codeSociety = '';
-  searchModal?: BsModalRef;
-
-  @ViewChild('modalSearch') modalSearch?: TemplateRef<void>;
 
   @Input() user?: User;
   @Input() getUserIsLoading = false;
@@ -53,20 +50,9 @@ export class NavbarComponent implements OnInit {
     location: Location,
     private router: Router,
     private confirmDialogService: ConfirmDialogService,
-    private modalService: BsModalService,
     private toastAlertService: ToastAlertService,
   ) {
     this.location = location;
-  }
-
-  showModal() {
-    this.searchModal = this.modalService.show(this.modalSearch!, {
-      class: 'modal-xl',
-    });
-  }
-
-  hideModal() {
-    this.searchModal?.hide();
   }
 
   openSidebar() {
@@ -79,14 +65,6 @@ export class NavbarComponent implements OnInit {
       document.body.classList.remove('g-sidenav-hidden');
       this.sidenavOpen = true;
     }
-  }
-
-  moveToTenantDetail(id: string) {
-    this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
-      this.router.navigate([`./dashboard/tenant/tenant-details/${id}`]);
-    });
-
-    this.hideModal();
   }
 
   logout() {

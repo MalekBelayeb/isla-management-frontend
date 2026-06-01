@@ -1,0 +1,273 @@
+/* ============================================================
+   CARD
+   ============================================================ */
+.owners-card {
+  border: none;
+  border-radius: 0.75rem;
+  box-shadow: 0 2px 16px rgba(50, 50, 93, 0.08), 0 1px 4px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+.owners-header {
+  padding: 1.25rem 1.5rem;
+  background: #ffffff;
+}
+
+.owners-header-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #5e72e4 0%, #825ee4 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.owners-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #32325d;
+  letter-spacing: 0.01em;
+}
+
+.owners-count-badge {
+  display: inline-block;
+  background: #eef0fd;
+  color: #5e72e4;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.2em 0.6em;
+  border-radius: 999px;
+  letter-spacing: 0.02em;
+}
+
+.add-btn {
+  white-space: nowrap;
+  margin-top: 0.5rem;
+}
+
+@media (min-width: 576px) {
+  .add-btn {
+    margin-top: 0;
+  }
+}
+
+/* ============================================================
+   FILTERS
+   ============================================================ */
+.owners-filter-section {
+  padding: 1rem 1.5rem 1.25rem;
+  border-bottom: 1px solid #f0f2f8;
+  background: #fafbff;
+}
+
+.search-group .input-group-text.search-prefix {
+  background: #ffffff;
+  border-right: none;
+  color: #adb5bd;
+  font-size: 0.85rem;
+  border-radius: 0.375rem 0 0 0.375rem;
+}
+
+.search-input {
+  border-left: none;
+  background: #ffffff;
+  font-size: 0.875rem;
+  color: #32325d;
+  border-radius: 0 0.375rem 0.375rem 0;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.search-input:focus {
+  border-color: #c4c9f7;
+  box-shadow: 0 0 0 3px rgba(94, 114, 228, 0.12);
+}
+
+.filter-btn {
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+/* ============================================================
+   TABLE WRAPPER
+   ============================================================ */
+.owners-table-wrapper {
+  min-height: 200px;
+}
+
+/* ============================================================
+   EMPTY STATE
+   ============================================================ */
+.owners-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3.5rem 1.5rem;
+  text-align: center;
+}
+
+.empty-icon-wrapper {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: #f0f2f8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: #adb5bd;
+  margin-bottom: 1rem;
+}
+
+.empty-title {
+  font-size: 0.975rem;
+  font-weight: 700;
+  color: #32325d;
+  margin-bottom: 0.35rem;
+}
+
+.empty-subtitle {
+  font-size: 0.85rem;
+  color: #8898aa;
+  margin-bottom: 1.25rem;
+  max-width: 340px;
+}
+
+/* ============================================================
+   TABLE
+   ============================================================ */
+.owners-table--hidden {
+  display: none !important;
+}
+
+/* ============================================================
+   PAGINATION FOOTER
+   ============================================================ */
+.owners-footer {
+  background: #ffffff;
+  border-top: 1px solid #f0f2f8;
+}
+
+.pagination-info {
+  font-size: 0.8rem;
+}
+
+/* ============================================================
+   MODAL
+   ============================================================ */
+.modal-header--owners {
+  background: #fafbff;
+  border-bottom: 1px solid #f0f2f8;
+  padding: 1.1rem 1.5rem;
+}
+
+.modal-header-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #11cdef 0%, #1171ef 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.modal-title-text {
+  font-size: 0.975rem;
+  font-weight: 700;
+  color: #32325d;
+}
+
+.modal-table thead th {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: #8898aa;
+  white-space: nowrap;
+}
+
+.modal-row {
+  cursor: pointer;
+  transition: background-color 0.12s ease;
+}
+
+.modal-row:hover {
+  background-color: #f8f9fe !important;
+}
+
+.modal-row td {
+  vertical-align: middle;
+}
+
+.modal-id-cell {
+  width: 100px;
+}
+
+.modal-footer--owners {
+  background: #fafbff;
+  border-top: 1px solid #f0f2f8;
+  padding: 0.75rem 1.5rem;
+}
+
+.font-weight-600 {
+  font-weight: 600;
+}
+
+/* ============================================================
+   SKELETON LOADING
+   ============================================================ */
+@keyframes skeleton-shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+
+.skel {
+  border-radius: 4px;
+  background: linear-gradient(
+    90deg,
+    #edf0f7 25%,
+    #f5f7fc 50%,
+    #edf0f7 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s ease-in-out infinite;
+}
+
+.skel-text {
+  height: 13px;
+}
+
+.skel-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.skel-badge {
+  height: 22px;
+  border-radius: 999px;
+}
+
+.skel-circle {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+}
+
+.skeleton-row td {
+  padding: 0.95rem 1rem;
+  border-top: 1px solid #f6f9fc;
+  vertical-align: middle;
+}

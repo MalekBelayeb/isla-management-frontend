@@ -11,4 +11,5 @@ export interface FinancialBalance {
     profitInPercentage: number;
   };
   payments: Payment[];
+  previousPeriodNetBalance?: number;
 }

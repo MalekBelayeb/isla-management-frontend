@@ -128,18 +128,14 @@ export class PaymentMapper {
       return item.label;
     }
 
-    return (
-      `${
-        DataTypes.incomePaymentCategoryList.find(
-          (category) => category.id === item.category,
-        )?.title ?? ''
-      } pour ${apartmentPrefix}${item.agreement?.apartment?.matricule ?? ''} - ${item.agreement?.apartment?.address ?? ''}` ??
-      ''
-    );
+    return `${
+      DataTypes.incomePaymentCategoryList.find(
+        (category) => category.id === item.category,
+      )?.title ?? ''
+    } pour ${apartmentPrefix}${item.agreement?.apartment?.matricule ?? ''} - ${item.agreement?.apartment?.address ?? ''}`;
   }
 
   static mapFinancialBalance(data: any): FinancialBalance {
-    console.log(data);
     return {
       netBalance: fixDecimals(data.netBalance, 3),
       totalExpense: fixDecimals(data.totalExpense, 3),
@@ -153,6 +149,7 @@ export class PaymentMapper {
         },
       }),
       payments: this.mapPayments(data.payments),
+      previousPeriodNetBalance: fixDecimals(data.previousPeriodNetBalance, 3),
     };
   }
 }

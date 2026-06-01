@@ -357,23 +357,27 @@
           >
         </label>
         <div class="col-md-10">
-          <app-search-input
-            [clearInput]="false"
-            [prefixIcon]="'fas fa-search'"
-            [searchPlaceholder]="'Chercher un contrat'"
-            [searchLabel]="'Résultats'"
-            [maxSize]="5"
-            [isInvalid]="
+          <app-agreement-searchable-modal
+            [searchInputValue]="agreementSearchModalResult?.label ?? ''"
+            [errorText]="
               submitted &&
               activeForm.controls['agreementId']?.errors?.['required']
+                ? 'Champs incorrect, contrat est obligatoire'
+                : ''
             "
-            [errorMessage]="'Champs incorrect, Contrat est obligatoire'"
-            [triggerSearchOnOpen]="true"
-            (searchValue)="onSearchAgreementValueChanged($event)"
-            [searchInputValue]="searchAgreementValue"
-            (selectedResultItem)="onSelectedAgreementSearchItem($event)"
-            [searchResult]="agreementOptions"
-          ></app-search-input>
+            (agreementClicked)="onAgreementSelected($event)"
+          ></app-agreement-searchable-modal>
+          <small
+            *ngIf="
+              !(
+                submitted &&
+                activeForm.controls['agreementId']?.errors?.['required']
+              )
+            "
+            class="text-muted font-weight-light"
+          >
+            Cliquez pour lancer une recherche avancée
+          </small>
         </div>
       </div>
 

@@ -7,9 +7,9 @@ import { PaymentDetailsComponent } from './presentation/payment-details/payment-
 import { PaymentListComponent } from './presentation/payment-list/payment-list.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
-import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { DateRangePickerModule } from '@shared/form-inputs/date-range-picker/date-range-picker.module';
 import { SearchInputModule } from '@shared/search-input/search-input.module';
+import { SharedModule } from '@shared/shared.module';
 
 @NgModule({
   declarations: [
@@ -25,6 +25,7 @@ import { SearchInputModule } from '@shared/search-input/search-input.module';
     PaginationModule.forRoot(),
     SearchInputModule,
     DateRangePickerModule,
+    SharedModule,
   ],
 })
 export class PaymentModule {}
