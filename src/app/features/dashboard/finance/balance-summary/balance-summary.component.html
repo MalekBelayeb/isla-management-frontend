@@ -202,7 +202,7 @@
                 <div class="col-6">
                   <h4>{{ payment.tenant }}</h4>
                 </div>
-                <div class="col-6">
+                <div class="col-6" style="white-space: normal">
                   <h4>{{ payment.reason }}</h4>
                 </div>
               </div>
@@ -216,7 +216,7 @@
             <td>
               <h4 *ngIf="payment.type == 'income'">
                 <i class="fas fa-arrow-up text-success mr-3"> </i>
-                {{ payment.amount | number: "1.3-3" }} TND
+                {{ payment.totalAmount | number: "1.3-3" }} TND
               </h4>
             </td>
           </tr>

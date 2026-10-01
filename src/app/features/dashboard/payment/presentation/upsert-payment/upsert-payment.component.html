@@ -122,7 +122,32 @@
           </div>
         </div>
       </div>
+      <div class="form-group row">
+        <label
+          class="col-md-2 col-form-label form-control-label"
+          for="example-text-input"
+        >
+          Charge en DT
+        </label>
 
+        <div class="col-md-10">
+          <div class="input-group input-group-merge">
+            <input
+              formControlName="extraCharge"
+              class="form-control"
+              id="example-text-input"
+              placeholder=""
+              type="number"
+              value=""
+              [ngClass]="{
+                focused: focus12 === true,
+              }"
+              (focus)="focus12 = true"
+              (blur)="focus12 = false"
+            />
+          </div>
+        </div>
+      </div>
       <div class="form-group row">
         <label
           class="col-md-2 col-form-label form-control-label"

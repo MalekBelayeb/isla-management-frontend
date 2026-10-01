@@ -5,6 +5,7 @@ export interface FinancialBalance {
   totalIncome: number;
   totalExpense: number;
   profit?: {
+    totalIncome: number;
     grossProfit: number;
     taxAmount: number;
     profitWithTax: number;

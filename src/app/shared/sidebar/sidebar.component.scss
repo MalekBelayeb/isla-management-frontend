@@ -9,7 +9,7 @@ $border:         #eaedf3;
 // ── Shared scrollbar ───────────────────────────────────────────────
 .sidenav,
 .minimal-sidenav {
-  &::-webkit-scrollbar       { width: 2px; }
+  &::-webkit-scrollbar       { width: 0px; }
   &::-webkit-scrollbar-track { background: transparent; }
   &::-webkit-scrollbar-thumb {
     background: rgba(94, 114, 228, 0.25);

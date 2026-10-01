@@ -17,7 +17,7 @@
       "@owner/*": ["src/app/features/dashboard/owner/*"],
       "@property/*": ["src/app/features/dashboard/property/*"],
       "@apartment/*": ["src/app/features/dashboard/apartment/*"],
-      "@shared/*": ["src/app/shared/*"],
+      "@shared/*": ["src/app/shared/*"]
     },
     "strict": true,
     "noImplicitOverride": true,
@@ -25,7 +25,7 @@
     "esModuleInterop": true,
     "emitDecoratorMetadata": true,
     "declaration": true,
-
+    "skipLibCheck": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "sourceMap": true,

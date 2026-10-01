@@ -1,6 +1,7 @@
 export interface PaymentDetails {
   id: string;
   amount: string;
+  extraCharge?: string;
   tva?: string;
   paymentDate: string;
   method: string;

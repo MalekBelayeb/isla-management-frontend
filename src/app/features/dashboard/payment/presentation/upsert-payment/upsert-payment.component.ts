@@ -54,6 +54,7 @@ export class UpsertPaymentComponent implements OnInit {
   focus9 = false;
   focus10 = false;
   focus11 = false;
+  focus12 = false;
 
   withTax: boolean = false;
 
@@ -103,6 +104,7 @@ export class UpsertPaymentComponent implements OnInit {
     this.incomeFormGroup = this.formBuilder.group(
       {
         amount: new FormControl('', Validators.required),
+        extraCharge: new FormControl(0),
         label: new FormControl(''),
         rentStartDate: new FormControl(''),
         rentEndDate: new FormControl(''),
@@ -183,6 +185,9 @@ export class UpsertPaymentComponent implements OnInit {
           this.incomeFormGroup
             .get('amount')
             ?.setValue(this.paymentDetails?.amount);
+          this.incomeFormGroup
+            .get('extraCharge')
+            ?.setValue(this.paymentDetails?.extraCharge);
           this.incomeFormGroup.get('method')?.setValue(paymentMethodId);
           this.incomeFormGroup
             .get('label')
@@ -442,6 +447,7 @@ export class UpsertPaymentComponent implements OnInit {
       incomeBody = {
         type: 'income',
         amount: this.incomeFormGroup.get('amount')?.value,
+        extraCharge: this.incomeFormGroup.get('extraCharge')?.value,
         category: this.incomeFormGroup.get('category')?.value,
         label: this.incomeFormGroup.get('label')?.value,
         ...(this.paymentType === 'income' && {

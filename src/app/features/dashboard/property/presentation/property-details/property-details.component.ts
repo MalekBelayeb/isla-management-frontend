@@ -20,8 +20,6 @@ import {
 } from '@angular/forms';
 import { PageChangedEvent } from 'ngx-bootstrap/pagination';
 import { Apartment } from '@dashboard/apartment/entity/Apartment';
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
 
 type Trimester = {
   name: string;
@@ -264,7 +262,6 @@ export class PropertyDetailsComponent implements OnInit {
       .getAllApartments(`?${urlParameters}`, useCache)
       .subscribe({
         next: (value) => {
-          console.log(value.body);
           this.isLoadingFetchingApartments = false;
           this.totalLength = value.body.meta.total ?? 0;
           this.apartments = ApartmentMapper.mapApartments(

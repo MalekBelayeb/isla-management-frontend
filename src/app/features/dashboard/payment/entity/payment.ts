@@ -1,6 +1,8 @@
 export interface Payment {
   id: string;
   amount: number;
+  extraCharge: number;
+  totalAmount: number;
   paymentDate: string;
   method: string;
   label: string;

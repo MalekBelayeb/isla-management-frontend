@@ -9,6 +9,7 @@ import {
   propertyPrefix,
 } from 'src/app/variables/consts';
 import { fixDecimals } from '@core/helpers';
+import { PaymentReceiptDetails } from '../entity/income-receipt-details';
 
 @Injectable({ providedIn: 'root' })
 export class PaymentMapper {
@@ -22,6 +23,7 @@ export class PaymentMapper {
         ? `${apartmentPrefix}${data.agreement?.apartment?.matricule} - ${data.agreement?.apartment?.type} - ${data.agreement?.apartment?.address}`
         : '-',
       amount: data.amount,
+      extraCharge: data.extraCharge,
       tva: data.tva,
       bank: data.bank,
       transferNumber: data.transferNumber,
@@ -66,6 +68,38 @@ export class PaymentMapper {
           : '-',
     };
   }
+
+  static mapPaymentReceipeDetails(data: any): PaymentReceiptDetails {
+    console.log(data);
+    const person = data.agreement
+      ? data.agreement?.tenant
+      : data.property?.owner;
+    const prefix = person?.gender === 'M' ? 'Mr' : 'Mme';
+
+    return {
+      recipientName: `${prefix} ${person.fullname}`,
+      propertyAddress:
+        data.type == 'expense'
+          ? data.property?.address
+          : data.agreement?.apartment?.property?.address,
+      propertyNumber:
+        data.type == 'expense'
+          ? data.property.matricule
+          : data.agreement?.apartment?.property.matricule,
+      paymentLabel: data.label,
+      paymentMethod: data.method,
+      rentStartDate: data.rentStartDate,
+      rentEndDate: data.rentEndDate,
+      amountTva: ((data.amount ?? 0) * (data.tva ?? 0)) / 100,
+      amount: data.amount ?? 0,
+      extraCharge: data.extraCharge ?? 0,
+      totalAmount:
+        Number(data.amount ?? 0) +
+        Number(data.extraCharge ?? 0) +
+        Number(((data.amount ?? 0) * (data.tva ?? 0)) / 100),
+    };
+  }
+
   static mapPayments(data: any[]): Payment[] {
     return data.map((item): Payment => {
       return {
@@ -77,6 +111,9 @@ export class PaymentMapper {
           ? `${apartmentPrefix}${item.agreement?.apartment?.matricule} - ${item.agreement?.apartment?.type} - ${item.agreement?.apartment?.address}`
           : '-',
         amount: fixDecimals(item.amount, 3),
+        extraCharge: fixDecimals(item.extraCharge, 3),
+        totalAmount:
+          fixDecimals(item.amount, 3) + fixDecimals(item.extraCharge ?? 0, 3),
         label: item.label,
         account: item.agreement
           ? `${propertyPrefix}${item.agreement?.apartment?.property?.matricule ?? ''}`
@@ -142,6 +179,7 @@ export class PaymentMapper {
       totalIncome: fixDecimals(data.totalIncome, 3),
       ...(data.profit && {
         profit: {
+          totalIncome: fixDecimals(data.profit.totalIncome, 3),
           grossProfit: fixDecimals(data.profit.grossProfit, 3),
           profitInPercentage: fixDecimals(data.profit.profitInPercentage, 3),
           profitWithTax: fixDecimals(data.profit.profitWithTax, 3),
