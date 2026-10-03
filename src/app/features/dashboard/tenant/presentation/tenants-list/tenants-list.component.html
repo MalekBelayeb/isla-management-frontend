@@ -30,7 +30,7 @@
     <form [formGroup]="filtersFormGroup" (ngSubmit)="filterTenants()">
       <!-- Row 1 -->
       <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-12">
           <div class="form-group">
             <label class="filter-label">Recherche générale</label>
             <div class="input-group input-group-merge search-group">
@@ -46,24 +46,6 @@
                 autocomplete="off"
               />
             </div>
-          </div>
-        </div>
-
-        <div class="col-md-6">
-          <div class="form-group">
-            <label class="filter-label">Statut du contrat</label>
-            <app-search-input
-              [clearInput]="false"
-              [prefixIcon]="'fas fa-circle'"
-              [searchPlaceholder]="'Filtrer par statut'"
-              [searchLabel]="'Résultats'"
-              [prefixText]="'Status:'"
-              [maxSize]="4"
-              [searchInputValue]="statusTenantSearchValue.title"
-              (selectedResultItem)="onSelectedStatusTenantSearchItem($event)"
-              [searchResult]="statusTenantOptions"
-              [isEditable]="false"
-            ></app-search-input>
           </div>
         </div>
       </div>
@@ -168,18 +150,14 @@
     </div>
 
     <table
-      class="table align-items-center table-flush table-hover"
+      class="table align-items-center table-flush table-hover tenants-table"
       [class.tenants-table--hidden]="
         tenants.length === 0 && !isLoadingFetchingTenants
       "
     >
       <thead class="thead-light">
         <tr>
-          <th>Num locataire</th>
-          <th>Nom & Prénom</th>
-          <th>Téléphone</th>
-          <th>Nationalité</th>
-          <th>CIN</th>
+          <th>Locataire</th>
           <th>Emploi</th>
           <th>Status du contrat</th>
           <th>Num du dernier contrat signé</th>
@@ -195,11 +173,10 @@
       <!-- Skeleton rows while loading -->
       <tbody *ngIf="isLoadingFetchingTenants">
         <tr *ngFor="let i of [1, 2, 3, 4, 5, 6, 7, 8]" class="skeleton-row">
-          <td><div class="skel skel-text" style="width: 70px"></div></td>
-          <td><div class="skel skel-text" style="width: 130px"></div></td>
-          <td><div class="skel skel-text" style="width: 90px"></div></td>
-          <td><div class="skel skel-text" style="width: 60px"></div></td>
-          <td><div class="skel skel-text" style="width: 80px"></div></td>
+          <td>
+            <div class="skel skel-text mb-2" style="width: 130px"></div>
+            <div class="skel skel-text" style="width: 170px"></div>
+          </td>
           <td><div class="skel skel-text" style="width: 80px"></div></td>
           <td><div class="skel skel-badge" style="width: 100px"></div></td>
           <td><div class="skel skel-text" style="width: 65px"></div></td>
@@ -220,27 +197,49 @@
             (click)="redirectToDetails(tenant.id)"
             class="table-user"
           >
-            <b> {{ tenant.matricule }} </b>
-          </td>
-          <td
-            style="cursor: pointer"
-            (click)="redirectToDetails(tenant.id)"
-            class="table-user"
-          >
-            <span> {{ tenant.fullname }} </span>
-          </td>
-
-          <td style="cursor: pointer" (click)="redirectToDetails(tenant.id)">
-            <span class=""> {{ tenant.phoneNumber }} </span>
-          </td>
-          <td style="cursor: pointer" (click)="redirectToDetails(tenant.id)">
-            <span class="status"> {{ tenant.nationality }} </span>
-          </td>
-          <td style="cursor: pointer" (click)="redirectToDetails(tenant.id)">
-            <div class="col-auto">
-              <span class="">
-                {{ tenant.cin }}
-              </span>
+            <div class="tenant-identity">
+              <div
+                class="tenant-avatar"
+                [class.tenant-avatar--legal]="tenant.tenantType === 'legal'"
+                [title]="
+                  tenant.tenantType === 'legal'
+                    ? 'Personne morale (société)'
+                    : 'Personne physique'
+                "
+              >
+                <i
+                  class="fas"
+                  [ngClass]="
+                    tenant.tenantType === 'legal' ? 'fa-building' : 'fa-user'
+                  "
+                ></i>
+              </div>
+              <div class="tenant-info">
+                <div class="tenant-name-row">
+                  <span
+                    *ngIf="tenant.tenantType === 'natural'"
+                    class="tenant-name"
+                    >{{ tenant.matricule }} - {{ tenant.fullname || "—" }}</span
+                  >
+                  <span
+                    *ngIf="tenant.tenantType === 'legal'"
+                    class="tenant-name"
+                    >{{ tenant.matricule }} -
+                    {{ tenant.societyName || "—" }}</span
+                  >
+                </div>
+                <div class="tenant-meta">
+                  <span *ngIf="tenant.phoneNumber" class="tenant-meta-item">
+                    <i class="fas fa-phone"></i>{{ tenant.phoneNumber }}
+                  </span>
+                  <span
+                    *ngIf="tenant.tenantType === 'natural' && tenant.cin"
+                    class="tenant-meta-item"
+                  >
+                    <i class="fas fa-id-card"></i>{{ tenant.cin }}
+                  </span>
+                </div>
+              </div>
             </div>
           </td>
 

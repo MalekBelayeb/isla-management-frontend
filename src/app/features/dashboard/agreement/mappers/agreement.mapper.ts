@@ -7,9 +7,16 @@ import {
   apartmentPrefix,
   propertyPrefix,
 } from 'src/app/variables/consts';
+import { GetOwnerDetailsMapper } from '@dashboard/owner/mappers/get-owner-details';
+import { PropertyMapper } from '@dashboard/property/mappers/property-mapper';
+import { TenantMapper } from '@dashboard/tenant/mappers/tenant-mapper';
+import { ApartmentMapper } from '@dashboard/apartment/mappers/apartment-mapper';
 
 @Injectable({ providedIn: 'root' })
 export class AgreeementMapper {
+  constructor(private tenantMapper: TenantMapper) {}
+  // Static: TenantMapper uses it, and injecting AgreeementMapper there
+  // would create a TenantMapper <-> AgreeementMapper DI cycle (NG0200)
   static mapAgreementDetails(data: any): AgreementDetails {
     return {
       id: data.id,
@@ -23,20 +30,26 @@ export class AgreeementMapper {
       startDate: data.startDate,
       createdAt: data.createdAt,
       signedAt: data.signedAt,
-      apartment: `${apartmentPrefix}${data.apartment?.matricule} - ${data.apartment?.type} - ${data.apartment?.address}`,
-      apartmentId: data.apartment?.id,
       nbDaysOfTolerance: data.nbDaysOfTolerance,
       deposit: data.deposit,
       documentUrl: data.documentUrl,
       firstDayOfPayment: data.firstDayOfPayment,
       notes: data.notes,
-      tenant: `${data.tenant?.gender == 'M' ? 'Mr' : 'Mme'} ${data.tenant?.fullname}`,
-      owner: `${data.apartment?.property?.owner?.gender == 'M' ? 'Mr' : 'Mme'} ${data.apartment?.property?.owner?.fullname ?? ''}`,
-      property: `${propertyPrefix}${data.apartment?.property?.matricule} - ${data.apartment?.property?.address}`,
-      tenantId: data.tenant?.id,
+      apartment: data.apartment
+        ? ApartmentMapper.mapApartmentDetails(data.apartment)
+        : undefined,
+      tenant: data.tenant
+        ? TenantMapper.mapTenantDetails(data.tenant)
+        : undefined,
+      owner: data.apartment?.property?.owner
+        ? GetOwnerDetailsMapper.fromResponse(data.apartment?.property?.owner)
+        : undefined,
+      property: data.apartment?.property
+        ? PropertyMapper.mapPropertyDetails(data.apartment?.property)
+        : undefined,
     };
   }
-  static mapAgreements(data: any[]): Agreement[] {
+  mapAgreements(data: any[]): Agreement[] {
     return data.map((item): Agreement => {
       return {
         id: item.id,
@@ -50,11 +63,13 @@ export class AgreeementMapper {
         startDate: item.startDate,
         createdAt: item.createdAt,
         signedAt: item.signedAt,
-        owner: `${item.apartment?.property?.owner?.gender == 'M' ? 'Mr' : 'Mme'} ${item.apartment?.property?.owner?.fullname ?? ''}`,
-        property: `${propertyPrefix}${item.apartment?.property?.matricule} - ${item.apartment?.property?.address}`,
+        owner: GetOwnerDetailsMapper.fromResponse(
+          item.apartment?.property?.owner,
+        ),
+        property: PropertyMapper.mapPropertyDetails(item.apartment?.property),
         nbDaysOfTolerance: item.nbDaysOfTolerance,
-        apartment: `${apartmentPrefix}${item.apartment.matricule} - ${item.apartment.type} - ${item.apartment.address}`,
-        tenant: `${item.tenant.gender == 'M' ? 'Mr' : 'Mme'} ${item.tenant.fullname}`,
+        apartment: ApartmentMapper.mapApartmentDetails(item.apartment),
+        tenant: TenantMapper.mapTenantDetails(item.tenant),
       };
     });
   }

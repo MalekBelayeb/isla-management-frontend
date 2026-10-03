@@ -167,25 +167,23 @@
           *ngFor="let agreement of agreements"
           style="cursor: pointer; vertical-align: middle"
         >
-          <td
-            (click)="onItemClick(agreement.id, agreement.matricule)"
-            class="pl-4"
-          >
+          <td (click)="onItemClick(agreement)" class="pl-4">
             <span class="font-weight-bold">{{ agreement.matricule }}</span>
           </td>
-          <td (click)="onItemClick(agreement.id, agreement.matricule)">
-            {{ agreement.tenant }}
+          <td (click)="onItemClick(agreement)">
+            {{ agreement.tenant.fullname }}
           </td>
-          <td (click)="onItemClick(agreement.id, agreement.matricule)">
-            {{ agreement.apartment }}
+          <td (click)="onItemClick(agreement)">
+            {{ agreement.apartment.idNumber }} -
+            {{ agreement.apartment.address }}
           </td>
-          <td (click)="onItemClick(agreement.id, agreement.matricule)">
-            {{ agreement.property }}
+          <td (click)="onItemClick(agreement)">
+            {{ agreement.property.idNumber }} - {{ agreement.property.address }}
           </td>
-          <td (click)="onItemClick(agreement.id, agreement.matricule)">
-            {{ agreement.owner }}
+          <td (click)="onItemClick(agreement)">
+            {{ agreement.owner.fullname }}
           </td>
-          <td (click)="onItemClick(agreement.id, agreement.matricule)">
+          <td (click)="onItemClick(agreement)">
             <span
               *ngIf="agreement.status == 'ACTIVE'"
               class="badge badge-lg badge-success"
@@ -200,14 +198,11 @@
               Suspendu
             </span>
           </td>
-          <td (click)="onItemClick(agreement.id, agreement.matricule)">
+          <td (click)="onItemClick(agreement)">
             {{ agreement.startDate | date: "dd/MM/yyyy" }}
           </td>
 
-          <td
-            (click)="onItemClick(agreement.id, agreement.matricule)"
-            style="white-space: nowrap"
-          >
+          <td (click)="onItemClick(agreement)" style="white-space: nowrap">
             {{ agreement.createdAt | date: "dd/MM/yyyy" }}
           </td>
           <td class="pr-3" style="white-space: nowrap">

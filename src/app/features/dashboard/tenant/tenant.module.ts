@@ -9,6 +9,8 @@ import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { TenantDetailsComponent } from './presentation/tenant-details/tenant-details.component';
 import { UpsertTenantComponent } from './presentation/upsert-tenant/upsert-tenant.component';
 import { SearchInputModule } from '@shared/search-input/search-input.module';
+import { TenantLatePayersListComponent } from './presentation/tenant-late-payers-list/tenant-late-payers-list.component';
+import { SharedModule } from '@shared/shared.module';
 
 @NgModule({
   declarations: [
@@ -16,6 +18,7 @@ import { SearchInputModule } from '@shared/search-input/search-input.module';
     TenantsListComponent,
     UpsertTenantComponent,
     TenantDetailsComponent,
+    TenantLatePayersListComponent,
   ],
   imports: [
     CommonModule,
@@ -23,7 +26,7 @@ import { SearchInputModule } from '@shared/search-input/search-input.module';
     FormsModule,
     ReactiveFormsModule,
     PaginationModule.forRoot(),
-    SearchInputModule
+    SearchInputModule,
   ],
 })
 export class TenantModule {}

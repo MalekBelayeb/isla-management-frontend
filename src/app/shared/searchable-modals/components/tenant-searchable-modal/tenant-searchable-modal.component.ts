@@ -14,14 +14,12 @@ import { TenantService } from '@dashboard/tenant/service/tenant.service';
 import { TenantMapper } from '@dashboard/tenant/mappers/tenant-mapper';
 import { Tenant } from '@dashboard/tenant/entity/tenant';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
-import { BsDropdownDirective } from 'ngx-bootstrap/dropdown';
 import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-tenant-searchable-modal',
   templateUrl: './tenant-searchable-modal.component.html',
   styleUrls: ['./tenant-searchable-modal.component.scss'],
-  providers: [BsDropdownDirective],
 })
 export class TenantSearchableModalComponent implements OnInit, OnChanges {
   @ViewChild('modalSearch') modalSearch?: TemplateRef<void>;
@@ -33,11 +31,13 @@ export class TenantSearchableModalComponent implements OnInit, OnChanges {
 
   @Input() prefixIcon?: string = 'fas fa-search';
   @Input() searchInputValue = '';
+  // Text shown in the trigger input; set by the consumer or on tenant selection
+  @Input() selectedValue = '';
   @Input() suffixIcon?: string;
   @Input() searchResult: SearchResult[] = [];
 
   @Output() cancelClicked = new EventEmitter<void>();
-  @Output() tenantClicked = new EventEmitter<string>();
+  @Output() tenantClicked = new EventEmitter<Tenant>();
 
   @Input() searchPlaceholder =
     'Chercher par tél, cin, prénom et nom, email, address...';
@@ -86,12 +86,26 @@ export class TenantSearchableModalComponent implements OnInit, OnChanges {
     this.searchModal?.hide();
   }
 
-  moveToTenantDetails(id: string) {
-    const url = this.router.serializeUrl(
-      this.router.createUrlTree([`/dashboard/tenant/tenant-details/${id}`]),
-    );
+  onTenantClicked(tenant: Tenant) {
+    // An @Output always exists; `observed` tells whether a parent bound (tenantClicked)
 
-    window.open(url, '_blank');
+    if (this.tenantClicked.observed) {
+      if (tenant.tenantType === 'natural') {
+        this.selectedValue = `${tenant.matricule} - ${tenant.fullname}`;
+      } else {
+        this.selectedValue = `${tenant.matricule} - ${tenant.societyName}`;
+      }
+      this.tenantClicked.emit(tenant);
+      this.hideModal();
+    } else {
+      const url = this.router.serializeUrl(
+        this.router.createUrlTree([
+          `/dashboard/tenant/tenant-details/${tenant.id}`,
+        ]),
+      );
+
+      window.open(url, '_blank');
+    }
   }
 
   moveToPaymentDetails(id: string) {

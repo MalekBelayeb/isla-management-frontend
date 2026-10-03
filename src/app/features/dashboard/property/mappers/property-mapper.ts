@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Property } from '@property/entity/property';
 import { PropertyDetails } from '../entity/property-details';
 import { propertyPrefix } from 'src/app/variables/consts';
+import { GetOwnerDetailsMapper } from '@dashboard/owner/mappers/get-owner-details';
 
 @Injectable({ providedIn: 'root' })
 export class PropertyMapper {
@@ -10,11 +11,9 @@ export class PropertyMapper {
       id: data.id,
       address: data.address,
       type: data.type,
-      owner:
-        data.owner.type === 'natural'
-          ? `${data.owner.gender == 'M' ? 'Mr' : 'Mme'}  ${data.owner.firstname} ${data.owner.lastname}`
-          : `${data.owner.society}`,
-      ownerId: data.owner.id,
+      owner: data.owner
+        ? GetOwnerDetailsMapper.fromResponse(data.owner)
+        : undefined,
       idNumber: `${propertyPrefix}${data.matricule}`,
       createdAt: data.createdAt,
       profitInPercentage: data.profitInPercentage,
@@ -31,7 +30,7 @@ export class PropertyMapper {
       owner:
         data.owner.type === 'natural'
           ? `${data.owner.gender == 'M' ? 'Mr' : 'Mme'}  ${data.owner.firstname} ${data.owner.lastname}`
-          : `${data.owner.society}`,
+          : `Sté ${data.owner.society}`,
       nbApartments: data.apartments?.length ?? 0,
       createdAt: data.createdAt,
       apartments: [],

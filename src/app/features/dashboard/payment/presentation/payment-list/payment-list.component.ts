@@ -70,6 +70,7 @@ export class PaymentListComponent implements OnInit {
     private tenantService: TenantService,
     private tenantMapper: TenantMapper,
     private router: Router,
+    private agreeementMapper: AgreeementMapper,
   ) {
     this.filtersFormGroup = this.formBuilder.group({
       searchTerm: new FormControl(''),
@@ -158,7 +159,7 @@ export class PaymentListComponent implements OnInit {
 
     this.agreementService.getAllAgreement(`?${queryString}`).subscribe({
       next: (value) => {
-        const agreements = AgreeementMapper.mapAgreements(
+        const agreements = this.agreeementMapper.mapAgreements(
           value.body.agreements,
         );
         this.agreementOptions = agreements.map((item) => ({

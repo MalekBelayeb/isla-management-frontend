@@ -10,6 +10,7 @@ import { UpsertAgreementComponent } from './presentation/upsert-agreement/upsert
 import { AgreementDetailsComponent } from './presentation/agreement-details/Agreement-details.component';
 import { DateRangePickerModule } from '@shared/form-inputs/date-range-picker/date-range-picker.module';
 import { SearchInputModule } from '@shared/search-input/search-input.module';
+import { SharedModule } from '@shared/shared.module';
 
 @NgModule({
   declarations: [
@@ -26,6 +27,7 @@ import { SearchInputModule } from '@shared/search-input/search-input.module';
     SearchInputModule,
     DateRangePickerModule,
     PaginationModule.forRoot(),
+    SharedModule,
   ],
 })
 export class AggrementModule {}

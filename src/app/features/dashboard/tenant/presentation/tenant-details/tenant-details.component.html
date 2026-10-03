@@ -55,7 +55,7 @@
       </div>
 
       <div class="row">
-        <div class="col-lg-3">
+        <div *ngIf="tenantDetails?.tenantType === 'natural'" class="col-lg-3">
           <div class="form-group">
             <h5 class="card-title text-uppercase text-muted mb-0">CIN</h5>
 
@@ -140,7 +140,7 @@
           <tbody>
             <tr *ngFor="let payment of payments">
               <td>
-                <h4>{{ payment.agreement }}</h4>
+                <h4>{{ payment.agreement?.matricule }}</h4>
               </td>
 
               <td>
@@ -177,7 +177,10 @@
                 <h4>{{ payment.category }}</h4>
               </td>
               <td>
-                <h4>{{ payment.apartment }}</h4>
+                <h4>
+                  {{ payment.apartment?.idNumber }} -
+                  {{ payment.apartment?.address }}
+                </h4>
               </td>
               <td>
                 <h4>{{ payment.payementFrequency }}</h4>
@@ -261,7 +264,10 @@
           <tr *ngFor="let agreement of agreements">
             <th scope="row">{{ agreement.matricule }}</th>
             <td>
-              <h4>{{ agreement.apartment }}</h4>
+              <h4>
+                {{ agreement.apartment.idNumber }} -
+                {{ agreement.apartment.address }}
+              </h4>
             </td>
             <td>
               <h4>

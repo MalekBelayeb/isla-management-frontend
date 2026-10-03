@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
 import { ApartmentDetails } from '../entity/apartment-details';
 import { DataTypes } from '@models/data';
-import { Apartment } from '../entity/Apartment';
 import { apartmentPrefix, propertyPrefix } from 'src/app/variables/consts';
+import { PropertyMapper } from '@dashboard/property/mappers/property-mapper';
+import { GetOwnerDetailsMapper } from '@dashboard/owner/mappers/get-owner-details';
+import { Apartment } from '../entity/Apartment';
 
 @Injectable({ providedIn: 'root' })
 export class ApartmentMapper {
@@ -15,10 +17,13 @@ export class ApartmentMapper {
       description: data.description,
       type: data.type,
       rooms: data.rooms,
-      propertyId: data.property.id,
       createdAt: data.createdAt,
-      property: `${propertyPrefix}${data.property.matricule} - ${data.property.address}`,
-      owner: `${data.property.owner.gender == 'M' ? 'Mr' : 'Mme'}  ${data.property.owner.fullname}`,
+      property: data.property
+        ? PropertyMapper.mapPropertyDetails(data.property)
+        : undefined,
+      owner: data.property.owner
+        ? GetOwnerDetailsMapper.fromResponse(data.property.owner)
+        : undefined,
     };
   }
   static mapApartments(data: any[]): Apartment[] {
@@ -39,7 +44,7 @@ export class ApartmentMapper {
         owner:
           item.property?.owner?.type === 'natural'
             ? `${item.property?.owner?.gender == 'M' ? 'Mr' : 'Mme'} ${item.property?.owner?.fullname}`
-            : `${item.property?.owner?.society}`,
+            : `Sté ${item.property?.owner?.society}`,
         rentStatus: item.rentStatus ?? '',
       };
     });

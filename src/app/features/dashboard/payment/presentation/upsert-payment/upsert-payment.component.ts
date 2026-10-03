@@ -20,10 +20,12 @@ import {
   transferNumberFieldRequiredIfMethodIsTransferValidator,
 } from '@core/form-validators/form-validators';
 import { Agreement } from '@dashboard/agreement/entity/agreement';
+import { AgreementDetails } from '@dashboard/agreement/entity/agreement-details';
 import { AgreeementMapper } from '@dashboard/agreement/mappers/agreement.mapper';
 import { AgreementService } from '@dashboard/agreement/service/agreement.service';
 import { PaymentDetails } from '@dashboard/payment/entity/payment-details';
 import { PaymentService } from '@dashboard/payment/service/payment.service';
+import { Property } from '@dashboard/property/entity/property';
 import { TenantMapper } from '@dashboard/tenant/mappers/tenant-mapper';
 import { TenantService } from '@dashboard/tenant/service/tenant.service';
 import { DataTypes } from '@models/data';
@@ -60,9 +62,11 @@ export class UpsertPaymentComponent implements OnInit {
 
   @Input() paymentDetails?: PaymentDetails;
 
-  agreement?: Agreement;
+  agreement?: AgreementDetails;
 
   paymentType: 'income' | 'expense' | 'expense_agency' = 'income';
+
+  searchAgreementValue = '';
 
   constructor(
     private formBuilder: FormBuilder,
@@ -70,7 +74,6 @@ export class UpsertPaymentComponent implements OnInit {
     private paymentService: PaymentService,
     private tenantService: TenantService,
     private toastAlertService: ToastAlertService,
-    private tenantMapper: TenantMapper,
   ) {
     this.incomeFormGroup = this.formBuilder.group({});
     this.expenseFormGroup = this.formBuilder.group({});
@@ -99,6 +102,7 @@ export class UpsertPaymentComponent implements OnInit {
   searchExpensePaymentMethodValue: string = this.paymentMethodTypeList[0].title;
 
   agreementSearchModalResult?: SearchModalResultType;
+  propertySelectedValue = '';
 
   setFormToDefaultState() {
     this.incomeFormGroup = this.formBuilder.group(
@@ -147,7 +151,7 @@ export class UpsertPaymentComponent implements OnInit {
           this.paymentMethodTypeList[0].id,
           Validators.required,
         ),
-        matriculeProperty: new FormControl(
+        propertyId: new FormControl(
           '',
           this.paymentType === 'expense' ? Validators.required : null,
         ),
@@ -230,10 +234,8 @@ export class UpsertPaymentComponent implements OnInit {
 
           this.searchIncomePaymentMethodValue =
             this.paymentDetails?.method ?? '';
-          this.agreementSearchModalResult = {
-            id: this.paymentDetails.agreementId ?? '',
-            label: this.paymentDetails.agreement ?? '',
-          };
+          
+          this.searchAgreementValue = `${this.paymentDetails.agreement} - ${this.paymentDetails.apartment}`
           this.withTax = !!this.paymentDetails.tva;
         }
 
@@ -269,8 +271,8 @@ export class UpsertPaymentComponent implements OnInit {
           this.expenseFormGroup.get('category')?.setValue(categoryId);
           if (this.paymentType === 'expense') {
             this.expenseFormGroup
-              .get('matriculeProperty')
-              ?.setValue(this.paymentDetails?.matriculeProperty);
+              .get('propertyId')
+              ?.setValue(this.paymentDetails?.property?.id);
           }
           this.expenseFormGroup
             .get('paymentDate')
@@ -281,6 +283,7 @@ export class UpsertPaymentComponent implements OnInit {
             .get('notes')
             ?.setValue(this.paymentDetails?.notes);
 
+          this.propertySelectedValue = `${this.paymentDetails.property?.idNumber} - ${this.paymentDetails.property?.address}`;
           this.searchExpensePaymentCategoryValue = this.paymentDetails.category;
           this.searchExpensePaymentMethodValue = this.paymentDetails.method;
         }
@@ -375,10 +378,11 @@ export class UpsertPaymentComponent implements OnInit {
     if (idTenant) {
       this.tenantService.getTenant(idTenant).subscribe({
         next: (value) => {
-          this.agreement = this.tenantMapper.mapTenantDetails(
-            value.body,
-          ).agreement;
-
+          this.agreement = TenantMapper.mapTenantDetails(value.body).agreement;
+          this.incomeFormGroup
+            .get('amount')
+            ?.setValue(this.agreement?.rentAmount);
+          this.searchAgreementValue = `${this.agreement?.matricule} - ${this.agreement?.apartment}`;
           this.incomeFormGroup
             .get('agreementId')
             ?.setValue(this.agreement?.id ?? '');
@@ -390,6 +394,11 @@ export class UpsertPaymentComponent implements OnInit {
   onAgreementSelected(searchModalResult: SearchModalResultType) {
     this.incomeFormGroup.get('agreementId')?.setValue(searchModalResult.id);
     this.agreementSearchModalResult = searchModalResult;
+  }
+
+  onPropertySelected(property: Property) {
+    this.expenseFormGroup.get('propertyId')?.setValue(property.id);
+    this.propertySelectedValue = `${property.idNumber} - ${property.address}`;
   }
 
   get upsertPaymentForm() {
@@ -480,8 +489,7 @@ export class UpsertPaymentComponent implements OnInit {
         category: this.expenseFormGroup.get('category')?.value,
         label: this.expenseFormGroup.get('label')?.value,
         method: this.expenseFormGroup.get('method')?.value,
-        matriculeProperty:
-          this.expenseFormGroup.get('matriculeProperty')?.value,
+        propertyId: this.expenseFormGroup.get('propertyId')?.value,
         paymentDate: getPaymentDate(),
         ...(this.expenseFormGroup.get('notes')?.value && {
           notes: this.expenseFormGroup.get('notes')?.value,

@@ -42,9 +42,6 @@ export class TenantsListComponent implements OnInit {
   focus3: boolean = false;
   apartmentOptions: SearchResult[] = [];
   agreementOptions: SearchResult[] = [];
-  statusTenantOptions: SearchResult[] = DataTypes.statusTenantList;
-
-  statusTenantSearchValue: SearchResult = DataTypes.statusTenantList[0];
 
   filtersFormGroup: FormGroup;
   searchApartmentValue: string = '';
@@ -52,11 +49,11 @@ export class TenantsListComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private toastAlertService: ToastAlertService,
-    private modalService: BsModalService,
     private confirmDialogService: ConfirmDialogService,
     private apartmentService: ApartmentService,
     private agreementService: AgreementService,
+    private agreeementMapper: AgreeementMapper,
+    private apartmentMapper: ApartmentMapper,
     private queryStringBuilder: QueryStringBuilder,
     private router: Router,
     private tenantService: TenantService,
@@ -66,7 +63,6 @@ export class TenantsListComponent implements OnInit {
       searchTerm: new FormControl(''),
       apartmentId: new FormControl(''),
       agreementId: new FormControl(''),
-      statusTenant: new FormControl(''),
       tenantAgreement: new FormControl(''),
       tenantProperty: new FormControl(''),
     });
@@ -142,7 +138,7 @@ export class TenantsListComponent implements OnInit {
 
     this.agreementService.getAllAgreement(`?${queryString}`).subscribe({
       next: (value) => {
-        const agreements = AgreeementMapper.mapAgreements(
+        const agreements = this.agreeementMapper.mapAgreements(
           value.body.agreements,
         );
         this.agreementOptions = agreements.map((item) => ({

@@ -1,3 +1,7 @@
+import { OwnerDetails } from '@dashboard/owner/entity/owner-details';
+import { PropertyDetails } from '@dashboard/property/entity/property-details';
+import { TenantDetails } from '@dashboard/tenant/entity/tenant-details';
+
 export interface PaymentDetails {
   id: string;
   amount: string;
@@ -15,12 +19,11 @@ export interface PaymentDetails {
   transferNumber: string;
   agreement?: string;
   agreementId?: string;
-  matriculeProperty?: string;
   payementFrequency?: string;
-  tenant?: string;
+  tenant?: TenantDetails | undefined;
   notes: string;
-  property: string;
+  property: PropertyDetails | undefined;
   apartment?: string;
   createdAt: string;
-  owner?: string;
+  owner?: OwnerDetails | undefined;
 }

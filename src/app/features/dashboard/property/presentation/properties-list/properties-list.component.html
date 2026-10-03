@@ -153,9 +153,10 @@
       <thead class="thead-light">
         <tr>
           <th scope="col">N° Dossier</th>
-          <th scope="col">Propriétaire</th>
           <th scope="col">Adresse</th>
           <th scope="col">Type</th>
+          <th scope="col">Propriétaire</th>
+
           <th scope="col" class="text-center">Locaux</th>
           <th scope="col">Date de création</th>
           <th scope="col"></th>
@@ -192,13 +193,7 @@
           >
             <b> {{ property.idNumber }} </b>
           </td>
-          <td
-            style="cursor: pointer"
-            (click)="redirectToDetails(property.id)"
-            class="table-user"
-          >
-            <span> {{ property.owner }} </span>
-          </td>
+
           <td
             style="cursor: pointer"
             (click)="redirectToDetails(property.id)"
@@ -212,6 +207,13 @@
             class="table-user"
           >
             <span> {{ property.type }} </span>
+          </td>
+          <td
+            style="cursor: pointer"
+            (click)="redirectToDetails(property.id)"
+            class="table-user"
+          >
+            <span> {{ property.owner }} </span>
           </td>
           <td style="cursor: pointer" (click)="redirectToDetails(property.id)">
             <div class="col-auto">

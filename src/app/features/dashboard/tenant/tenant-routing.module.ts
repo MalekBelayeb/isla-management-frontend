@@ -4,6 +4,7 @@ import { TenantComponent } from './tenant.component';
 import { TenantsListComponent } from './presentation/tenants-list/tenants-list.component';
 import { TenantDetailsComponent } from './presentation/tenant-details/tenant-details.component';
 import { UpsertTenantComponent } from './presentation/upsert-tenant/upsert-tenant.component';
+import { TenantLatePayersListComponent } from './presentation/tenant-late-payers-list/tenant-late-payers-list.component';
 
 const routes: Routes = [
   {
@@ -18,6 +19,10 @@ const routes: Routes = [
       {
         path: 'all-tenants',
         component: TenantsListComponent,
+      },
+      {
+        path: 'late-payers',
+        component: TenantLatePayersListComponent,
       },
       {
         path: 'create-tenant',

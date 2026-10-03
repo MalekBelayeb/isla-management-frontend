@@ -1,3 +1,6 @@
+import { OwnerDetails } from '@dashboard/owner/entity/owner-details';
+import { PropertyDetails } from '@dashboard/property/entity/property-details';
+
 export interface ApartmentDetails {
   id: string;
   type: string;
@@ -6,9 +9,7 @@ export interface ApartmentDetails {
   idNumber: string;
   description: string;
   rooms: number;
-  propertyId: string;
-  property: string;
-
   createdAt: string;
-  owner: string;
+  property: PropertyDetails | undefined;
+  owner: OwnerDetails | undefined;
 }

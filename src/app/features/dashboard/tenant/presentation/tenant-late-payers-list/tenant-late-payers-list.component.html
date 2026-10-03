@@ -1,0 +1,235 @@
+<div class="card tenants-card">
+  <!-- Card Header -->
+  <div class="card-header border-0 tenants-header">
+    <div class="d-flex align-items-center justify-content-between flex-wrap">
+      <div class="d-flex align-items-center">
+        <div class="tenants-header-icon mr-3">
+          <i class="fas fa-user-clock"></i>
+        </div>
+        <div>
+          <h3 class="mb-0 tenants-title">Liste des locataires impayés</h3>
+          <p class="text-muted text-sm mb-0 mt-1">
+            <span class="tenants-count-badge">{{ totalLength }}</span>
+            locataire(s) au total
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filters Section -->
+  <div class="tenants-filter-section">
+    <form [formGroup]="filtersFormGroup" (ngSubmit)="filterTenants()">
+      <!-- Row 1 -->
+      <div class="row">
+        <div class="col-md-12">
+          <div class="form-group">
+            <label class="filter-label">Recherche générale</label>
+            <div class="input-group input-group-merge search-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text search-prefix">
+                  <i class="fas fa-search"></i>
+                </span>
+              </div>
+              <input
+                class="form-control search-input"
+                formControlName="searchTerm"
+                placeholder="Tél, CIN, nom, prénom, email, adresse..."
+                autocomplete="off"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filter actions -->
+      <div class="d-flex justify-content-end">
+        <button class="btn btn-primary filter-btn" type="submit">
+          <i class="fas fa-filter mr-2"></i>Filtrer
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Table Section -->
+  <div class="table-responsive tenants-table-wrapper">
+    <!-- Empty State -->
+    <div
+      *ngIf="
+        allLatePayersTenants.length === 0 && !isLoadingAllLatePayersTenants
+      "
+      class="tenants-empty-state"
+    >
+      <div class="empty-icon-wrapper">
+        <i class="fas fa-user-slash"></i>
+      </div>
+      <h5 class="empty-title">Aucun locataire n’a de paiement en retard.</h5>
+      <p class="empty-subtitle">Modifiez vos critères de recherche.</p>
+    </div>
+
+    <table
+      class="table align-items-center table-flush table-hover late-payers-table"
+      [class.tenants-table--hidden]="
+        allLatePayersTenants.length === 0 && !isLoadingAllLatePayersTenants
+      "
+    >
+      <thead class="thead-light">
+        <tr>
+          <th>Locataire</th>
+          <th>Adresse</th>
+          <th>Date début de contrat</th>
+          <th>Loyer</th>
+          <th>Retard de paiement</th>
+          <th>Total (non payé)</th>
+          <th></th>
+        </tr>
+      </thead>
+
+      <!-- Skeleton rows while loading -->
+      <tbody *ngIf="isLoadingAllLatePayersTenants">
+        <tr *ngFor="let i of [1, 2, 3, 4, 5, 6, 7, 8]" class="skeleton-row">
+          <td>
+            <div class="tenant-identity">
+              <div>
+                <div class="skel skel-text mb-2" style="width: 130px"></div>
+                <div class="skel skel-text" style="width: 170px"></div>
+              </div>
+            </div>
+          </td>
+          <td><div class="skel skel-text" style="width: 130px"></div></td>
+          <td><div class="skel skel-text" style="width: 90px"></div></td>
+          <td><div class="skel skel-text" style="width: 60px"></div></td>
+          <td><div class="skel skel-text" style="width: 80px"></div></td>
+          <td><div class="skel skel-text" style="width: 80px"></div></td>
+          <td></td>
+        </tr>
+      </tbody>
+
+      <!-- Real rows -->
+      <tbody *ngIf="!isLoadingAllLatePayersTenants">
+        <tr *ngFor="let tenant of allLatePayersTenants">
+          <td
+            style="cursor: pointer"
+            (click)="redirectToDetails(tenant.id)"
+            class="table-user"
+          >
+            <div class="tenant-identity">
+              <div
+                class="tenant-avatar"
+                [class.tenant-avatar--legal]="tenant.tenantType === 'legal'"
+                [title]="
+                  tenant.tenantType === 'legal'
+                    ? 'Personne morale (société)'
+                    : 'Personne physique'
+                "
+              >
+                <i
+                  class="fas"
+                  [ngClass]="
+                    tenant.tenantType === 'legal' ? 'fa-building' : 'fa-user'
+                  "
+                ></i>
+              </div>
+              <div class="tenant-info">
+                <div class="tenant-name-row">
+                  <span
+                    *ngIf="tenant.tenantType === 'natural'"
+                    class="tenant-name"
+                    >{{ tenant.fullname || "—" }}</span
+                  >
+                  <span
+                    *ngIf="tenant.tenantType === 'legal'"
+                    class="tenant-name"
+                    >{{ tenant.societyName }}</span
+                  >
+                </div>
+                <div class="tenant-meta">
+                  <span *ngIf="tenant.phoneNumber" class="tenant-meta-item">
+                    <i class="fas fa-phone"></i>{{ tenant.phoneNumber }}
+                  </span>
+                  <span *ngIf="tenant.cin" class="tenant-meta-item">
+                    <i class="fas fa-id-card"></i>{{ tenant.cin }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </td>
+
+          <td style="cursor: pointer" (click)="redirectToDetails(tenant.id)">
+            <div class="col-auto">
+              <span
+                >{{ tenant.apartment?.idNumber }} -
+                {{ tenant.apartment?.address }}</span
+              >
+            </div>
+          </td>
+
+          <td style="cursor: pointer" (click)="redirectToDetails(tenant.id)">
+            <div class="col-auto">
+              <span>
+                {{ tenant.agreementStartDate | date: "dd/MM/yyyy" }}
+              </span>
+            </div>
+          </td>
+          <td style="cursor: pointer" (click)="redirectToDetails(tenant.id)">
+            <span class="status"> {{ tenant.agreement?.rentAmount }} TND </span>
+          </td>
+
+          <td style="cursor: pointer" (click)="redirectToDetails(tenant.id)">
+            <div class="col-auto">
+              <span> {{ tenant.paymentDelay }} mois </span>
+            </div>
+          </td>
+          <td style="cursor: pointer" (click)="redirectToDetails(tenant.id)">
+            <span class="status"> {{ tenant.overdueAmount }} TND </span>
+          </td>
+
+          <td>
+            <a
+              href="dashboard/payment/create-payment/{{ tenant.id }}"
+              class="nav-link"
+              target="_blank"
+            >
+              <div class="flex gap-2">
+                <i class="ni ni-money-coins"> </i
+                ><span class="ml-2">Ajouter un loyer</span>
+              </div></a
+            >
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination Footer -->
+  <div class="card-footer tenants-footer py-4">
+    <div class="d-flex align-items-center justify-content-between flex-wrap">
+      <span class="pagination-info text-muted">
+        Total : <strong>{{ totalLength }}</strong> locataire(s)
+      </span>
+      <nav aria-label="Pagination des locataires">
+        <pagination
+          [totalItems]="totalLength"
+          [itemsPerPage]="pageSize"
+          [rotate]="false"
+          [boundaryLinks]="true"
+          [(ngModel)]="page"
+          firstText="&laquo;"
+          lastText="&raquo;"
+          [maxSize]="5"
+          class="justify-content-end mb-0"
+          [customPreviousTemplate]="prevTemplate"
+          (pageChanged)="pageChange($event)"
+          [customNextTemplate]="nextTemplate"
+        ></pagination>
+      </nav>
+    </div>
+
+    <ng-template #nextTemplate let-currentPage="currentPage">
+      <ng-container><i class="fas fa-angle-right"></i></ng-container>
+    </ng-template>
+    <ng-template #prevTemplate let-currentPage="currentPage">
+      <ng-container><i class="fas fa-angle-left"></i></ng-container>
+    </ng-template>
+  </div>
+</div>

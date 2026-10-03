@@ -86,12 +86,10 @@
     >
       <thead class="thead-light">
         <tr>
-          <th scope="col">N° Propriétaire</th>
           <th scope="col">Propriétaire</th>
           <th scope="col">Téléphone</th>
           <th scope="col">CIN</th>
           <th scope="col">Nationalité</th>
-          <th scope="col">Type</th>
           <th scope="col" class="text-center">Propriétés</th>
           <th scope="col" class="text-center">Locaux</th>
           <th scope="col">Date de création</th>
@@ -132,14 +130,23 @@
             (click)="redirectToDetails(owner.id)"
             class="table-user"
           >
-            <b> {{ owner.matricule }} </b>
-          </td>
-          <td
-            style="cursor: pointer"
-            (click)="redirectToDetails(owner.id)"
-            class="table-user"
-          >
-            <span> {{ owner.name }} </span>
+            <div class="owner-identity">
+              <div
+                class="owner-avatar"
+                [class.owner-avatar--legal]="owner.type === 'legal'"
+                [title]="
+                  owner.type === 'legal'
+                    ? 'Personne morale (société)'
+                    : 'Personne physique'
+                "
+              >
+                <i
+                  class="fas"
+                  [ngClass]="owner.type === 'legal' ? 'fa-building' : 'fa-user'"
+                ></i>
+              </div>
+              <span>{{ owner.matricule }} - {{ owner.name }}</span>
+            </div>
           </td>
           <td style="cursor: pointer" (click)="redirectToDetails(owner.id)">
             <span class=""> {{ owner.phoneNumber }} </span>
@@ -152,14 +159,7 @@
           <td style="cursor: pointer" (click)="redirectToDetails(owner.id)">
             <span class="status"> {{ owner.nationality }} </span>
           </td>
-          <td style="cursor: pointer" (click)="redirectToDetails(owner.id)">
-            <span class="font-weight-bold" *ngIf="owner.type == 'natural'">
-              P. Physique
-            </span>
-            <span class="font-weight-bold" *ngIf="owner.type == 'legal'">
-              P. Morale
-            </span>
-          </td>
+
           <td style="cursor: pointer" (click)="showModal()">
             <div class="col-auto">
               <span class="badge badge-lg badge-secondary">

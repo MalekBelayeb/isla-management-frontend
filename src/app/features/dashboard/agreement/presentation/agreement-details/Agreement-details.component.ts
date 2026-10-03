@@ -34,8 +34,6 @@ export class AgreementDetailsComponent implements OnInit {
   }
 
   getAgreementDetails() {
-    console.log(this.getAgreementId());
-
     this.agreementService.getAgreement(this.getAgreementId()).subscribe({
       next: (value) => {
         const result = value.body;
@@ -67,8 +65,8 @@ export class AgreementDetailsComponent implements OnInit {
       paymentFrequency: DataTypes.paymentFrequencyTypeList.find(
         (item) => item?.title === this.agreementDetails?.paymentFrequency,
       )?.id,
-      apartmentId: this.agreementDetails?.apartmentId,
-      tenantId: this.agreementDetails?.tenantId,
+      apartmentId: this.agreementDetails?.apartment?.id,
+      tenantId: this.agreementDetails?.tenant?.id,
       ...(this.agreementDetails?.nbDaysOfTolerance && {
         nbDaysOfTolerance: Number(this.agreementDetails?.nbDaysOfTolerance),
       }),

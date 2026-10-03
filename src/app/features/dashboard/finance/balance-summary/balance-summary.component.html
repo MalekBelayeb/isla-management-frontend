@@ -194,17 +194,15 @@
             <td>
               <h4>{{ payment.method }}</h4>
             </td>
-            <td>
+            <td class="cell-wrap">
               <h4>{{ payment.account }}</h4>
             </td>
-            <td>
-              <div class="row">
-                <div class="col-6">
-                  <h4>{{ payment.tenant }}</h4>
-                </div>
-                <div class="col-6" style="white-space: normal">
-                  <h4>{{ payment.reason }}</h4>
-                </div>
+            <td class="cell-wrap cell-wrap--wide">
+              <div class="label-cell">
+                <h4 *ngIf="payment.tenant?.fullname">
+                  {{ payment.tenant?.fullname }}
+                </h4>
+                <h4>{{ payment.reason }}</h4>
               </div>
             </td>
             <td>

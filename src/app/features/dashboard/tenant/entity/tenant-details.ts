@@ -1,4 +1,7 @@
 import { Agreement } from '@dashboard/agreement/entity/agreement';
+import { AgreementDetails } from '@dashboard/agreement/entity/agreement-details';
+
+export type TenantType = 'natural' | 'legal';
 
 export interface TenantDetails {
   id: string;
@@ -15,5 +18,13 @@ export interface TenantDetails {
   address: string;
   createdAt: Date;
   job: string;
-  agreement?: Agreement;
+  tenantType?: TenantType;
+
+  agreement?: AgreementDetails;
+
+  companyName: string;
+  managerCin: string;
+  managerFirstname: string;
+  managerLastname: string;
+  managerPhoneNumber: string;
 }

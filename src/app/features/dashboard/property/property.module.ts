@@ -11,6 +11,7 @@ import { PropertyDetailsComponent } from './presentation/property-details/proper
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { SearchInputModule } from '@shared/search-input/search-input.module';
 import { DateRangePickerModule } from '@shared/form-inputs/date-range-picker/date-range-picker.module';
+import { SharedModule } from '@shared/shared.module';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import { DateRangePickerModule } from '@shared/form-inputs/date-range-picker/dat
     BsDatepickerModule.forRoot(),
     SearchInputModule,
     DateRangePickerModule,
-  ],
+    SharedModule
+],
 })
 export class PropertyModule {}

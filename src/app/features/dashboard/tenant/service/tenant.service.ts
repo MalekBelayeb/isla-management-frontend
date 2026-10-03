@@ -48,6 +48,14 @@ export class TenantService {
       observe: 'response',
     });
   }
+  getAllLatePayersTenants(urlParameters: string) {
+    return this.httpClient.get<any>(
+      `${conts.getAllLatePayersTenantUrl}${urlParameters}`,
+      {
+        observe: 'response',
+      },
+    );
+  }
   getTenant(id: string) {
     return this.httpClient.get<any>(`${conts.getTenantUrl}/${id}`, {
       observe: 'response',

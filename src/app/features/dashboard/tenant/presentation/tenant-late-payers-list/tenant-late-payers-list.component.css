@@ -1,0 +1,356 @@
+/* ============================================================
+   CARD
+   ============================================================ */
+.tenants-card {
+    border: none;
+    border-radius: 0.75rem;
+    box-shadow: 0 2px 16px rgba(50, 50, 93, 0.08), 0 1px 4px rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+}
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+.tenants-header {
+    padding: 1.25rem 1.5rem;
+    background: #ffffff;
+}
+
+.tenants-header-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #f5365c 0%, #c2185b 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
+.tenants-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #32325d;
+    letter-spacing: 0.01em;
+}
+
+.tenants-count-badge {
+    display: inline-block;
+    background: #fde8ee;
+    color: #b0123f;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 0.2em 0.6em;
+    border-radius: 999px;
+    letter-spacing: 0.02em;
+}
+
+.add-btn {
+    white-space: nowrap;
+    margin-top: 0.5rem;
+}
+
+@media (min-width: 576px) {
+    .add-btn {
+        margin-top: 0;
+    }
+}
+
+/* ============================================================
+   FILTERS
+   ============================================================ */
+.tenants-filter-section {
+    padding: 1rem 1.5rem 1.25rem;
+    border-bottom: 1px solid #f0f2f8;
+    background: #fafbff;
+}
+
+.filter-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #8898aa;
+    margin-bottom: 0.4rem;
+    display: block;
+}
+
+.search-group .input-group-text.search-prefix {
+    background: #ffffff;
+    border-right: none;
+    color: #adb5bd;
+    font-size: 0.85rem;
+}
+
+.search-input {
+    border-left: none;
+    background: #ffffff;
+    font-size: 0.875rem;
+    color: #32325d;
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.search-input:focus {
+    border-color: #a8e6cf;
+    box-shadow: 0 0 0 3px rgba(45, 206, 137, 0.12);
+}
+
+.prefix-text {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #525f7f;
+    background: #f6f9fc;
+    white-space: nowrap;
+}
+
+.filter-btn {
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+}
+
+/* ============================================================
+   TABLE WRAPPER
+   ============================================================ */
+.tenants-table-wrapper {
+    min-height: 200px;
+}
+
+.tenants-table--hidden {
+    display: none !important;
+}
+
+/* ============================================================
+   EMPTY STATE
+   ============================================================ */
+.tenants-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3.5rem 1.5rem;
+    text-align: center;
+}
+
+.empty-icon-wrapper {
+    width: 68px;
+    height: 68px;
+    border-radius: 50%;
+    background: #f0f2f8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: #adb5bd;
+    margin-bottom: 1rem;
+}
+
+.empty-title {
+    font-size: 0.975rem;
+    font-weight: 700;
+    color: #32325d;
+    margin-bottom: 0.35rem;
+}
+
+.empty-subtitle {
+    font-size: 0.85rem;
+    color: #8898aa;
+    margin-bottom: 1.25rem;
+    max-width: 340px;
+}
+
+/* ============================================================
+   PAGINATION FOOTER
+   ============================================================ */
+.tenants-footer {
+    background: #ffffff;
+    border-top: 1px solid #f0f2f8;
+}
+
+.pagination-info {
+    font-size: 0.8rem;
+}
+
+/* ============================================================
+   SKELETON LOADING
+   ============================================================ */
+@keyframes skeleton-shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+.skel {
+    border-radius: 4px;
+    background: linear-gradient(90deg,
+            #edf0f7 25%,
+            #f5f7fc 50%,
+            #edf0f7 75%);
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 1.4s ease-in-out infinite;
+}
+
+.skel-text {
+    height: 13px;
+}
+
+.skel-badge {
+    height: 22px;
+    border-radius: 999px;
+}
+
+.skeleton-row td {
+    padding: 0.95rem 1rem;
+    border-top: 1px solid #f6f9fc;
+    vertical-align: middle;
+}
+.skel-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+/* ============================================================
+   TENANT IDENTITY CELL
+   ============================================================ */
+.tenant-identity {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-width: 220px;
+}
+
+/* Tenant type avatar: natural person (default) vs legal entity */
+.tenant-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #e8f0fe;
+    color: #1a56db;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.tenant-avatar--legal {
+    background: #fff4e5;
+    color: #b45309;
+}
+
+.tenant-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    min-width: 0;
+}
+
+.tenant-name-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.tenant-name {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #32325d;
+}
+
+.tenant-matricule {
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: #525f7f;
+    background: #f6f9fc;
+    border: 1px solid #e9ecef;
+    padding: 0.1em 0.5em;
+    border-radius: 999px;
+    letter-spacing: 0.02em;
+}
+
+.tenant-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.9rem;
+    font-size: 0.75rem;
+    color: #8898aa;
+}
+
+.tenant-meta-item {
+    display: inline-flex;
+    align-items: center;
+    white-space: nowrap;
+    line-height: 1;
+}
+
+/* Fixed square box keeps every icon centred on the text line */
+.tenant-meta-item i {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1rem;
+    height: 1rem;
+    font-size: 0.7rem;
+    line-height: 1;
+    margin-right: 0.35rem;
+    color: #adb5bd;
+}
+
+/* ============================================================
+   TABLE TEXT WRAPPING
+   Argon sets `white-space: nowrap` on every cell; let long text
+   wrap so the table stays within the card.
+   ============================================================ */
+.late-payers-table td,
+.late-payers-table th {
+    white-space: normal;
+    vertical-align: middle;
+}
+
+/* Wrap between words only; min-width stops columns collapsing */
+.late-payers-table td {
+    min-width: 160px;
+    max-width: 320px;
+    overflow-wrap: break-word;
+}
+
+/* Headers wrap too but never narrower than their longest word */
+.late-payers-table th {
+    min-width: 130px;
+}
+
+.late-payers-table td .col-auto {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+/* Keep the tenant identity cell readable */
+.late-payers-table td.table-user {
+    min-width: 260px;
+    max-width: 360px;
+}
+
+/* Address column gets extra room */
+.late-payers-table th:nth-child(2),
+.late-payers-table td:nth-child(2) {
+    min-width: 240px;
+    max-width: 420px;
+}
+
+/* Action columns must stay on one line */
+.late-payers-table th:nth-last-child(-n + 2),
+.late-payers-table td:nth-last-child(-n + 2) {
+    white-space: nowrap;
+    min-width: 0;
+    max-width: none;
+    width: 1%;
+}

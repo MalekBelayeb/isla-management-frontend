@@ -8,8 +8,6 @@ import { DataTypes } from '@models/data';
 import { Seed } from '@models/seed';
 import { ConfirmDialogService } from '@shared/confirm-dialog/confirm-dialog.service';
 import { SearchResult } from '@shared/search-input/search-input.component';
-import { ToastAlertService } from '@shared/toast-alert/toast-alert.service';
-import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { PageChangedEvent } from 'ngx-bootstrap/pagination';
 import { Apartment } from '@dashboard/apartment/entity/Apartment';
 import {
@@ -42,6 +40,7 @@ export class ApartmentListComponent {
     private ownerService: OwnerService,
     private confirmDialogService: ConfirmDialogService,
     private queryStringBuilder: QueryStringBuilder,
+    private apartmentMapper: ApartmentMapper,
     private router: Router,
   ) {
     this.filtersFormGroup = this.formBuilder.group({

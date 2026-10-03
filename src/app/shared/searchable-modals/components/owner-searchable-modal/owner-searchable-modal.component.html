@@ -1,0 +1,228 @@
+<div class="navbar-search navbar-search-light" id="navbar-search-main">
+  <div class="form-group mb-0 search-wrapper">
+    <div class="input-group input-group-alternative input-group-merge">
+      <div class="input-group-prepend">
+        <span class="input-group-text">
+          <i class="fas fa-search"></i>
+        </span>
+      </div>
+      <input
+        class="form-control search-input"
+        (click)="showModal()"
+        [value]="selectedValue"
+        placeholder="Chercher un propriétaire..."
+        readonly
+        type="text"
+      />
+    </div>
+  </div>
+</div>
+<ng-template #modalSearch>
+  <div class="modal-header pb-3">
+    <div class="d-flex flex-column w-100">
+      <h3 class="mb-0">{{ title }}</h3>
+      <div [ngClass]="{ 'mt-4': title !== '' }">
+        <div class="form-group mb-0">
+          <div
+            class="input-group input-group-merge"
+            [ngClass]="{ focused: focus === true }"
+          >
+            <div *ngIf="prefixIcon" class="input-group-prepend">
+              <span class="input-group-text">
+                <i class="{{ prefixIcon }}"></i>
+              </span>
+            </div>
+
+            <input
+              (focus)="focus = true"
+              (blur)="focus = false"
+              [value]="searchInputValue"
+              [placeholder]="searchPlaceholder"
+              (keyup)="debounceValueChange($event)"
+              class="form-control"
+              type="text"
+            />
+
+            <div
+              *ngIf="suffixIcon"
+              class="input-group-append"
+              [ngClass]="{ focused: focus === true }"
+            >
+              <span class="input-group-text">
+                <i class="{{ suffixIcon }}"></i>
+              </span>
+            </div>
+          </div>
+
+          <div class="d-flex align-items-center mt-3">
+            <ng-container *ngIf="!isLoadingFetchingOwners">
+              <small *ngIf="totalLength > 0" class="text-muted">
+                <i class="ni ni-single-02 mr-1"></i>
+                {{ totalLength }} propriétaire(s) trouvé(s)
+              </small>
+              <small *ngIf="totalLength === 0" class="text-muted">
+                Aucun élément trouvé
+              </small>
+            </ng-container>
+            <div
+              *ngIf="isLoadingFetchingOwners"
+              class="spinner-border spinner-border-sm text-primary"
+              role="status"
+            ></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-body p-0" style="height: 50vh; overflow-y: auto">
+    <table class="table table-hover table-sm mb-0">
+      <thead
+        style="
+          position: sticky;
+          top: 0;
+          z-index: 1;
+          background: #fff;
+          box-shadow: 0 1px 0 #e9ecef;
+        "
+      >
+        <tr>
+          <th
+            class="text-uppercase text-muted"
+            style="font-size: 0.65rem; font-weight: 700"
+          ></th>
+          <th
+            class="text-uppercase text-muted"
+            style="font-size: 0.65rem; font-weight: 700"
+          >
+            Propriétaire
+          </th>
+          <th
+            class="text-uppercase text-muted"
+            style="font-size: 0.65rem; font-weight: 700"
+          >
+            Téléphone
+          </th>
+          <th
+            class="text-uppercase text-muted"
+            style="font-size: 0.65rem; font-weight: 700"
+          >
+            CIN
+          </th>
+          <th
+            class="text-uppercase text-muted"
+            style="font-size: 0.65rem; font-weight: 700"
+          >
+            Nationalité
+          </th>
+          <th
+            class="text-uppercase text-muted text-center"
+            style="font-size: 0.65rem; font-weight: 700"
+          >
+            Propriétés
+          </th>
+          <th
+            class="text-uppercase text-muted text-center"
+            style="font-size: 0.65rem; font-weight: 700"
+          >
+            Locaux
+          </th>
+          <th
+            class="text-uppercase text-muted"
+            style="font-size: 0.65rem; font-weight: 700"
+          >
+            Créé le
+          </th>
+          <th
+            class="text-uppercase text-muted"
+            style="font-size: 0.65rem; font-weight: 700"
+          >
+            Actions
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          *ngFor="let owner of owners"
+          style="cursor: pointer; vertical-align: middle"
+          (click)="onOwnerClicked(owner)"
+        >
+          <td></td>
+
+          <td class="cell-wrap">
+            <div class="owner-identity">
+              <div
+                class="owner-avatar"
+                [class.owner-avatar--legal]="owner.type === 'legal'"
+                [title]="
+                  owner.type === 'legal'
+                    ? 'Personne morale (société)'
+                    : 'Personne physique'
+                "
+              >
+                <i
+                  class="fas"
+                  [ngClass]="owner.type === 'legal' ? 'fa-building' : 'fa-user'"
+                ></i>
+              </div>
+              <span>{{ owner.matricule }} - {{ owner.name || "—" }}</span>
+            </div>
+          </td>
+          <td>{{ owner.phoneNumber || "—" }}</td>
+          <td>{{ owner.cin || "—" }}</td>
+          <td>{{ owner.nationality || "—" }}</td>
+          <td class="text-center">
+            <span class="badge badge-lg badge-secondary">
+              {{ owner.nbProperty }}
+            </span>
+          </td>
+          <td class="text-center">
+            <span class="badge badge-lg badge-secondary">
+              {{ owner.nbPremises }}
+            </span>
+          </td>
+          <td class="text-muted" style="white-space: nowrap">
+            {{ owner.createdAt | date: "dd/MM/yyyy" }}
+          </td>
+          <!-- Actions menu must not trigger the row click -->
+          <td
+            class="pr-3"
+            style="white-space: nowrap"
+            (click)="$event.stopPropagation()"
+          >
+            <li class="nav-item dropdown" dropdown placement="bottom-right">
+              <button
+                dropdownToggle
+                type="button"
+                class="btn btn-sm btn-icon-only action-menu-btn"
+              >
+                <i class="fas fa-ellipsis-v"></i>
+              </button>
+              <div
+                class="dropdown-menu dropdown-menu-arrow dropdown-menu-right user-dropdown"
+                *dropdownMenu
+              >
+                <a
+                  class="dropdown-item"
+                  style="cursor: pointer"
+                  (click)="openOwnerDetails(owner.id)"
+                >
+                  <i class="ni ni-single-02 text-primary"></i>
+                  <span>Voir détails</span>
+                </a>
+              </div>
+            </li>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="modal-footer">
+    <div
+      class="d-flex w-100 flex-wrap align-content-stretch justify-content-end"
+    >
+      <button class="btn btn-secondary" (click)="onCancel()">Annuler</button>
+    </div>
+  </div>
+</ng-template>

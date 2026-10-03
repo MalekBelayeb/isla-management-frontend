@@ -383,7 +383,7 @@
         </label>
         <div class="col-md-10">
           <app-agreement-searchable-modal
-            [searchInputValue]="agreementSearchModalResult?.label ?? ''"
+            [searchInputValue]="searchAgreementValue"
             [errorText]="
               submitted &&
               activeForm.controls['agreementId']?.errors?.['required']
@@ -800,34 +800,15 @@
               focused: focus8 === true,
             }"
           >
-            <div class="input-group input-group-merge">
-              <div class="input-group-prepend">
-                <span class="input-group-text text-sm">
-                  {{ propertyPrefix }}
-                </span>
-              </div>
-              <input
-                class="form-control"
-                [ngClass]="{
-                  focused: focus8 === true,
-                  'is-invalid':
-                    submitted &&
-                    activeForm.controls['matriculeProperty']?.errors?.[
-                      'required'
-                    ],
-                }"
-                type="number"
-                min="1"
-                formControlName="matriculeProperty"
-                placeholder="Chercher par num dossier"
-                (focus)="focus8 = true"
-                (blur)="focus8 = false"
-              />
-            </div>
+            <app-property-searchable-modal
+              [selectedValue]="propertySelectedValue"
+              (propertyClicked)="onPropertySelected($event)"
+            />
+
             <div
               *ngIf="
                 submitted &&
-                activeForm.controls['matriculeProperty']?.errors?.['required']
+                activeForm.controls['propertyId']?.errors?.['required']
               "
               class="error-text"
             >

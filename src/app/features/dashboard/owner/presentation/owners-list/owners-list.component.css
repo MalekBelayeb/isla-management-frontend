@@ -248,6 +248,31 @@
   height: 13px;
 }
 
+/* Owner type avatar: natural person (default) vs legal entity */
+.owner-identity {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.owner-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #e8f0fe;
+  color: #1a56db;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.owner-avatar--legal {
+  background: #fff4e5;
+  color: #b45309;
+}
+
 .skel-avatar {
   width: 36px;
   height: 36px;

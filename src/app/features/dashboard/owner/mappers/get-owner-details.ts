@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Owner } from '../entity/owner';
 import { OwnerDetails } from '../entity/owner-details';
 
 @Injectable({ providedIn: 'root' })
@@ -16,7 +15,7 @@ export class GetOwnerDetailsMapper {
       fullname:
         data.type == 'natural'
           ? `${data.gender == 'M' ? 'Mr' : 'Mme'}  ${data.firstname} ${data.lastname}`
-          : `${data.society}`,
+          : `Sté ${data.society}`,
       firstname: data.firstname,
       lastname: data.lastname,
       nationality: data.nationality,

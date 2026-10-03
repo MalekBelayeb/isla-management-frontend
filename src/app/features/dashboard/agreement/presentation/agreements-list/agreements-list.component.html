@@ -231,18 +231,24 @@
             (click)="redirectToDetails(agreement.id)"
             class="table-user"
           >
-            <span> {{ agreement.tenant }} </span>
+            <span> {{ agreement.tenant.fullname }} </span>
           </td>
 
           <td style="cursor: pointer" (click)="redirectToDetails(agreement.id)">
-            <span class=""> {{ agreement.apartment }} </span>
+            <span class=""
+              >{{ agreement.apartment.idNumber }} -
+              {{ agreement.apartment.address }}
+            </span>
           </td>
 
           <td style="cursor: pointer" (click)="redirectToDetails(agreement.id)">
-            <span class=""> {{ agreement.property }} </span>
+            <span class="">
+              {{ agreement.property.idNumber }} -
+              {{ agreement.property.address }}
+            </span>
           </td>
           <td style="cursor: pointer" (click)="redirectToDetails(agreement.id)">
-            <span class=""> {{ agreement.owner }} </span>
+            <span class=""> {{ agreement.owner.fullname }} </span>
           </td>
           <td style="cursor: pointer" (click)="redirectToDetails(agreement.id)">
             <span class="status">

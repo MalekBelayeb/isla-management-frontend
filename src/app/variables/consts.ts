@@ -2,9 +2,9 @@ import { environment } from 'src/environments/environment';
 
 export const defaultSearchLimit = 5;
 
-export const apartmentPrefix = 'Apt-'
-export const propertyPrefix = 'Prop-'
-export const agreementPrefix = 'Agr-'
+export const apartmentPrefix = 'Apt-';
+export const propertyPrefix = 'Prop-';
+export const agreementPrefix = 'Agr-';
 
 export const conts = {
   getOwnerUrl: `${environment.url}/owner`,
@@ -21,6 +21,7 @@ export const conts = {
   createTenantUrl: `${environment.url}/tenant`,
   updateTenantUrl: `${environment.url}/tenant`,
   getTenantUrl: `${environment.url}/tenant`,
+  getAllLatePayersTenantUrl: `${environment.url}/tenant/late-payers`,
   deleteTenantUrl: `${environment.url}/tenant`,
 
   createAgreementUrl: `${environment.url}/agreement`,

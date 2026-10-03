@@ -47,12 +47,12 @@ export class LoginComponent implements OnInit {
 
     this.isLoading = true;
     const body = { email: this.f.email.value, password: this.f.password.value };
-    console.log(body);
 
+    
     this.authService.login(body).subscribe({
       next: (value) => {
-        console.log(value?.body);
 
+        
         this.submitted = false;
         this.isLoading = false;
 

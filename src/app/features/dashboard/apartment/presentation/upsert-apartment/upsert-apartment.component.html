@@ -14,22 +14,10 @@
           Propriété (bien) <span class="text-danger">*</span>
         </label>
         <div class="col-md-10">
-          <app-search-input
-            [clearInput]="false"
-            [prefixIcon]="'fas fa-search'"
-            [searchPlaceholder]="'Chercher une propriété (Bien)'"
-            [searchLabel]="'Résultats'"
-            [isInvalid]="
-              submitted &&
-              createApartmentForm['propertyId'].errors?.['required']
-            "
-            [errorMessage]="'Champs incorrect, Propriété est obligatoire'"
-            [triggerSearchOnOpen]="true"
-            (searchValue)="onSearchPropertyValueChanged($event)"
-            [searchInputValue]="searchPropertyValue"
-            (selectedResultItem)="onSelectedPropertySearchItem($event)"
-            [searchResult]="propertyOptions"
-          ></app-search-input>
+          <app-property-searchable-modal
+            [selectedValue]="searchPropertyValue"
+            (propertyClicked)="onSelectedPropertySearchItem($event)"
+          />
         </div>
       </div>
 

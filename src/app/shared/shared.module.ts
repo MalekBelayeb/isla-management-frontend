@@ -14,6 +14,9 @@ import { DateShiftPipe } from '@core/pipes/date-shift.pipe';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TenantSearchableModalComponent } from './searchable-modals/components/tenant-searchable-modal/tenant-searchable-modal.component';
 import { AgreementSearchableModalComponent } from './searchable-modals/components/agreement-searchable-modal/agreement-searchable-modal.component';
+import { ApartmentSearchableModalComponent } from './searchable-modals/components/apartment-searchable-modal/apartment-searchable-modal.component';
+import { PropertySearchableModalComponent } from './searchable-modals/components/property-searchable-modal/property-searchable-modal.component';
+import { OwnerSearchableModalComponent } from './searchable-modals/components/owner-searchable-modal/owner-searchable-modal.component';
 
 @NgModule({
   declarations: [
@@ -24,6 +27,9 @@ import { AgreementSearchableModalComponent } from './searchable-modals/component
     ConfirmDialogComponent,
     TenantSearchableModalComponent,
     AgreementSearchableModalComponent,
+    ApartmentSearchableModalComponent,
+    PropertySearchableModalComponent,
+    OwnerSearchableModalComponent,
   ],
   exports: [
     FooterComponent,
@@ -32,6 +38,9 @@ import { AgreementSearchableModalComponent } from './searchable-modals/component
     DateShiftPipe,
     TenantSearchableModalComponent,
     AgreementSearchableModalComponent,
+    ApartmentSearchableModalComponent,
+    PropertySearchableModalComponent,
+    OwnerSearchableModalComponent,
   ],
   imports: [
     RouterModule,

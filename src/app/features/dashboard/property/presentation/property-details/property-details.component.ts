@@ -62,6 +62,7 @@ export class PropertyDetailsComponent implements OnInit {
     private propertyService: PropertyService,
     private paymentService: PaymentService,
     private apartmentService: ApartmentService,
+    private apartmentMapper: ApartmentMapper,
   ) {
     this.maxDate.setDate(this.maxDate.getDate() + 7);
     this.bsRangeValue = [this.bsValue, this.maxDate];

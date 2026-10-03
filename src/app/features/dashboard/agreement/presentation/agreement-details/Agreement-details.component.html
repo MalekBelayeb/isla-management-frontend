@@ -26,7 +26,7 @@
             <h5 class="card-title text-uppercase text-muted mb-0">Locataire</h5>
 
             <h5 class="h2 font-weight-bold mb-0 mt-1">
-              {{ agreementDetails?.tenant }}
+              {{ agreementDetails?.tenant?.fullname }}
             </h5>
           </div>
         </div>
@@ -35,7 +35,8 @@
             <h5 class="card-title text-uppercase text-muted mb-0">Local</h5>
 
             <h5 class="h2 font-weight-bold mb-0 mt-1">
-              {{ agreementDetails?.apartment }}
+              {{ agreementDetails?.apartment?.idNumber }} -
+              {{ agreementDetails?.apartment?.address }}
             </h5>
           </div>
         </div>
@@ -46,7 +47,8 @@
             </h5>
 
             <h5 class="h2 font-weight-bold mb-0 mt-1">
-              {{ agreementDetails?.property }}
+              {{ agreementDetails?.property?.idNumber }} -
+              {{ agreementDetails?.property?.address }}
             </h5>
           </div>
         </div>
@@ -82,7 +84,7 @@
             </h5>
 
             <h5 class="h2 font-weight-bold mb-0 mt-1">
-              {{ agreementDetails?.owner }}
+              {{ agreementDetails?.owner?.fullname }}
             </h5>
           </div>
         </div>
@@ -136,12 +138,14 @@
     </div>
     <div class="mt-5 d-flex w-100 flex-row justify-content-end">
       <div
-          *ngIf="isSuspendAgreementLoading"
-          class="spinner-border text-primary mr-5"
-          role="status"
-        ></div>
+        *ngIf="isSuspendAgreementLoading"
+        class="spinner-border text-primary mr-5"
+        role="status"
+      ></div>
       <button
-        *ngIf="!isSuspendAgreementLoading && agreementDetails?.status === 'ACTIVE'"
+        *ngIf="
+          !isSuspendAgreementLoading && agreementDetails?.status === 'ACTIVE'
+        "
         class="btn btn-danger"
         (click)="toogleAgreementStatus(agreementDetails?.id ?? '')"
         type="submit"
@@ -149,7 +153,9 @@
         Suspendre maintenant
       </button>
       <button
-        *ngIf="!isSuspendAgreementLoading && agreementDetails?.status === 'SUSPENDED'"
+        *ngIf="
+          !isSuspendAgreementLoading && agreementDetails?.status === 'SUSPENDED'
+        "
         class="btn btn-primary"
         (click)="toogleAgreementStatus(agreementDetails?.id ?? '')"
         type="submit"

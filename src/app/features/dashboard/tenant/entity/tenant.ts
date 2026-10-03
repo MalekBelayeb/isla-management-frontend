@@ -1,3 +1,5 @@
+import { TenantType } from './tenant-details';
+
 export interface Tenant {
   id: string;
   matricule: string;
@@ -12,9 +14,11 @@ export interface Tenant {
   job: string;
   apartment: string;
   agreement: string;
+  societyName: string;
   agreementStartDate?: Date;
   lastPaymentDate: string;
   status: TenantStatusType;
+  tenantType: TenantType;
 }
 
 export type TenantStatusType =

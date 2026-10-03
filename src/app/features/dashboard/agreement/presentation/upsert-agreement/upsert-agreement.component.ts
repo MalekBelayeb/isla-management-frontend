@@ -7,8 +7,10 @@ import {
 } from '@angular/forms';
 import { AgreementDetails } from '@dashboard/agreement/entity/agreement-details';
 import { AgreementService } from '@dashboard/agreement/service/agreement.service';
+import { Apartment } from '@dashboard/apartment/entity/Apartment';
 import { ApartmentMapper } from '@dashboard/apartment/mappers/apartment-mapper';
 import { ApartmentService } from '@dashboard/apartment/service/apartment.service';
+import { Tenant } from '@dashboard/tenant/entity/tenant';
 import { TenantMapper } from '@dashboard/tenant/mappers/tenant-mapper';
 import { TenantService } from '@dashboard/tenant/service/tenant.service';
 import { DataTypes } from '@models/data';
@@ -39,10 +41,7 @@ export class UpsertAgreementComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private agreementService: AgreementService,
-    private tenantService: TenantService,
-    private apartmentService: ApartmentService,
     private toastAlertService: ToastAlertService,
-    private tenantMapper: TenantMapper,
   ) {
     this.formGroup = this.formBuilder.group({
       rentAmount: new FormControl('', Validators.required),
@@ -102,10 +101,10 @@ export class UpsertAgreementComponent implements OnInit {
         this.formGroup.get('notes')?.setValue(this.agreementDetails?.notes);
         this.formGroup
           .get('apartmentId')
-          ?.setValue(this.agreementDetails?.apartmentId);
+          ?.setValue(this.agreementDetails?.apartment?.id);
         this.formGroup
           .get('tenantId')
-          ?.setValue(this.agreementDetails?.tenantId);
+          ?.setValue(this.agreementDetails?.tenant?.id);
         this.formGroup
           .get('nbDaysOfTolerance')
           ?.setValue(this.agreementDetails?.nbDaysOfTolerance);
@@ -122,8 +121,8 @@ export class UpsertAgreementComponent implements OnInit {
             (item) => item.title === this.agreementDetails?.paymentFrequency,
           )?.title ?? '';
 
-        this.searchTenantValue = this.agreementDetails.tenant;
-        this.searchApartmentValue = this.agreementDetails.apartment;
+        this.searchTenantValue = `${this.agreementDetails.tenant?.fullname ?? ''}`;
+        this.searchApartmentValue = `${this.agreementDetails.apartment?.idNumber ?? ''} - ${this.agreementDetails.apartment?.address ?? ''}`;
       }
     }
   }
@@ -148,53 +147,17 @@ export class UpsertAgreementComponent implements OnInit {
     return this.formGroup.controls;
   }
 
-  onSearchTenantValueChanged(searchValue?: string) {
-    const params = {
-      ...(searchValue && { searchTerm: searchValue }),
-      limit: `${defaultSearchLimit}`,
-    };
-
-    const queryString = new URLSearchParams(params).toString();
-
-    this.tenantService.getAllTenant(`?${queryString}`).subscribe({
-      next: (value) => {
-        const tenants = this.tenantMapper.mapTenants(value.body.tenants);
-        this.tenantOptions = tenants.map((item) => ({
-          id: item.id,
-          title: `${item.matricule} - ${item.fullname}`,
-        }));
-      },
-    });
-  }
-  onSelectedTenantSearchItem(searchResult: SearchResult) {
-    this.formGroup.get('tenantId')?.setValue(searchResult.id);
+  onSelectedTenantSearchItem(tenant: Tenant) {
+    this.formGroup.get('tenantId')?.setValue(tenant.id);
   }
 
-  onSearchApartmentValueChanged(searchValue?: string) {
-    const params = {
-      ...(searchValue && { searchTerm: searchValue }),
-      limit: `${defaultSearchLimit}`,
-    };
-
-    const queryString = new URLSearchParams(params).toString();
-
-    this.apartmentService.getAllApartments(`?${queryString}`).subscribe({
-      next: (value) => {
-        const apartments = ApartmentMapper.mapApartments(value.body.apartments);
-        this.apartmentOptions = apartments.map((item) => ({
-          id: item.id,
-          title: `${apartmentPrefix}${item.matricule} - ${item.address}`,
-        }));
-      },
-    });
-  }
-  onSelectedApartmentSearchItem(searchResult: SearchResult) {
-    this.formGroup.get('apartmentId')?.setValue(searchResult.id);
+  onSelectedApartmentSearchItem(apartment: Apartment) {
+    this.formGroup.get('apartmentId')?.setValue(apartment.id);
   }
 
   upsertAgreement() {
     this.submitted = true;
-    console.log(this.formGroup.controls);
+
     if (this.formGroup.invalid) return;
     this.isLoading = true;
     let body: any = {

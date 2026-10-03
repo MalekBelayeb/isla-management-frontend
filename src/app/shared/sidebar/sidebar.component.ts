@@ -58,6 +58,7 @@ export const DASHBOARD_ROUTES: RouteInfo[] = [
     icontype: 'fa-users text-primary',
     children: [
       { path: 'all-tenants', title: 'Liste des locataires', type: 'link' },
+      { path: 'late-payers', title: 'Liste des impayés', type: 'link' },
     ],
   },
   {

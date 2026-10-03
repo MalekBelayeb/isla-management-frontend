@@ -207,3 +207,131 @@
   border-top: 1px solid #f6f9fc;
   vertical-align: middle;
 }
+
+/* ============================================================
+   TENANT IDENTITY CELL
+   ============================================================ */
+.tenant-identity {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-width: 220px;
+}
+
+/* Tenant type avatar: natural person (default) vs legal entity */
+.tenant-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #e8f0fe;
+    color: #1a56db;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.tenant-avatar--legal {
+    background: #fff4e5;
+    color: #b45309;
+}
+
+.tenant-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    min-width: 0;
+}
+
+.tenant-name-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.tenant-name {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #32325d;
+}
+
+.tenant-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.7rem;
+    font-size: 0.75rem;
+    color: #8898aa;
+}
+
+.tenant-meta-item {
+    display: inline-flex;
+    align-items: center;
+    white-space: nowrap;
+    line-height: 1;
+}
+
+/* Fixed square box keeps every icon centred on the text line */
+.tenant-meta-item i {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1rem;
+    height: 1rem;
+    font-size: 0.7rem;
+    line-height: 1;
+    margin-right: 0.35rem;
+    color: #adb5bd;
+}
+
+/* ============================================================
+   TABLE TEXT WRAPPING
+   Argon sets `white-space: nowrap` on every cell; let long text
+   wrap so the table stays within the card.
+   ============================================================ */
+.tenants-table td,
+.tenants-table th {
+    white-space: normal;
+    vertical-align: middle;
+}
+
+/* Wrap between words only; min-width stops columns collapsing */
+.tenants-table td {
+    min-width: 160px;
+    max-width: 320px;
+    overflow-wrap: break-word;
+}
+
+/* Headers wrap too but never narrower than their longest word */
+.tenants-table th {
+    min-width: 130px;
+}
+
+.tenants-table td .col-auto {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+/* Keep the tenant identity cell readable */
+.tenants-table th:first-child,
+.tenants-table td:first-child {
+    min-width: 260px;
+    max-width: 360px;
+}
+
+/* "Dernier local loué" column gets extra room */
+.tenants-table th:nth-child(6),
+.tenants-table td:nth-child(6) {
+    min-width: 240px;
+    max-width: 420px;
+}
+
+/* Action columns must stay on one line */
+.tenants-table th:nth-last-child(-n + 2),
+.tenants-table td:nth-last-child(-n + 2) {
+    white-space: nowrap;
+    min-width: 0;
+    max-width: none;
+    width: 1%;
+}

@@ -15,16 +15,17 @@ export class GetAllOwnersMapper {
         name:
           item.type === 'natural'
             ? `${item.gender == 'M' ? 'Mr' : 'Mme'}  ${item.firstname} ${item.lastname}`
-            : (item.society ?? ''),
+            : `Sté ${item.society ?? ''}`,
         nationality: item.nationality,
         phoneNumber: item.phoneNumber,
         type: item.type == 'natural' ? 'natural' : 'legal',
         createdAt: new Date(item.createdAt),
-        nbPremises: item.properties.reduce(
-          (sum: number, property: any) =>
-            sum + (property.apartments?.length || 0),
-          0,
-        ) ?? 0,
+        nbPremises:
+          item.properties.reduce(
+            (sum: number, property: any) =>
+              sum + (property.apartments?.length || 0),
+            0,
+          ) ?? 0,
         nbProperty: item.properties?.length ?? 0,
       };
     });

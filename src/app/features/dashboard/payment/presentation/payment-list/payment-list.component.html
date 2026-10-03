@@ -247,22 +247,27 @@
       <tbody *ngIf="!isLoadingFetchingPayments">
         <tr *ngFor="let payment of payments">
           <td style="cursor: pointer" (click)="redirectToDetails(payment.id)">
-            <span class=""> {{ payment.agreement }} </span>
+            <span class=""> {{ payment.agreement?.matricule }} </span>
           </td>
           <td style="cursor: pointer" (click)="redirectToDetails(payment.id)">
             <span class=""> {{ payment.label }} </span>
           </td>
           <td style="cursor: pointer" (click)="redirectToDetails(payment.id)">
-            <span class=""> {{ payment.tenant }} </span>
+            <span class=""> {{ payment.tenant?.fullname }} </span>
           </td>
           <td style="cursor: pointer" (click)="redirectToDetails(payment.id)">
-            <span class=""> {{ payment.apartment }} </span>
+            <span class="">
+              {{ payment.apartment?.idNumber }} -
+              {{ payment.apartment?.address }}
+            </span>
           </td>
           <td style="cursor: pointer" (click)="redirectToDetails(payment.id)">
-            <span class=""> {{ payment.property }} </span>
+            <span class="">
+              {{ payment.property?.idNumber }} - {{ payment.property?.address }}
+            </span>
           </td>
           <td style="cursor: pointer" (click)="redirectToDetails(payment.id)">
-            <span class=""> {{ payment.owner }} </span>
+            <span class=""> {{ payment.owner?.fullname }} </span>
           </td>
           <td
             style="cursor: pointer"

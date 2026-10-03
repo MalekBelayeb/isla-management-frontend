@@ -10,6 +10,11 @@ import {
 } from 'src/app/variables/consts';
 import { fixDecimals } from '@core/helpers';
 import { PaymentReceiptDetails } from '../entity/income-receipt-details';
+import { AgreeementMapper } from '@dashboard/agreement/mappers/agreement.mapper';
+import { ApartmentMapper } from '@dashboard/apartment/mappers/apartment-mapper';
+import { GetOwnerDetailsMapper } from '@dashboard/owner/mappers/get-owner-details';
+import { PropertyMapper } from '@dashboard/property/mappers/property-mapper';
+import { TenantMapper } from '@dashboard/tenant/mappers/tenant-mapper';
 
 @Injectable({ providedIn: 'root' })
 export class PaymentMapper {
@@ -35,14 +40,13 @@ export class PaymentMapper {
       label: data.label,
       rentStartDate: data.rentStartDate,
       rentEndDate: data.rentEndDate,
-      matriculeProperty: data.property?.matricule,
       payementFrequency:
         DataTypes.paymentFrequencyTypeList.find(
           (frequency) => frequency.id === data.agreement?.paymentFrequency,
         )?.title ?? '-',
       tenant: data.agreement
-        ? `${data.agreement?.tenant?.gender == 'M' ? 'Mr' : 'Mme'} - ${data.agreement?.tenant?.fullname} `
-        : '-',
+        ? TenantMapper.mapTenantDetails(data.agreement?.tenant)
+        : undefined,
       type: data.type,
       category:
         data.type === 'income'
@@ -57,27 +61,38 @@ export class PaymentMapper {
       paymentDate: data.paymentDate,
       createdAt: data.createdAt,
       owner: data.agreement
-        ? `${data.agreement?.apartment?.property?.owner?.gender == 'M' ? 'Mr' : 'Mme'} - ${data.agreement?.apartment?.property?.owner?.fullname}`
+        ? GetOwnerDetailsMapper.fromResponse(
+            data.agreement?.apartment?.property?.owner,
+          )
         : data.property
-          ? `${data.property?.owner?.gender == 'M' ? 'Mr' : 'Mme'} - ${data.property?.owner?.fullname}`
-          : '-',
+          ? GetOwnerDetailsMapper.fromResponse(data.property?.owner)
+          : undefined,
       property: data.agreement
-        ? `${propertyPrefix}${data.agreement?.apartment?.property?.matricule} - ${data.agreement?.apartment?.property?.address}`
+        ? PropertyMapper.mapPropertyDetails(data.agreement?.apartment?.property)
         : data.property
-          ? `${propertyPrefix}${data.property?.matricule} - ${data.property?.address}`
-          : '-',
+          ? PropertyMapper.mapPropertyDetails(data.property)
+          : undefined,
     };
   }
 
   static mapPaymentReceipeDetails(data: any): PaymentReceiptDetails {
     console.log(data);
-    const person = data.agreement
-      ? data.agreement?.tenant
-      : data.property?.owner;
-    const prefix = person?.gender === 'M' ? 'Mr' : 'Mme';
+    const owner = data.property?.owner
+      ? GetOwnerDetailsMapper.fromResponse(data.property?.owner)
+      : undefined;
+    const tenant = data.agreement?.tenant
+      ? TenantMapper.mapTenantDetails(data.agreement?.tenant)
+      : undefined;
+    const person = data.agreement ? tenant?.fullname : owner?.fullname;
 
     return {
-      recipientName: `${prefix} ${person.fullname}`,
+      recipientName: `${person}`,
+      owner: data.property?.owner
+        ? GetOwnerDetailsMapper.fromResponse(data.property?.owner)
+        : undefined,
+      tenant: data.agreement?.tenant
+        ? TenantMapper.mapTenantDetails(data.agreement?.tenant)
+        : undefined,
       propertyAddress:
         data.type == 'expense'
           ? data.property?.address
@@ -105,11 +120,11 @@ export class PaymentMapper {
       return {
         id: item.id,
         agreement: item.agreement
-          ? `${agreementPrefix}${item.agreement?.matricule}`
-          : '-',
+          ? AgreeementMapper.mapAgreementDetails(item.agreement)
+          : undefined,
         apartment: item.agreement
-          ? `${apartmentPrefix}${item.agreement?.apartment?.matricule} - ${item.agreement?.apartment?.type} - ${item.agreement?.apartment?.address}`
-          : '-',
+          ? ApartmentMapper.mapApartmentDetails(item.agreement?.apartment)
+          : undefined,
         amount: fixDecimals(item.amount, 3),
         extraCharge: fixDecimals(item.extraCharge, 3),
         totalAmount:
@@ -126,15 +141,19 @@ export class PaymentMapper {
         reason: `${this.getReason(item)} `,
         rentEndDate: item.rentEndDate,
         owner: item.agreement
-          ? `${item.agreement?.apartment?.property?.owner?.gender == 'M' ? 'Mr' : 'Mme'} - ${item.agreement?.apartment?.property?.owner?.fullname}`
+          ? GetOwnerDetailsMapper.fromResponse(
+              item.agreement?.apartment?.property?.owner,
+            )
           : item.property
-            ? `${item.property?.owner?.gender == 'M' ? 'Mr' : 'Mme'} - ${item.property?.owner?.fullname}`
-            : '-',
+            ? GetOwnerDetailsMapper.fromResponse(item.property?.owner)
+            : undefined,
         property: item.agreement
-          ? `${propertyPrefix}${item.agreement?.apartment?.property?.matricule} - ${item.agreement?.apartment?.property?.address}`
+          ? PropertyMapper.mapPropertyDetails(
+              item.agreement?.apartment?.property,
+            )
           : item.property
-            ? `${propertyPrefix}${item.property?.matricule} - ${item.property?.address}`
-            : '-',
+            ? PropertyMapper.mapPropertyDetails(item.property)
+            : undefined,
         method:
           DataTypes.paymentMethodTypeList.find(
             (method) => method.id === item.method,
@@ -144,8 +163,8 @@ export class PaymentMapper {
             (frequency) => frequency.id === item.agreement?.paymentFrequency,
           )?.title ?? '-',
         tenant: item.agreement
-          ? `${item.agreement?.tenant?.gender == 'M' ? 'Mr' : 'Mme'} - ${item.agreement?.tenant?.fullname}`
-          : '-',
+          ? TenantMapper.mapTenantDetails(item.agreement?.tenant)
+          : undefined,
         type: item.type,
         category:
           item.type === 'income'

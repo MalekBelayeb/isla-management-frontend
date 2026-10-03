@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { TenantDetails } from '../entity/tenant-details';
-import { Tenant, TenantStatusType } from '../entity/tenant';
+import { Tenant } from '../entity/tenant';
 import { AgreeementMapper } from '@dashboard/agreement/mappers/agreement.mapper';
 import { agreementPrefix, apartmentPrefix } from 'src/app/variables/consts';
 
@@ -18,7 +18,7 @@ export class TenantMapper {
       : undefined;
   }
 
-  mapTenantDetails(data: any): TenantDetails {
+  static mapTenantDetails(data: any): TenantDetails {
     return {
       id: data.id,
       matricule: data.matricule,
@@ -29,9 +29,18 @@ export class TenantMapper {
       email: data.email,
       job: data.job,
       lastname: data.lastname,
-      fullname: `${data.gender == 'M' ? 'Mr' : 'Mme'} ${data.firstname} ${data.lastname}`,
+      fullname:
+        data.type === 'legal'
+          ? `Sté ${data.societyName}`
+          : `${data.gender == 'M' ? 'Mr' : 'Mme'} ${data.firstname} ${data.lastname}`,
       nationality: data.nationality,
       phoneNumber: data.phoneNumber,
+      tenantType: data.type,
+      companyName: data.societyName,
+      managerCin: data.managerCin,
+      managerFirstname: data.managerFirstname,
+      managerLastname: data.managerLastname,
+      managerPhoneNumber: data.managerPhoneNumber,
       createdAt: data.createdAt,
       agreement:
         data.agreements?.length > 0
@@ -55,6 +64,8 @@ export class TenantMapper {
         nationality: item.nationality,
         phoneNumber: item.phoneNumber,
         createdAt: item.createdAt,
+        tenantType: item.type,
+        societyName: `Sté ${item.societyName}`,
         lastPaymentDate: payment ? payment.createdAt : '',
         agreementStartDate: agreement
           ? new Date(agreement.startDate)

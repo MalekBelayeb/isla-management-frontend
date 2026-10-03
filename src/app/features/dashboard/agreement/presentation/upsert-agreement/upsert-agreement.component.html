@@ -6,43 +6,6 @@
 
   <div class="card-body">
     <form [formGroup]="formGroup" (ngSubmit)="upsertAgreement()">
-      <!-- <div class="form-group row">
-        <label
-          class="col-md-2 col-form-label form-control-label"
-          for="example-text-input"
-        >
-          Libellé <span class="text-danger">*</span>
-        </label>
-
-        <div class="col-md-10">
-          <div class="input-group input-group-merge">
-            <input
-              formControlName="matricule"
-              class="form-control"
-              id="example-text-input"
-              placeholder=""
-              type="text"
-              value=""
-              [ngClass]="{
-                focused: focus1 === true,
-                'is-invalid':
-                  submitted &&
-                  upsertAgreementForm['matricule'].errors?.['required'],
-              }"
-              (focus)="focus1 = true"
-              (blur)="focus1 = false"
-            />
-          </div>
-          <div
-            *ngIf="
-              submitted && upsertAgreementForm['matricule'].errors?.['required']
-            "
-            class="error-text"
-          >
-            Champs incorrect, Libellé est obligatoire.
-          </div>
-        </div>
-      </div> -->
       <div class="row mb-4">
         <label
           class="col-md-2 col-form-label form-control-label"
@@ -137,23 +100,10 @@
           Local <span class="text-danger">*</span>
         </label>
         <div class="col-md-10">
-          <app-search-input
-            [clearInput]="false"
-            [prefixIcon]="'fas fa-search'"
-            [searchPlaceholder]="'Chercher un local'"
-            [searchLabel]="'Résultats'"
-            [maxSize]="5"
-            [isInvalid]="
-              submitted &&
-              upsertAgreementForm['apartmentId'].errors?.['required']
-            "
-            [errorMessage]="'Champs incorrect, Local est obligatoire'"
-            [triggerSearchOnOpen]="true"
-            (searchValue)="onSearchApartmentValueChanged($event)"
-            [searchInputValue]="searchApartmentValue"
-            (selectedResultItem)="onSelectedApartmentSearchItem($event)"
-            [searchResult]="apartmentOptions"
-          ></app-search-input>
+          <app-apartment-searchable-modal
+            [selectedValue]="searchApartmentValue"
+            (apartmentClicked)="onSelectedApartmentSearchItem($event)"
+          />
         </div>
       </div>
       <div class="row mb-4">
@@ -164,105 +114,13 @@
           Locataire <span class="text-danger">*</span>
         </label>
         <div class="col-md-10">
-          <app-search-input
-            [clearInput]="false"
-            [prefixIcon]="'fas fa-search'"
-            [searchPlaceholder]="'Chercher un locataire'"
-            [searchLabel]="'Résultats'"
-            [triggerSearchOnOpen]="true"
-            [isInvalid]="
-              submitted && upsertAgreementForm['tenantId'].errors?.['required']
-            "
-            [errorMessage]="'Champs incorrect, Locataire est obligatoire'"
-            (searchValue)="onSearchTenantValueChanged($event)"
-            [searchInputValue]="searchTenantValue"
-            (selectedResultItem)="onSelectedTenantSearchItem($event)"
-            [searchResult]="tenantOptions"
-          ></app-search-input>
+          <app-tenant-searchable-modal
+            [selectedValue]="searchTenantValue"
+            (tenantClicked)="onSelectedTenantSearchItem($event)"
+          />
         </div>
       </div>
-      <!-- <div class="form-group row">
-        <label
-          class="col-md-2 col-form-label form-control-label"
-          for="example-text-input"
-        >
-          Nombre de jour de tolérance (en jr) <span class="text-danger">*</span>
-        </label>
 
-        <div class="col-md-10">
-          <div class="input-group input-group-merge">
-            <input
-              formControlName="nbDaysOfTolerance"
-              class="form-control"
-              placeholder=""
-              type="number"
-              value="10"
-              min="0"
-              max="31"
-              (focus)="focus8 = true"
-              (blur)="focus8 = false"
-            />
-          </div>
-          <small class="text-muted font-weight-light">
-            Nombre de jours à partir du début du mois, au-delà, le locataire est
-            considéré comme retardataire
-          </small>
-        </div>
-      </div> -->
-      <!-- <div class="form-group row">
-        <label
-          class="col-md-2 col-form-label form-control-label"
-          for="example-text-input"
-        >
-          Cautionnement (TND)
-        </label>
-
-        <div class="col-md-10">
-          <div class="input-group input-group-merge">
-            <input
-              formControlName="deposit"
-              class="form-control"
-              id="example-text-input"
-              placeholder=""
-              type="text"
-              value=""
-              (focus)="focus4 = true"
-              (blur)="focus4 = false"
-            />
-          </div>
-        </div>
-      </div> -->
-      <!-- <div class="form-group row">
-        <label
-          class="col-md-2 col-form-label form-control-label"
-          for="example-text-input"
-        >
-          Document (url)
-        </label>
-
-        <div class="col-md-10">
-          <div class="input-group input-group-merge">
-            <div
-              class="input-group-prepend"
-              [ngClass]="{ focused: focus6 === true }"
-            >
-              <span class="input-group-text">
-                <i class="fas fa-userss"> </i>
-              </span>
-            </div>
-            <input
-              formControlName="documentUrl"
-              class="form-control"
-              id="example-text-input"
-              placeholder=""
-              type="text"
-              value=""
-              (focus)="focus6 = true"
-              (blur)="focus6 = false"
-            />
-          </div>
-        </div>
-      </div> -->
       <div class="form-group row mt-4">
         <label
           class="col-md-2 col-form-label form-control-label"

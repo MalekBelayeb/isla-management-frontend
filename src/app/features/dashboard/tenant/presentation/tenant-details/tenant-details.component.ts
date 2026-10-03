@@ -34,6 +34,7 @@ export class TenantDetailsComponent implements OnInit {
     private confirmDialogService: ConfirmDialogService,
     private modalService: BsModalService,
     private toastAlertService: ToastAlertService,
+    private agreementMapper: AgreeementMapper,
     private tenantMapper: TenantMapper,
   ) {}
 
@@ -42,79 +43,6 @@ export class TenantDetailsComponent implements OnInit {
   ngOnInit() {
     this.getTenantDetails();
 
-    /*var calendarEl = document.getElementById('widget-calendar');
-    if (!calendarEl) return;
-    var calendar = new Calendar(calendarEl, {
-      plugins: [interactionPlugin, dayGridPlugin, multiMonthPlugin],
-      initialView: 'multiMonthYear',
-      selectable: true,
-      headerToolbar: false,
-      contentHeight: 'auto',
-      initialDate: '2025-01-01',
-      editable: true,
-      events: [
-        {
-          title: 'Paiement Loyer Janvier',
-          start: '2025-01-01',
-          end: '2025-01-05',
-          className: 'bg-primary',
-          editable: true,
-          durationEditable: true,
-        },
-
-        {
-          title: 'Paiement Loyer Février',
-          start: '2025-02-10',
-          end: '2025-02-15',
-          className: 'bg-red',
-          editable: true,
-          durationEditable: true,
-        },
-
-        {
-          title: 'Paiement Loyer Ma',
-          start: '2025-03-01',
-          end: '2025-03-05',
-          className: 'bg-primary',
-          editable: true,
-          durationEditable: true,
-        },
-        {
-          title: 'Paiement Loyer Ma',
-          start: '2025-04-01',
-          end: '2025-04-05',
-          className: 'bg-primary',
-          editable: true,
-          durationEditable: true,
-        },
-
-        {
-          title: 'Paiement Loyer Ma',
-          start: '2025-05-01',
-          end: '2025-05-05',
-          className: 'bg-primary',
-          editable: true,
-          durationEditable: true,
-        },
-        {
-          title: 'Paiement Loyer Ma',
-          start: '2025-06-01',
-          end: '2025-06-05',
-          className: 'bg-primary',
-          editable: true,
-          durationEditable: true,
-        },
-      ],
-    });
-
-    calendar.render();
-
-
-    var mYear = moment().format('YYYY');
-    var mDay = moment().format('dddd, MMM D');
-    document.getElementsByClassName('widget-calendar-year')[0].innerHTML =
-      mYear;
-    document.getElementsByClassName('widget-calendar-day')[0].innerHTML = mDay;*/
     this.getAllAgreementByTenant(
       this.getAllAgreementByTenantPage,
       this.getAllAgreementByTenantPageSize,
@@ -139,7 +67,7 @@ export class TenantDetailsComponent implements OnInit {
     this.tenantService.getTenant(this.getTenantId()).subscribe({
       next: (value) => {
         const result = value.body;
-        this.tenantDetails = this.tenantMapper.mapTenantDetails(result);
+        this.tenantDetails = TenantMapper.mapTenantDetails(result);
       },
       error: (err) => {
         console.log(err);
@@ -185,7 +113,7 @@ export class TenantDetailsComponent implements OnInit {
           this.isLoadingFetchingAgreements = false;
           this.getAllAgreementByTenantTotalLength = value.body.meta.total;
 
-          this.agreements = AgreeementMapper.mapAgreements(
+          this.agreements = this.agreementMapper.mapAgreements(
             value.body.agreements,
           );
           console.log(this.agreements);

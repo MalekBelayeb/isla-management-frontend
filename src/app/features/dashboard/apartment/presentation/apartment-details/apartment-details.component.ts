@@ -37,9 +37,8 @@ export class ApartmentDetailsComponent implements OnInit {
     private apartmentService: ApartmentService,
     private agreementService: AgreementService,
     private paymentService: PaymentService,
-    private confirmDialogService: ConfirmDialogService,
-    private modalService: BsModalService,
-    private toastAlertService: ToastAlertService,
+    private agreeementMapper: AgreeementMapper,
+    private apartmentMapper: ApartmentMapper,
   ) {
     this.maxDate.setDate(this.maxDate.getDate() + 7);
     this.bsRangeValue = [this.bsValue, this.maxDate];
@@ -62,7 +61,7 @@ export class ApartmentDetailsComponent implements OnInit {
       this.getAllPaymentByApartmentPage,
       this.getAllPaymentByApartmentPageSize,
     );
-    this.getFinancialBalance();
+    //this.getFinancialBalance();
   }
 
   getApartmentId(): string {
@@ -131,7 +130,7 @@ export class ApartmentDetailsComponent implements OnInit {
           this.isLoadingFetchingAgreements = false;
           this.getAllAgreementByApartmentTotalLength = value.body.meta.total;
 
-          this.agreements = AgreeementMapper.mapAgreements(
+          this.agreements = this.agreeementMapper.mapAgreements(
             value.body.agreements,
           );
           console.log(this.agreements);

@@ -10,6 +10,7 @@ import { ApartmentListComponent } from './presentation/apartment-list/apartment-
 import { ApartmentDetailsComponent } from './presentation/apartment-details/apartment-details.component';
 import { ApartmentComponent } from './apartment.component';
 import { SearchInputModule } from '@shared/search-input/search-input.module';
+import { SharedModule } from '@shared/shared.module';
 
 @NgModule({
   declarations: [
@@ -26,6 +27,7 @@ import { SearchInputModule } from '@shared/search-input/search-input.module';
     PaginationModule.forRoot(),
     BsDatepickerModule.forRoot(),
     SearchInputModule,
+    SharedModule,
   ],
 })
 export class ApartmentModule {}

@@ -5,17 +5,16 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
-import { GetAllOwnersMapper } from '@dashboard/owner/mappers/get-all-owners-mapper';
 import { OwnerService } from '@dashboard/owner/service/owner.service';
 import { SearchResult } from '@shared/search-input/search-input.component';
 import { PropertyService } from '../../service/property.service';
 import { DataTypes } from '@models/data';
 import { ToastAlertService } from '@shared/toast-alert/toast-alert.service';
 import { PropertyDetails } from '../../entity/property-details';
-import { defaultSearchLimit } from 'src/app/variables/consts';
 import { ActivatedRoute } from '@angular/router';
 import { GetOwnerDetailsMapper } from '@dashboard/owner/mappers/get-owner-details';
 import { OwnerDetails } from '@dashboard/owner/entity/owner-details';
+import { Owner } from '@dashboard/owner/entity/owner';
 
 @Component({
   selector: 'app-upsert-property',
@@ -57,12 +56,12 @@ export class UpsertPropertyComponent implements OnInit {
       if (this.propertyDetails) {
         this.formGroup.get('address')?.setValue(this.propertyDetails?.address);
         this.formGroup.get('type')?.setValue(this.propertyDetails?.type);
-        this.formGroup.get('ownerId')?.setValue(this.propertyDetails?.ownerId);
+        this.formGroup.get('ownerId')?.setValue(this.propertyDetails?.owner?.id);
         this.formGroup
           .get('profitInPercentage')
           ?.setValue(this.propertyDetails?.profitInPercentage);
-        
-        this.searchOwnerValue = this.propertyDetails.owner;
+
+        this.searchOwnerValue = `${this.propertyDetails.owner?.fullname}`;
       }
     }
   }
@@ -80,27 +79,9 @@ export class UpsertPropertyComponent implements OnInit {
   }
 
   searchOwnerValue: string = '';
-  onSearchOwnerValueChanged(searchValue?: string) {
-    const params = {
-      ...(searchValue && { searchTerm: searchValue }),
-      limit: `${defaultSearchLimit}`,
-    };
-    const queryString = new URLSearchParams(params).toString();
-    this.ownerService.getAllOwners(`?${queryString}`).subscribe({
-      next: (value) => {
-        const owners = GetAllOwnersMapper.fromResponse(value.body.owners);
-        console.log(owners)
-        this.ownerOptions = owners.map((item) => ({
-          id: item.id,
-          title: item.name,
-        }));
-      },
-    });
-  }
-  onSelectedOwnerSearchItem(searchResult: SearchResult) {
-    console.log(searchResult);
 
-    this.formGroup.get('ownerId')?.setValue(searchResult.id);
+  onSelectedOwnerSearchItem(owner: Owner) {
+    this.formGroup.get('ownerId')?.setValue(owner.id);
   }
 
   onSelectedPropertyTypeSearchItem(searchResult: SearchResult) {

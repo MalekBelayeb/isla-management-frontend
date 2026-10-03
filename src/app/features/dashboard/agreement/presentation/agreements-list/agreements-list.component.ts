@@ -36,9 +36,9 @@ export class AgreementsListComponent implements OnInit {
   agreements: Agreement[] = [];
   isLoadingFetchingAgreements = false;
   isLoadingArchiveOwner = false;
-  
+
   agreementPrefix: string = agreementPrefix;
-  propertyPrefix:string = propertyPrefix
+  propertyPrefix: string = propertyPrefix;
 
   groupSearchResult: SearchResult[] = [];
   activitySearchResult: SearchResult[] = [];
@@ -62,7 +62,8 @@ export class AgreementsListComponent implements OnInit {
     private tenantService: TenantService,
     private tenantMapper: TenantMapper,
     private formBuilder: FormBuilder,
-    private toastAlertService: ToastAlertService,
+    private agreementMapper: AgreeementMapper,
+    private apartmentMapper: ApartmentMapper,
     private modalService: BsModalService,
     private confirmDialogService: ConfirmDialogService,
     private queryStringBuilder: QueryStringBuilder,
@@ -206,10 +207,9 @@ export class AgreementsListComponent implements OnInit {
         next: (value) => {
           this.isLoadingFetchingAgreements = false;
           this.totalLength = value.body.meta.total ?? 0;
-          this.agreements = AgreeementMapper.mapAgreements(
+          this.agreements = this.agreementMapper.mapAgreements(
             value.body.agreements,
           );
-          console.log(this.agreements);
         },
         error: (err) => {
           this.isLoadingFetchingAgreements = false;

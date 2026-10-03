@@ -3,6 +3,7 @@ import {
   FormBuilder,
   FormControl,
   FormGroup,
+  ValidatorFn,
   Validators,
 } from '@angular/forms';
 import {
@@ -10,7 +11,10 @@ import {
   emailValidator,
   phoneNumberTnValidator,
 } from '@core/form-validators/form-validators';
-import { TenantDetails } from '@dashboard/tenant/entity/tenant-details';
+import {
+  TenantDetails,
+  TenantType,
+} from '@dashboard/tenant/entity/tenant-details';
 import { TenantService } from '@dashboard/tenant/service/tenant.service';
 import { DataTypes } from '@models/data';
 import { SearchResult } from '@shared/search-input/search-input.component';
@@ -42,6 +46,7 @@ export class UpsertTenantComponent {
   ) {
     this.formGroup = this.formBuilder.group(
       {
+        tenantType: new FormControl<TenantType>('natural', Validators.required),
         firstname: new FormControl('', Validators.required),
         lastname: new FormControl('', Validators.required),
         cin: new FormControl('', Validators.required),
@@ -54,21 +59,91 @@ export class UpsertTenantComponent {
           DataTypes.nationalityTypeList[0].id,
           Validators.required,
         ),
+        // Société — only validated when tenantType is legal
+        companyName: new FormControl(''),
+        managerFirstname: new FormControl(''),
+        managerLastname: new FormControl(''),
+        managerPhoneNumber: new FormControl(''),
+        managerCin: new FormControl(''),
       },
-      { validators: [phoneNumberTnValidator, cinValidator, emailValidator] },
+      { validators: [phoneNumberTnValidator, emailValidator] },
     );
+
+    this.formGroup
+      .get('tenantType')
+      ?.valueChanges.subscribe((type: TenantType) =>
+        this.updateTenantTypeValidators(type),
+      );
   }
   nationalityTypeList: SearchResult[] = DataTypes.nationalityTypeList;
   onChangeGender(gender: string) {
     this.formGroup.get('gender')?.setValue(gender);
+  }
+
+  get isCompany(): boolean {
+    return this.formGroup.get('tenantType')?.value === 'legal';
+  }
+
+  onChangeTenantType(type: TenantType) {
+    this.formGroup.get('tenantType')?.setValue(type);
+  }
+
+  // Validates only the fields of the selected tenant type. Values of the other
+  // type are kept so switching back and forth loses nothing; upsertTenant()
+  // only sends the fields of the selected type.
+  private updateTenantTypeValidators(type: TenantType) {
+    const eightDigits = Validators.pattern(/^\d{8}$/);
+    const personControls: Record<string, ValidatorFn[]> = {
+      firstname: [Validators.required],
+      lastname: [Validators.required],
+      cin: [Validators.required],
+      gender: [Validators.required],
+    };
+    const companyControls: Record<string, ValidatorFn[]> = {
+      companyName: [Validators.required],
+      managerFirstname: [Validators.required],
+      managerLastname: [Validators.required],
+      managerPhoneNumber: [Validators.required, eightDigits],
+      managerCin: [Validators.required, eightDigits],
+    };
+
+    this.toggleControls(personControls, type === 'natural');
+    this.toggleControls(companyControls, type === 'legal');
+    this.formGroup.updateValueAndValidity({ emitEvent: false });
+  }
+
+  private toggleControls(
+    validatorsByControl: Record<string, ValidatorFn[]>,
+    enabled: boolean,
+  ) {
+    Object.entries(validatorsByControl).forEach(([name, validators]) => {
+      const control = this.formGroup.get(name);
+      if (!control) return;
+      if (enabled) {
+        control.setValidators(validators);
+      } else {
+        control.clearValidators();
+      }
+      control.updateValueAndValidity({ emitEvent: false });
+    });
   }
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['tenantDetails'] && !changes['tenantDetails'].firstChange) {
       this.tenantDetails = changes['tenantDetails'].currentValue;
       if (this.tenantDetails) {
         this.formGroup
+          .get('tenantType')
+          ?.setValue(this.tenantDetails?.tenantType ?? 'natural');
+        this.updateTenantTypeValidators(
+          this.tenantDetails.tenantType ?? 'natural',
+        );
+        this.formGroup
           .get('firstname')
           ?.setValue(this.tenantDetails?.firstname);
+        this.formGroup
+          .get('companyName')
+          ?.setValue(this.tenantDetails?.companyName);
+
         this.formGroup.get('lastname')?.setValue(this.tenantDetails?.lastname);
         this.formGroup.get('cin')?.setValue(this.tenantDetails?.cin);
         this.formGroup
@@ -81,6 +156,19 @@ export class UpsertTenantComponent {
         this.formGroup
           .get('nationality')
           ?.setValue(this.tenantDetails?.nationality);
+
+        this.formGroup
+          .get('managerFirstname')
+          ?.setValue(this.tenantDetails?.managerFirstname);
+        this.formGroup
+          .get('managerLastname')
+          ?.setValue(this.tenantDetails?.managerLastname);
+        this.formGroup
+          .get('managerPhoneNumber')
+          ?.setValue(this.tenantDetails?.managerPhoneNumber);
+        this.formGroup
+          .get('managerCin')
+          ?.setValue(this.tenantDetails?.managerCin);
       }
     }
   }
@@ -95,21 +183,31 @@ export class UpsertTenantComponent {
   }
   upsertTenant() {
     this.submitted = true;
-    console.log(this.formGroup.controls);
+    console.log(this.formGroup.errors);
     if (this.formGroup.invalid) return;
     this.isLoading = true;
 
     let body: any = {
       ...(this.tenantDetails && { id: this.tenantDetails.id }),
-      firstname: this.formGroup.get('firstname')?.value,
-      lastname: this.formGroup.get('lastname')?.value,
-      cin: `${this.formGroup.get('cin')?.value}`,
       phoneNumber: `${this.formGroup.get('phoneNumber')?.value}`,
       address: this.formGroup.get('address')?.value,
       job: this.formGroup.get('job')?.value,
       nationality: this.formGroup.get('nationality')?.value,
       email: this.formGroup.get('email')?.value,
-      gender: this.formGroup.get('gender')?.value,
+      tenantType: this.formGroup.get('tenantType')?.value,
+      ...(!this.isCompany && {
+        firstname: this.formGroup.get('firstname')?.value,
+        lastname: this.formGroup.get('lastname')?.value,
+        cin: `${this.formGroup.get('cin')?.value}`,
+        gender: this.formGroup.get('gender')?.value,
+      }),
+      ...(this.isCompany && {
+        societyName: this.formGroup.get('companyName')?.value,
+        managerFirstname: this.formGroup.get('managerFirstname')?.value,
+        managerLastname: this.formGroup.get('managerLastname')?.value,
+        managerPhoneNumber: `${this.formGroup.get('managerPhoneNumber')?.value}`,
+        managerCin: `${this.formGroup.get('managerCin')?.value}`,
+      }),
     };
     if (this.tenantDetails) {
       this.tenantService.updateTenant(this.tenantDetails.id, body).subscribe({

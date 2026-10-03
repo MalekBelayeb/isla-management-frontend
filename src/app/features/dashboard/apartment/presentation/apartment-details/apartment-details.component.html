@@ -51,10 +51,12 @@
       <div class="row">
         <div class="col-lg-3">
           <div class="form-group">
-            <h5 class="card-title text-uppercase text-muted mb-0">Propriété (Bien)</h5>
+            <h5 class="card-title text-uppercase text-muted mb-0">
+              Propriété (Bien)
+            </h5>
 
             <h5 class="h2 font-weight-bold mb-0 mt-1">
-              {{ apartmentDetails?.property }}
+              {{ apartmentDetails?.property?.idNumber }} - {{ apartmentDetails?.property?.address }}
             </h5>
           </div>
         </div>
@@ -65,7 +67,7 @@
             </h5>
 
             <h5 class="h2 font-weight-bold mb-0 mt-1">
-              {{ apartmentDetails?.owner }}
+              {{ apartmentDetails?.owner?.fullname }}
             </h5>
           </div>
         </div>
@@ -240,7 +242,7 @@
           <tr *ngFor="let agreement of agreements">
             <th scope="row">{{ agreement.matricule }}</th>
             <td>
-              <h4>{{ agreement.tenant }}</h4>
+              <h4>{{ agreement.tenant.fullname }}</h4>
             </td>
             <td>
               <h4>
@@ -294,7 +296,7 @@
   [apartmentDetails]="apartmentDetails"
 ></app-upsert-apartment>
 
-<div class="card">
+<!-- <div class="card">
   <div class="card-header">
     <div class="row align-items-center">
       <div class="col-8">
@@ -304,7 +306,7 @@
   </div>
 
   <div class="card-body">
-    <!-- <div class="row mb-5 mt-3">
+     <div class="row mb-5 mt-3">
       <div class="col">
         <div class="form-group">
           <label class="form-control-label">
@@ -325,7 +327,7 @@
           </div>
         </div>
       </div>
-    </div> -->
+    </div> 
     <div class="table-responsive">
       <div class="my-3 pr-2 d-flex w-100 flex-row justify-content-end">
         <button class="btn btn-icon btn-secondary" type="button">
@@ -409,4 +411,4 @@
       </table>
     </div>
   </div>
-</div>
+</div> -->

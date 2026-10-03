@@ -36,7 +36,7 @@
             <h5 class="card-title text-uppercase text-muted mb-0">Locataire</h5>
 
             <h5 class="h2 font-weight-bold mb-0 mt-1">
-              {{ paymentDetails?.tenant }}
+              {{ paymentDetails?.tenant?.fullname }}
             </h5>
           </div>
         </div>
@@ -59,7 +59,8 @@
             </h5>
 
             <h5 class="h2 font-weight-bold mb-0 mt-1">
-              {{ paymentDetails?.property }}
+              {{ paymentDetails?.property?.idNumber }} -
+              {{ paymentDetails?.property?.address }}
             </h5>
           </div>
         </div>
@@ -70,7 +71,7 @@
             </h5>
 
             <h5 class="h2 font-weight-bold mb-0 mt-1">
-              {{ paymentDetails?.owner }}
+              {{ paymentDetails?.owner?.fullname }}
             </h5>
           </div>
         </div>
@@ -159,7 +160,7 @@
             </h5>
 
             <h5 class="h2 font-weight-bold mb-0 mt-1">
-              {{ paymentDetails?.owner }}
+              {{ paymentDetails?.owner?.fullname }}
             </h5>
           </div>
         </div>
@@ -170,7 +171,8 @@
             </h5>
 
             <h5 class="h2 font-weight-bold mb-0 mt-1">
-              {{ paymentDetails?.property }}
+              {{ paymentDetails?.property?.idNumber }} -
+              {{ paymentDetails?.property?.address }}
             </h5>
           </div>
         </div>

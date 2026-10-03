@@ -18,6 +18,7 @@ import { AgreementService } from '@dashboard/agreement/service/agreement.service
 import { AgreeementMapper } from '@dashboard/agreement/mappers/agreement.mapper';
 import { Agreement } from '@dashboard/agreement/entity/agreement';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { apartmentPrefix } from 'src/app/variables/consts';
 
 @Component({
   selector: 'app-agreement-searchable-modal',
@@ -62,6 +63,7 @@ export class AgreementSearchableModalComponent implements OnInit {
     private modalService: BsModalService,
     private router: Router,
     private formBuilder: FormBuilder,
+    private agreeementMapper: AgreeementMapper,
   ) {
     this.criteriaFormGroup = this.formBuilder.group({
       searchByTenant: new FormControl(''),
@@ -97,10 +99,10 @@ export class AgreementSearchableModalComponent implements OnInit {
     }, this.debounceDelay);
   }
 
-  onItemClick(id: string, matricule: string) {
+  onItemClick(agreement: Agreement) {
     this.agreementClicked.emit({
-      id: id,
-      label: matricule,
+      id: agreement.id,
+      label: `${agreement.matricule} - ${apartmentPrefix}${agreement.apartment.matricule} - ${agreement.apartment.address}`,
     });
     this.hideModal();
   }
@@ -158,7 +160,7 @@ export class AgreementSearchableModalComponent implements OnInit {
         next: (value) => {
           this.isLoadingFetchingAgreements = false;
           this.totalLength = value.body.meta.total ?? 0;
-          this.agreements = AgreeementMapper.mapAgreements(
+          this.agreements = this.agreeementMapper.mapAgreements(
             value.body.agreements,
           );
         },

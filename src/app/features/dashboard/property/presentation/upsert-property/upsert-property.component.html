@@ -14,22 +14,10 @@
           Propriétaire <span class="text-danger">*</span>
         </label>
         <div class="col-md-10">
-          <app-search-input
-            [clearInput]="false"
-            [prefixIcon]="'fas fa-search'"
-            [searchPlaceholder]="'Chercher propriétaire'"
-            [searchLabel]="'Résultats'"
-            [maxSize]="5"
-            [triggerSearchOnOpen]="true"
-            [isInvalid]="
-              submitted && createPropertyForm['ownerId'].errors?.['required']
-            "
-            [errorMessage]="'Champs incorrect, Propriétaire est obligatoire'"
-            (searchValue)="onSearchOwnerValueChanged($event)"
-            [searchInputValue]="searchOwnerValue"
-            (selectedResultItem)="onSelectedOwnerSearchItem($event)"
-            [searchResult]="ownerOptions"
-          ></app-search-input>
+          <app-owner-searchable-modal
+            [selectedValue]="searchOwnerValue"
+            (ownerClicked)="onSelectedOwnerSearchItem($event)"
+          />
         </div>
       </div>
 

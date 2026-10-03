@@ -15,6 +15,7 @@ import { ToastAlertService } from '@shared/toast-alert/toast-alert.service';
 import { defaultSearchLimit } from 'src/app/variables/consts';
 import { ActivatedRoute } from '@angular/router';
 import { PropertyDetails } from '@dashboard/property/entity/property-details';
+import { Property } from '@dashboard/property/entity/property';
 
 @Component({
   selector: 'app-upsert-apartment',
@@ -65,11 +66,11 @@ export class UpsertApartmentComponent {
         this.formGroup.get('rooms')?.setValue(this.apartmentDetails?.rooms);
         this.formGroup
           .get('propertyId')
-          ?.setValue(this.apartmentDetails?.propertyId);
+          ?.setValue(this.apartmentDetails?.property?.id);
         this.formGroup
           .get('description')
           ?.setValue(this.apartmentDetails?.description);
-        this.searchPropertyValue = this.apartmentDetails.address;
+        this.searchPropertyValue = `${this.apartmentDetails.idNumber} - ${this.apartmentDetails.address}`;
       }
     }
   }
@@ -103,27 +104,9 @@ export class UpsertApartmentComponent {
   }
 
   searchPropertyValue: string = '';
-  onSearchPropertyValueChanged(searchValue?: string) {
-    const params = {
-      ...(searchValue && { searchTerm: searchValue }),
-      limit: `${defaultSearchLimit}`,
-    };
 
-    const queryString = new URLSearchParams(params).toString();
-    this.propertyService.getAllProperties(`?${queryString}`).subscribe({
-      next: (value) => {
-        const properties = PropertyMapper.mapProperties(value.body.properties);
-        this.propertyOptions = properties.map((item) => ({
-          id: item.id,
-          title: `${item.matricule} - ${item.address}`,
-        }));
-      },
-    });
-  }
-  onSelectedPropertySearchItem(searchResult: SearchResult) {
-    console.log(searchResult);
-
-    this.formGroup.get('propertyId')?.setValue(searchResult.id);
+  onSelectedPropertySearchItem(property: Property) {
+    this.formGroup.get('propertyId')?.setValue(property.id);
   }
 
   onSelectedApartmentTypeSearchItem(searchResult: SearchResult) {

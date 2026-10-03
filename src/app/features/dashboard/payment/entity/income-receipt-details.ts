@@ -1,3 +1,6 @@
+import { OwnerDetails } from '@dashboard/owner/entity/owner-details';
+import { TenantDetails } from '@dashboard/tenant/entity/tenant-details';
+
 export type PaymentReceiptDetails = {
   recipientName: string;
   propertyAddress: string;
@@ -10,4 +13,6 @@ export type PaymentReceiptDetails = {
   amount: number;
   extraCharge: number;
   totalAmount: number;
+  owner: OwnerDetails | undefined;
+  tenant: TenantDetails | undefined;
 };
