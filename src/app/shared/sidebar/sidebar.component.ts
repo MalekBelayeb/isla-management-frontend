@@ -63,7 +63,7 @@ export const DASHBOARD_ROUTES: RouteInfo[] = [
   },
   {
     path: '/dashboard',
-    title: 'Contrats & Mouvements',
+    title: 'Contrats & Opérations',
     type: 'sub',
     icontype: 'fa-file-signature text-primary',
     children: [
@@ -73,8 +73,13 @@ export const DASHBOARD_ROUTES: RouteInfo[] = [
         type: 'link',
       },
       {
-        path: 'payment/all-payments',
-        title: 'Mouvements de caisse',
+        path: 'payment/income-payments',
+        title: 'Opérations de recettes',
+        type: 'link',
+      },
+      {
+        path: 'payment/expense-payments',
+        title: 'Opérations de dépenses',
         type: 'link',
       },
     ],

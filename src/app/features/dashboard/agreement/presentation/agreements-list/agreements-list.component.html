@@ -52,95 +52,35 @@
             </div>
           </div>
         </div>
-
         <div class="col-md-3">
           <div class="form-group" [ngClass]="{ focused: focus3 === true }">
-            <label class="filter-label">N° Dossier</label>
-            <div class="input-group input-group-merge">
-              <div class="input-group-prepend">
-                <span class="input-group-text prefix-text">{{
-                  propertyPrefix
-                }}</span>
-              </div>
-              <input
-                class="form-control"
-                [ngClass]="{ focused: focus3 === true }"
-                type="number"
-                min="1"
-                formControlName="agreementProperty"
-                placeholder="Num dossier"
-                (focus)="focus3 = true"
-                (blur)="focus3 = false"
-              />
-            </div>
+            <label class="filter-label">Propriété (bien)</label>
+            <app-property-searchable-modal
+              [searchInputPlaceholder]="'Filtrer par propriété (bien)'"
+              [selectedValue]="searchPropertyValue"
+              (propertyClicked)="onSelectedPropertySearchItem($event)"
+            />
           </div>
         </div>
 
         <div class="col-md-3">
           <div class="form-group">
             <label class="filter-label">Local</label>
-            <app-search-input
-              [clearInput]="false"
-              [prefixIcon]="'fas fa-door-open'"
-              [searchPlaceholder]="'Filtrer par local (adresse ou num local)'"
-              [searchLabel]="'Résultats'"
-              [maxSize]="5"
-              [triggerSearchOnOpen]="true"
-              (searchValue)="onSearchApartmentValueChanged($event)"
-              [searchInputValue]="searchApartmentValue"
-              (selectedResultItem)="onSelectedApartmentSearchItem($event)"
-              [searchResult]="apartmentOptions"
-            ></app-search-input>
+            <app-apartment-searchable-modal
+              [searchInputPlaceholder]="'Filtrer par local'"
+              [selectedValue]="searchApartmentValue"
+              (apartmentClicked)="onSelectedApartmentSearchItem($event)"
+            />
           </div>
         </div>
-
         <div class="col-md-3">
           <div class="form-group">
-            <label class="filter-label">Statut</label>
-            <app-search-input
-              [clearInput]="false"
-              [prefixIcon]="'fas fa-circle'"
-              [searchPlaceholder]="'Filtrer par statut contrat'"
-              [searchLabel]="'Résultats'"
-              [prefixText]="'Status contrat'"
-              [maxSize]="4"
-              [searchInputValue]="agreementStatusTypeSearchValue.title"
-              (selectedResultItem)="
-                onSelectedAgreementStatusTypeSearchItem($event)
-              "
-              [searchResult]="agreementStatusOptions"
-              [isEditable]="false"
-            ></app-search-input>
-          </div>
-        </div>
-      </div>
-
-      <!-- Row 2 -->
-      <div class="row">
-        <div class="col-md-6">
-          <div class="form-group">
-            <label class="filter-label">Période</label>
-            <app-date-range-picker
-              (startDate)="onStartDateChange($event)"
-              (endDate)="onEndDateChange($event)"
-            ></app-date-range-picker>
-          </div>
-        </div>
-
-        <div class="col-md-6">
-          <div class="form-group">
             <label class="filter-label">Locataire</label>
-            <app-search-input
-              [clearInput]="false"
-              [prefixIcon]="'fas fa-user'"
-              [searchPlaceholder]="'Filtrer par locataire'"
-              [searchLabel]="'Résultats'"
-              [triggerSearchOnOpen]="true"
-              (searchValue)="onSearchTenantValueChanged($event)"
-              [searchInputValue]="searchTenantValue"
-              (selectedResultItem)="onSelectedTenantSearchItem($event)"
-              [searchResult]="tenantOptions"
-            ></app-search-input>
+            <app-tenant-searchable-modal
+              [searchInputPlaceholder]="'Filtrer par locataire'"
+              [selectedValue]="searchTenantValue"
+              (tenantClicked)="onSelectedTenantSearchItem($event)"
+            />
           </div>
         </div>
       </div>

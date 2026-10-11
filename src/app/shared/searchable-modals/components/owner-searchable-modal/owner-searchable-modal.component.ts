@@ -39,7 +39,9 @@ export class OwnerSearchableModalComponent implements OnInit, OnChanges {
   @Input() searchResult: SearchResult[] = [];
 
   @Output() cancelClicked = new EventEmitter<void>();
-  @Output() ownerClicked = new EventEmitter<Owner>();
+  @Output() ownerClicked = new EventEmitter<Owner | undefined>();
+
+  @Input() searchInputPlaceholder = 'Chercher un propriétaire...';
 
   @Input() searchPlaceholder =
     'Chercher par tél, cin, prénom et nom, société...';
@@ -118,6 +120,22 @@ export class OwnerSearchableModalComponent implements OnInit, OnChanges {
     }, this.debounceDelay);
   }
 
+  clearSelectedValue() {
+    this.selectedValue = '';
+    this.searchValue.emit('');
+    this.ownerClicked.emit(undefined);
+  }
+
+  clearSearch(input: HTMLInputElement) {
+    if (this.timerId) {
+      clearTimeout(this.timerId);
+    }
+    input.value = '';
+    input.focus();
+    this.clearSelectedValue();
+    this.searchValueChanged('');
+  }
+
   onCancel() {
     this.cancelClicked.emit();
     this.hideModal();
@@ -131,7 +149,7 @@ export class OwnerSearchableModalComponent implements OnInit, OnChanges {
     page: number,
     pageSize: number,
     searchTerm?: string,
-    useCache = true,
+    useCache = false,
   ) {
     this.isLoadingFetchingOwners = true;
     const urlParameters = new URLSearchParams({

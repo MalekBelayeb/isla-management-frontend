@@ -31,48 +31,6 @@
       <!-- Row 1 -->
       <div class="row">
         <div class="col-md-4">
-          <div class="form-group">
-            <label class="filter-label">Adresse</label>
-            <div class="input-group input-group-merge search-group">
-              <div class="input-group-prepend">
-                <span class="input-group-text search-prefix">
-                  <i class="fas fa-map-marker-alt"></i>
-                </span>
-              </div>
-              <input
-                class="form-control search-input"
-                formControlName="searchTerm"
-                placeholder="Rechercher par adresse du local..."
-                autocomplete="off"
-              />
-            </div>
-          </div>
-        </div>
-
-        <div class="col-md-4">
-          <div class="form-group" [ngClass]="{ focused: focus2 === true }">
-            <label class="filter-label">N° Dossier</label>
-            <div class="input-group input-group-merge">
-              <div class="input-group-prepend">
-                <span class="input-group-text prefix-text">{{
-                  propertyPrefix
-                }}</span>
-              </div>
-              <input
-                class="form-control"
-                [ngClass]="{ focused: focus2 === true }"
-                type="number"
-                min="1"
-                formControlName="propertyMatricule"
-                placeholder="Rechercher par num dossier"
-                (focus)="focus2 = true"
-                (blur)="focus2 = false"
-              />
-            </div>
-          </div>
-        </div>
-
-        <div class="col-md-4">
           <div class="form-group" [ngClass]="{ focused: focus1 === true }">
             <label class="filter-label">N° Local</label>
             <div class="input-group input-group-merge">
@@ -94,10 +52,7 @@
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- Row 2 -->
-      <div class="row">
         <div class="col-md-4">
           <div class="form-group">
             <label class="filter-label">Type</label>
@@ -118,19 +73,45 @@
 
         <div class="col-md-4">
           <div class="form-group">
+            <label class="filter-label">Adresse</label>
+            <div class="input-group input-group-merge search-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text search-prefix">
+                  <i class="fas fa-map-marker-alt"></i>
+                </span>
+              </div>
+              <input
+                class="form-control search-input"
+                formControlName="searchTerm"
+                placeholder="Rechercher par adresse du local..."
+                autocomplete="off"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 2 -->
+      <div class="row">
+        <div class="col-md-4">
+          <div class="form-group">
             <label class="filter-label">Propriétaire</label>
-            <app-search-input
-              [clearInput]="false"
-              [prefixIcon]="'fas fa-user'"
-              [searchPlaceholder]="'Filtrer par propriétaire'"
-              [searchLabel]="'Résultats'"
-              [maxSize]="5"
-              [triggerSearchOnOpen]="true"
-              (searchValue)="onSearchOwnerValueChanged($event)"
-              [searchInputValue]="searchOwnerValue"
-              (selectedResultItem)="onSelectedOwnerSearchItem($event)"
-              [searchResult]="ownerOptions"
-            ></app-search-input>
+            <app-owner-searchable-modal
+              [searchInputPlaceholder]="'Filtrer par propriétaire'"
+              [selectedValue]="searchOwnerValue"
+              (ownerClicked)="onSelectedOwnerSearchItem($event)"
+            />
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="form-group">
+            <label class="filter-label">Propriété (bien)</label>
+            <app-property-searchable-modal
+              [searchInputPlaceholder]="'Filtrer par propriété (bien)'"
+              [selectedValue]="searchPropertyValue"
+              (propertyClicked)="onSelectedPropertySearchItem($event)"
+            />
           </div>
         </div>
 

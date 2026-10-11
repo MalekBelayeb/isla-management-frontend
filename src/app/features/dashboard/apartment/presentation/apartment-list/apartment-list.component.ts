@@ -17,6 +17,8 @@ import {
 } from 'src/app/variables/consts';
 import { OwnerService } from '@dashboard/owner/service/owner.service';
 import { GetAllOwnersMapper } from '@dashboard/owner/mappers/get-all-owners-mapper';
+import { Owner } from '@dashboard/owner/entity/owner';
+import { Property } from '@dashboard/property/entity/property';
 
 @Component({
   selector: 'app-apartment-list',
@@ -48,6 +50,7 @@ export class ApartmentListComponent {
       type: new FormControl(''),
       matricule: new FormControl(''),
       ownerId: new FormControl(''),
+      propertyId: new FormControl(''),
       rentStatus: new FormControl(''),
       propertyMatricule: new FormControl(''),
       status: new FormControl(''),
@@ -59,6 +62,7 @@ export class ApartmentListComponent {
   showCheckboxSelection = false;
   ownerOptions: SearchResult[] = [];
   searchOwnerValue: string = '';
+  searchPropertyValue: string = '';
   apartmentPrefix: string = apartmentPrefix;
   apartementStatus: SearchResult[] = DataTypes.apartmentStatusType;
   apartmentStatusSearchValue: SearchResult = DataTypes.apartmentStatusType[0];
@@ -68,6 +72,7 @@ export class ApartmentListComponent {
     ...DataTypes.apartmentsType,
   ];
   apartmentTypeSearchValue: SearchResult = this.apartmentsType[0];
+  premiseTypeOptions = Seed.premiseTypeOptions;
 
   ngOnInit(): void {
     this.getAllApartments(this.page, this.pageSize);
@@ -107,13 +112,12 @@ export class ApartmentListComponent {
       false,
     );
   }
-  premiseTypeOptions = Seed.premiseTypeOptions;
 
   async getAllApartments(
     page: number,
     pageSize: number,
     filters?: Record<string, string>,
-    useCache = true,
+    useCache = false,
   ) {
     this.isLoadingFetchingApartments = true;
     const urlParameters = this.queryStringBuilder.create(
@@ -137,27 +141,12 @@ export class ApartmentListComponent {
       });
   }
 
-  onSelectedOwnerSearchItem(searchResult: SearchResult) {
-    this.filtersFormGroup.get('ownerId')?.setValue(searchResult.id);
+  onSelectedOwnerSearchItem(owner: Owner | undefined) {
+    this.filtersFormGroup.get('ownerId')?.setValue(owner?.id);
   }
 
-  onSearchOwnerValueChanged(searchValue?: string) {
-    const params = {
-      ...(searchValue && { searchTerm: searchValue }),
-      limit: `${defaultSearchLimit}`,
-    };
-
-    const queryString = new URLSearchParams(params).toString();
-
-    this.ownerService.getAllOwners(`?${queryString}`).subscribe({
-      next: (value) => {
-        const owners = GetAllOwnersMapper.fromResponse(value.body.owners);
-        this.ownerOptions = owners.map((item) => ({
-          id: item.id,
-          title: `${item.name}`,
-        }));
-      },
-    });
+  onSelectedPropertySearchItem(property: Property | undefined) {
+    this.filtersFormGroup.get('propertyId')?.setValue(property?.id);
   }
 
   deleteApartement(id: string, fullName: string) {

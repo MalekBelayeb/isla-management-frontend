@@ -5,14 +5,16 @@ import { QueryStringBuilder } from '@core/query-string-builder/query-string-buil
 import { Agreement } from '@dashboard/agreement/entity/agreement';
 import { AgreeementMapper } from '@dashboard/agreement/mappers/agreement.mapper';
 import { AgreementService } from '@dashboard/agreement/service/agreement.service';
+import { Apartment } from '@dashboard/apartment/entity/Apartment';
 import { ApartmentMapper } from '@dashboard/apartment/mappers/apartment-mapper';
 import { ApartmentService } from '@dashboard/apartment/service/apartment.service';
+import { Property } from '@dashboard/property/entity/property';
+import { Tenant } from '@dashboard/tenant/entity/tenant';
 import { TenantMapper } from '@dashboard/tenant/mappers/tenant-mapper';
 import { TenantService } from '@dashboard/tenant/service/tenant.service';
 import { DataTypes } from '@models/data';
 import { ConfirmDialogService } from '@shared/confirm-dialog/confirm-dialog.service';
 import { SearchResult } from '@shared/search-input/search-input.component';
-import { ToastAlertService } from '@shared/toast-alert/toast-alert.service';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { PageChangedEvent } from 'ngx-bootstrap/pagination';
 import {
@@ -55,16 +57,12 @@ export class AgreementsListComponent implements OnInit {
 
   searchTenantValue: string = '';
   searchApartmentValue: string = '';
+  searchPropertyValue: string = '';
 
   constructor(
     private agreementService: AgreementService,
-    private apartmentService: ApartmentService,
-    private tenantService: TenantService,
-    private tenantMapper: TenantMapper,
     private formBuilder: FormBuilder,
     private agreementMapper: AgreeementMapper,
-    private apartmentMapper: ApartmentMapper,
-    private modalService: BsModalService,
     private confirmDialogService: ConfirmDialogService,
     private queryStringBuilder: QueryStringBuilder,
     private router: Router,
@@ -73,11 +71,7 @@ export class AgreementsListComponent implements OnInit {
       searchTerm: new FormControl(''),
       tenantId: new FormControl(''),
       apartmentId: new FormControl(''),
-      agreementStatus: new FormControl(DataTypes.agreementStatusTypeList[0].id),
-      startDate: new FormControl(''),
-      endDate: new FormControl(''),
-      propertyMatricule: new FormControl(''),
-      agreementProperty: new FormControl(''),
+      propertyId: new FormControl(''),
     });
   }
 
@@ -85,6 +79,8 @@ export class AgreementsListComponent implements OnInit {
   showCheckboxSelection = false;
 
   affectGroupModal?: BsModalRef;
+  showClearFilterBtn = false;
+  clearInputValue = false;
 
   @ViewChild('modalAffectGroup') modalAffectGroup?: TemplateRef<void>;
 
@@ -103,8 +99,6 @@ export class AgreementsListComponent implements OnInit {
     );
   }
 
-  showClearFilterBtn = false;
-
   clearFilter() {
     this.filtersFormGroup.reset();
     this.filtersFormGroup.get('');
@@ -113,52 +107,17 @@ export class AgreementsListComponent implements OnInit {
     this.showClearFilterBtn = false;
   }
 
-  onSearchTenantValueChanged(searchValue?: string) {
-    const params = {
-      ...(searchValue && { searchTerm: searchValue }),
-      limit: `${defaultSearchLimit}`,
-    };
-
-    const queryString = new URLSearchParams(params).toString();
-
-    this.tenantService.getAllTenant(`?${queryString}`).subscribe({
-      next: (value) => {
-        const tenants = this.tenantMapper.mapTenants(value.body.tenants);
-        this.tenantOptions = tenants.map((item) => ({
-          id: item.id,
-          title: `${item.matricule} - ${item.fullname}`,
-        }));
-      },
-    });
-  }
-  onSelectedTenantSearchItem(searchResult: SearchResult) {
-    this.filtersFormGroup.get('tenantId')?.setValue(searchResult.id);
+  onSelectedPropertySearchItem(property: Property | undefined) {
+    this.filtersFormGroup.get('propertyId')?.setValue(property?.id);
   }
 
-  onSearchApartmentValueChanged(searchValue?: string) {
-    const params = {
-      ...(searchValue && { searchTerm: searchValue }),
-      limit: `${defaultSearchLimit}`,
-    };
-
-    const queryString = new URLSearchParams(params).toString();
-
-    this.apartmentService.getAllApartments(`?${queryString}`).subscribe({
-      next: (value) => {
-        const apartments = ApartmentMapper.mapApartments(value.body.apartments);
-        this.apartmentOptions = apartments.map((item) => ({
-          id: item.id,
-          title: `${apartmentPrefix}${item.matricule} - ${item.address}`,
-        }));
-      },
-    });
+  onSelectedTenantSearchItem(tenant: Tenant | undefined) {
+    this.filtersFormGroup.get('tenantId')?.setValue(tenant?.id);
   }
 
-  onSelectedApartmentSearchItem(searchResult: SearchResult) {
-    this.filtersFormGroup.get('apartmentId')?.setValue(searchResult.id);
+  onSelectedApartmentSearchItem(apartment: Apartment | undefined) {
+    this.filtersFormGroup.get('apartmentId')?.setValue(apartment?.id);
   }
-
-  clearInputValue = false;
 
   filterAgreements() {
     this.showClearFilterBtn = true;
@@ -170,27 +129,11 @@ export class AgreementsListComponent implements OnInit {
     );
   }
 
-  onSelectedAgreementStatusTypeSearchItem(event: SearchResult) {
-    this.filtersFormGroup.get('agreementStatus')?.setValue(event.id);
-  }
-
-  onStartDateChange($event: Date) {
-    this.filtersFormGroup
-      .get('startDate')
-      ?.setValue($event.toISOString().split('T')[0]);
-  }
-
-  onEndDateChange($event: Date) {
-    this.filtersFormGroup
-      .get('endDate')
-      ?.setValue($event?.toISOString().split('T')[0]);
-  }
-
   async getAllAgreement(
     page: number,
     pageSize: number,
     filters?: Record<string, string>,
-    useCache = true,
+    useCache = false,
   ) {
     this.isLoadingFetchingAgreements = true;
     if (this.filtersFormGroup.get('agreementStatus')?.value === 'all') {

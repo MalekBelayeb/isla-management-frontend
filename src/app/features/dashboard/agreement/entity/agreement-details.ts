@@ -1,5 +1,6 @@
 import { ApartmentDetails } from '@dashboard/apartment/entity/apartment-details';
 import { OwnerDetails } from '@dashboard/owner/entity/owner-details';
+import { PaymentDetails } from '@dashboard/payment/entity/payment-details';
 import { PropertyDetails } from '@dashboard/property/entity/property-details';
 import { TenantDetails } from '@dashboard/tenant/entity/tenant-details';
 
@@ -21,4 +22,5 @@ export interface AgreementDetails {
   notes: string;
   createdAt: string;
   signedAt: string;
+  payment: PaymentDetails | undefined;
 }

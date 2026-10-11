@@ -147,12 +147,12 @@ export class UpsertAgreementComponent implements OnInit {
     return this.formGroup.controls;
   }
 
-  onSelectedTenantSearchItem(tenant: Tenant) {
-    this.formGroup.get('tenantId')?.setValue(tenant.id);
+  onSelectedTenantSearchItem(tenant: Tenant | undefined) {
+    this.formGroup.get('tenantId')?.setValue(tenant?.id ?? '');
   }
 
-  onSelectedApartmentSearchItem(apartment: Apartment) {
-    this.formGroup.get('apartmentId')?.setValue(apartment.id);
+  onSelectedApartmentSearchItem(apartment: Apartment | undefined) {
+    this.formGroup.get('apartmentId')?.setValue(apartment?.id ?? '');
   }
 
   upsertAgreement() {

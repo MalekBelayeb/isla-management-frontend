@@ -105,7 +105,7 @@ export class TenantLatePayersListComponent implements OnInit {
     page: number,
     pageSize: number,
     filters?: Record<string, string>,
-    useCache = true,
+    useCache = false,
   ) {
     this.isLoadingAllLatePayersTenants = true;
     const urlParameters = this.queryStringBuilder.create(

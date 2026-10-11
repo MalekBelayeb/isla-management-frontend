@@ -32,7 +32,7 @@
 .agreements-title {
   font-size: 1rem;
   font-weight: 700;
-  color: #32325d;
+  color: #12122e;
   letter-spacing: 0.01em;
 }
 
@@ -72,7 +72,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: #8898aa;
+  color: #4a586c;
   margin-bottom: 0.4rem;
   display: block;
 }
@@ -80,7 +80,7 @@
 .prefix-text {
   font-size: 0.8rem;
   font-weight: 600;
-  color: #525f7f;
+  color: #222a42;
   background: #f6f9fc;
   white-space: nowrap;
 }
@@ -130,13 +130,13 @@
 .empty-title {
   font-size: 0.975rem;
   font-weight: 700;
-  color: #32325d;
+  color: #12122e;
   margin-bottom: 0.35rem;
 }
 
 .empty-subtitle {
   font-size: 0.85rem;
-  color: #8898aa;
+  color: #4a586c;
   margin-bottom: 1.25rem;
   max-width: 340px;
 }

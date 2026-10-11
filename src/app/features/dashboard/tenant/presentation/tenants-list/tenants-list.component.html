@@ -52,67 +52,35 @@
 
       <!-- Row 2 -->
       <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-4">
           <div class="form-group">
             <label class="filter-label">Local</label>
-            <app-search-input
-              [clearInput]="false"
-              [prefixIcon]="'fas fa-door-open'"
-              [searchPlaceholder]="'Filtrer par local (adresse ou num local)'"
-              [searchLabel]="'Résultats'"
-              [maxSize]="5"
-              [triggerSearchOnOpen]="true"
-              (searchValue)="onSearchApartmentValueChanged($event)"
-              [searchInputValue]="searchApartmentValue"
-              (selectedResultItem)="onSelectedApartmentSearchItem($event)"
-              [searchResult]="apartmentOptions"
-            ></app-search-input>
+            <app-apartment-searchable-modal
+              [searchInputPlaceholder]="
+                'Filtrer par local (adresse ou num local)'
+              "
+              [selectedValue]="searchApartmentValue"
+              (apartmentClicked)="onSelectedApartmentSearchItem($event)"
+            />
           </div>
         </div>
-
-        <div class="col-md-3">
-          <div class="form-group" [ngClass]="{ focused: focus2 === true }">
-            <label class="filter-label">N° Contrat</label>
-            <div class="input-group input-group-merge">
-              <div class="input-group-prepend">
-                <span class="input-group-text prefix-text">{{
-                  agreementPrefix
-                }}</span>
-              </div>
-              <input
-                class="form-control"
-                [ngClass]="{ focused: focus2 === true }"
-                type="number"
-                min="1"
-                formControlName="tenantAgreement"
-                placeholder="Num contrat"
-                (focus)="focus2 = true"
-                (blur)="focus2 = false"
-              />
-            </div>
+        <div class="col-md-4">
+          <div class="form-group">
+            <label class="filter-label">Propriété (bien)</label>
+            <app-property-searchable-modal
+              [searchInputPlaceholder]="'Filtrer par propriété (bien)'"
+              [selectedValue]="searchPropertyValue"
+              (propertyClicked)="onSelectedPropertySearchItem($event)"
+            />
           </div>
         </div>
-
-        <div class="col-md-3">
-          <div class="form-group" [ngClass]="{ focused: focus3 === true }">
-            <label class="filter-label">N° Dossier</label>
-            <div class="input-group input-group-merge">
-              <div class="input-group-prepend">
-                <span class="input-group-text prefix-text">{{
-                  propertyPrefix
-                }}</span>
-              </div>
-              <input
-                class="form-control"
-                [ngClass]="{ focused: focus3 === true }"
-                type="number"
-                min="1"
-                formControlName="tenantProperty"
-                placeholder="Num dossier"
-                (focus)="focus3 = true"
-                (blur)="focus3 = false"
-              />
-            </div>
+        <div class="col-md-4">
+          <div class="form-group">
+            <label class="filter-label">Contrat</label>
+            <app-agreement-searchable-modal
+              [searchInputPlaceholder]="'Filtrer par contrat'"
+              (agreementClicked)="onSelectedAgreementSearchItem($event)"
+            />
           </div>
         </div>
       </div>
@@ -323,7 +291,7 @@
                 tenant.status !== 'NO_AGREEMENT' &&
                 tenant.status !== 'AGREEMENT_SUSPENDED'
               "
-              href="dashboard/payment/create-payment/{{ tenant.id }}"
+              href="dashboard/payment/create-income-payment/{{ tenant.id }}"
               class="nav-link"
               target="_blank"
             >

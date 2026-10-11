@@ -30,26 +30,7 @@
     <form [formGroup]="filtersFormGroup" (ngSubmit)="filterProperties()">
       <!-- Row 1 : address search + matricule -->
       <div class="row">
-        <div class="col-md-7">
-          <div class="form-group">
-            <label class="filter-label">Adresse</label>
-            <div class="input-group input-group-merge search-group">
-              <div class="input-group-prepend">
-                <span class="input-group-text search-prefix">
-                  <i class="fas fa-map-marker-alt"></i>
-                </span>
-              </div>
-              <input
-                class="form-control search-input"
-                formControlName="searchTerm"
-                placeholder="Rechercher par adresse de propriété..."
-                autocomplete="off"
-              />
-            </div>
-          </div>
-        </div>
-
-        <div class="col-md-5">
+        <div class="col-md-6">
           <div class="form-group" [ngClass]="{ focused: focus1 === true }">
             <label class="filter-label">N° Dossier</label>
             <div class="input-group input-group-merge">
@@ -71,29 +52,40 @@
             </div>
           </div>
         </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label class="filter-label">Adresse</label>
+            <div class="input-group input-group-merge search-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text search-prefix">
+                  <i class="fas fa-map-marker-alt"></i>
+                </span>
+              </div>
+              <input
+                class="form-control search-input"
+                formControlName="searchTerm"
+                placeholder="Rechercher par adresse de propriété..."
+                autocomplete="off"
+              />
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Row 2 : owner search + type filter -->
       <div class="row">
-        <div class="col-md-7">
+        <div class="col-md-6">
           <div class="form-group">
             <label class="filter-label">Propriétaire</label>
-            <app-search-input
-              [clearInput]="false"
-              [prefixIcon]="'fas fa-user'"
-              [searchPlaceholder]="'Filtrer par propriétaire'"
-              [searchLabel]="'Résultats'"
-              [maxSize]="5"
-              [triggerSearchOnOpen]="true"
-              (searchValue)="onSearchOwnerValueChanged($event)"
-              [searchInputValue]="searchOwnerValue"
-              (selectedResultItem)="onSelectedOwnerSearchItem($event)"
-              [searchResult]="ownerOptions"
-            ></app-search-input>
+            <app-owner-searchable-modal
+              [searchInputPlaceholder]="'Filtrer par propriétaire'"
+              [selectedValue]="searchOwnerValue"
+              (ownerClicked)="onSelectedOwnerSearchItem($event)"
+            />
           </div>
         </div>
 
-        <div class="col-md-5">
+        <div class="col-md-6">
           <div class="form-group">
             <label class="filter-label">Type de bien</label>
             <app-search-input

@@ -222,6 +222,7 @@ export class PropertyDetailsComponent implements OnInit {
     const queryString = new URLSearchParams(params).toString();
     this.paymentService.getFinancialBalance(`?${queryString}`).subscribe({
       next: (value) => {
+        console.log(value.body);
         this.financialBalance = PaymentMapper.mapFinancialBalance(value.body);
       },
     });
@@ -251,7 +252,7 @@ export class PropertyDetailsComponent implements OnInit {
     page: number,
     pageSize: number,
     filters?: Record<string, string>,
-    useCache = true,
+    useCache = false,
   ) {
     this.isLoadingFetchingApartments = true;
     const urlParameters = new URLSearchParams({
@@ -312,7 +313,7 @@ export class PropertyDetailsComponent implements OnInit {
           body {
             font-family: Arial, sans-serif;
             font-size: 13px;
-            color: #32325d;
+            color: #12122e;
           }
           table {
             border-collapse: collapse;
@@ -337,7 +338,7 @@ export class PropertyDetailsComponent implements OnInit {
             text-transform: uppercase;
             letter-spacing: 0.06em;
             font-weight: 700;
-            color: #8898aa;
+            color: #4a586c;
             border-bottom: 2px solid #dee2e6;
           }
           tbody tr:nth-child(even) {

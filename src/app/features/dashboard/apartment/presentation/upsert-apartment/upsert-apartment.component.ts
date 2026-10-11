@@ -105,8 +105,8 @@ export class UpsertApartmentComponent {
 
   searchPropertyValue: string = '';
 
-  onSelectedPropertySearchItem(property: Property) {
-    this.formGroup.get('propertyId')?.setValue(property.id);
+  onSelectedPropertySearchItem(property: Property | undefined) {
+    this.formGroup.get('propertyId')?.setValue(property?.id ?? '');
   }
 
   onSelectedApartmentTypeSearchItem(searchResult: SearchResult) {

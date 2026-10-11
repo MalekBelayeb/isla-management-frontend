@@ -12,9 +12,9 @@ export class UserMapper {
       firstname: data.firstname,
       lastname: data.lastname,
       societyId: '',
-      societyLogo: '',
-      societyName: 'Isla Immo',
-      type: 'admin',
+      societyLogo: 'isla-immobiliere-logo.png',
+      societyName: 'ISLA Immobilière',
+      type: data.role,
       webSite: '',
     };
   }

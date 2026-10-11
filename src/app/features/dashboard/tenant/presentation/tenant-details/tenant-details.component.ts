@@ -95,7 +95,7 @@ export class TenantDetailsComponent implements OnInit {
     page: number,
     pageSize: number,
     filters?: Record<string, string>,
-    useCache = true,
+    useCache = false,
   ) {
     this.isLoadingFetchingAgreements = true;
     const params = {
@@ -146,7 +146,7 @@ export class TenantDetailsComponent implements OnInit {
     page: number,
     pageSize: number,
     filters?: Record<string, string>,
-    useCache = true,
+    useCache = false,
   ) {
     this.isLoadingFetchingPayments = true;
     const params = {

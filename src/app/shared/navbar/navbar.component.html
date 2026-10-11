@@ -8,7 +8,7 @@
       <app-tenant-searchable-modal></app-tenant-searchable-modal>
       <!-- Notifications -->
       <ul class="navbar-nav align-items-center ml-md-auto">
-        <li class="nav-item dropdown" dropdown placement="bottom-right">
+        <!-- <li class="nav-item dropdown" dropdown placement="bottom-right">
           <a
             class="nav-link nav-icon-btn"
             role="button"
@@ -66,7 +66,7 @@
               </div>
             </div>
           </div>
-        </li>
+        </li> -->
       </ul>
 
       <!-- User menu -->
@@ -75,34 +75,40 @@
           <a
             class="nav-link user-nav-link d-flex align-items-center"
             role="button"
+            aria-label="Menu utilisateur"
             dropdownToggle
           >
-            <div *ngIf="!getUserIsLoading" class="d-flex align-items-center">
-              <div class="user-avatar" *ngIf="user">
+            <!-- Loading placeholder -->
+            <div *ngIf="getUserIsLoading" class="d-flex align-items-center">
+              <div class="user-avatar skeleton"></div>
+              <div class="ml-2 d-none d-lg-block">
+                <div class="skeleton skeleton-line"></div>
+                <div class="skeleton skeleton-line skeleton-line--short"></div>
+              </div>
+            </div>
+
+            <div
+              *ngIf="!getUserIsLoading && user"
+              class="d-flex align-items-center"
+            >
+              <div class="user-avatar">
                 {{ user.firstname.charAt(0) }}{{ user.lastname.charAt(0) }}
+                <span class="user-status-dot"></span>
               </div>
 
               <div
-                *ngIf="user"
                 class="user-info ml-2 d-none d-lg-flex flex-column align-items-start"
               >
-                <span class="user-name"
-                  >{{ user.firstname }} {{ user.lastname }}</span
-                >
-                <span class="user-role" *ngIf="user.type === 'admin'"
-                  >Administrateur</span
-                >
-                <span class="user-role" *ngIf="user.type === 'agent'">
-                  Agent · {{ user.societyName }}
+                <span class="user-name">
+                  {{ user.email }}
+                </span>
+                <span class="user-role">
+                  {{ user.type === "admin" ? "Compte administrateur" : "Compte agent" }}
                 </span>
               </div>
 
-              <div *ngIf="!user" class="ml-2 d-none d-lg-block">
-                <span class="user-name">Administrateur</span>
-              </div>
-
               <i
-                class="fas fa-chevron-down chevron-icon ml-2 d-none d-lg-block"
+                class="fas fa-chevron-down chevron-icon ml-3 d-none d-lg-block"
               ></i>
             </div>
           </a>
@@ -111,30 +117,35 @@
             class="dropdown-menu dropdown-menu-arrow dropdown-menu-right user-dropdown"
             *dropdownMenu
           >
-            <div class="user-dropdown-header px-4 py-3">
+            <div *ngIf="user" class="user-dropdown-header">
               <div class="d-flex align-items-center">
-                <div class="">
-                  <ng-container *ngIf="user">
-                    {{ user.firstname.charAt(0) }}{{ user.lastname.charAt(0) }}
-                  </ng-container>
+                <div class="user-avatar user-avatar-md">
+                  {{ user.firstname.charAt(0) }}{{ user.lastname.charAt(0) }}
                 </div>
-                <div class="ml-3">
-                  <div class="font-weight-bold user-name" *ngIf="user">
+                <div class="ml-3 user-dropdown-identity">
+                  <div class="user-name">
                     {{ user.firstname }} {{ user.lastname }}
                   </div>
-                  <small class="text-muted" *ngIf="user?.type === 'admin'"
-                    >Administrateur</small
+                  <div class="user-email" [title]="user.email">
+                    {{ user.email }}
+                  </div>
+                  <span
+                    class="role-pill"
+                    [class.role-pill--admin]="user.type === 'admin'"
                   >
-                  <small class="text-muted" *ngIf="user?.type === 'agent'">
-                    Agent · {{ user?.societyName }}
-                  </small>
+                    <i
+                      class="fas"
+                      [ngClass]="
+                        user.type === 'admin' ? 'fa-user-shield' : 'fa-user'
+                      "
+                    ></i>
+                    {{ user.type === "admin" ? "Administrateur" : "Agent" }}
+                  </span>
                 </div>
               </div>
             </div>
 
-            <div class="dropdown-divider my-0"></div>
-
-            <a
+            <!-- <a
               routerLinkActive="active"
               [routerLink]="['/user-profile']"
               class="dropdown-item"
@@ -146,18 +157,18 @@
             <a class="dropdown-item" style="cursor: pointer">
               <i class="ni ni-support-16 text-info"></i>
               <span>Support</span>
-            </a>
+            </a> -->
 
-            <div class="dropdown-divider my-0"></div>
-
-            <a
-              href="javascript:void()"
-              (click)="logout()"
-              class="dropdown-item logout-item"
-            >
-              <i class="ni ni-user-run"></i>
-              <span>Se déconnecter</span>
-            </a>
+            <div class="user-dropdown-actions">
+              <a
+                href="javascript:void(0)"
+                (click)="logout()"
+                class="dropdown-item logout-item"
+              >
+                <span class="item-icon"><i class="fas fa-sign-out-alt"></i></span>
+                <span>Se déconnecter</span>
+              </a>
+            </div>
           </div>
         </li>
       </ul>

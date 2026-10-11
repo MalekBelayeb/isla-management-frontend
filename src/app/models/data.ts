@@ -105,9 +105,6 @@ export class DataTypes {
 
   static paymentFrequencyTypeList: SearchResult[] = [
     { id: 'MONTHLY', title: 'Mensuel' },
-    /*{ id: 'DAILY', title: 'Quotidien' },
-    { id: 'QUARTERLY', title: 'Trimestriel' },
-    { id: 'YEARLY', title: 'Annuel' },*/
   ];
 
   static paymentMethodTypeList: SearchResult[] = [
@@ -139,15 +136,9 @@ export class DataTypes {
     { id: 'expense', title: 'Dépense' },
   ];
 
-  static statusTenantList: SearchResult[] = [
-    { id: 'all', title: 'Tous' },
-    { id: 'latePayers', title: 'Liste des retardataires' },
-  ];
-
   static agreementStatusTypeList: SearchResult[] = [
     { id: 'all', title: 'Tous' },
     { id: 'active', title: 'Valide' },
-    { id: 'expired', title: 'Expiré' },
     { id: 'suspended', title: 'Suspendu' },
   ];
 }

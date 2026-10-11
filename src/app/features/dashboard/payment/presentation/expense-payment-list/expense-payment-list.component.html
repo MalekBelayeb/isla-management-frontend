@@ -1,0 +1,250 @@
+<div class="card payments-card">
+  <!-- Card Header -->
+  <div class="card-header border-0 payments-header">
+    <div class="d-flex align-items-center justify-content-between flex-wrap">
+      <div class="d-flex align-items-center">
+        <div class="payments-header-icon mr-3">
+          <i class="fas fa-arrow-down"></i>
+        </div>
+        <div>
+          <h3 class="mb-0 payments-title">Dépenses</h3>
+          <p class="text-muted text-sm mb-0 mt-1">
+            <span class="payments-count-badge">{{ totalLength }}</span>
+            décaissement(s) — dépenses des biens et de l'agence
+          </p>
+        </div>
+      </div>
+      <a
+        class="btn btn-warning btn-sm btn-round btn-icon add-btn"
+        href="javascript:void(0)"
+        routerLink="../create-expense-payment"
+        [queryParams]="{ type: 'expense' }"
+      >
+        <span class="btn-inner--icon"><i class="ni ni-fat-add"></i></span>
+        <span class="btn-inner--text">Nouvelle dépense</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Filters Section -->
+  <div class="payments-filter-section">
+    <form [formGroup]="filtersFormGroup" (ngSubmit)="filterPayments()">
+      <!-- Row 1 -->
+
+      <!-- Row 2 -->
+      <div class="row">
+        <div class="col-md-12">
+          <div class="form-group">
+            <label class="filter-label">Méthode de paiement</label>
+            <app-search-input
+              [clearInput]="false"
+              [prefixIcon]="'fas fa-credit-card'"
+              [searchPlaceholder]="'Filtrer par méthode'"
+              [searchLabel]="'Résultats'"
+              [prefixText]="'Méthode:'"
+              [maxSize]="4"
+              [searchInputValue]="paymentMethodTypeSearchValue.title"
+              (selectedResultItem)="
+                onSelectedPaymentMethodTypeSearchItem($event)
+              "
+              [searchResult]="paymentMethodsType"
+              [isEditable]="false"
+            ></app-search-input>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group" [ngClass]="{ focused: focus3 === true }">
+            <label class="filter-label">Propriété (Bien)</label>
+            <app-property-searchable-modal
+              [searchInputPlaceholder]="'Filtrer par propriété (Bien)'"
+              [selectedValue]="searchPropertyValue"
+              (propertyClicked)="onSelectedPropertySearchItem($event)"
+            />
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="form-group">
+            <label class="filter-label">Propriétaire</label>
+            <app-owner-searchable-modal
+              [searchInputPlaceholder]="'Filtrer par propriétaire'"
+              [selectedValue]="searchOwnerValue"
+              (ownerClicked)="onSelectedOwnerSearchItem($event)"
+            />
+          </div>
+        </div>
+      </div>
+      <!-- Filter actions -->
+      <div class="d-flex justify-content-end">
+        <button class="btn btn-primary filter-btn" type="submit">
+          <i class="fas fa-filter mr-2"></i>Filtrer
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Table Section -->
+  <div class="table-responsive payments-table-wrapper">
+    <!-- Empty State -->
+    <div
+      *ngIf="payments.length === 0 && !isLoadingFetchingPayments"
+      class="payments-empty-state"
+    >
+      <div class="empty-icon-wrapper">
+        <i class="fas fa-exchange-alt"></i>
+      </div>
+      <h5 class="empty-title">Aucune opération trouvée</h5>
+      <p class="empty-subtitle">
+        Modifiez vos critères de recherche ou créez une nouvelle opération de
+        dépense.
+      </p>
+      <a
+        class="btn btn-outline-primary btn-sm btn-round"
+        href="javascript:void(0)"
+        routerLink="../create-expense-payment"
+      >
+        <i class="ni ni-fat-add mr-1"></i>Créer une opération de dépense
+      </a>
+    </div>
+
+    <table
+      class="table align-items-center table-flush table-hover"
+      [class.payments-table--hidden]="
+        payments.length === 0 && !isLoadingFetchingPayments
+      "
+    >
+      <thead class="thead-light">
+        <tr>
+          <th>Propriété (Bien)</th>
+          <th>Libellé</th>
+          <th>Montant (TND)</th>
+          <th>Catégorie</th>
+          <th>Date de paiement</th>
+          <th>Méthode</th>
+          <th>Propriétaire</th>
+          <th>Date de création</th>
+          <th></th>
+        </tr>
+      </thead>
+
+      <!-- Skeleton rows while loading -->
+      <tbody *ngIf="isLoadingFetchingPayments">
+        <tr *ngFor="let i of [1, 2, 3, 4, 5, 6, 7, 8]" class="skeleton-row">
+          <td><div class="skel skel-text" style="width: 70px"></div></td>
+          <td><div class="skel skel-text" style="width: 100px"></div></td>
+          <td><div class="skel skel-text" style="width: 110px"></div></td>
+          <td><div class="skel skel-text" style="width: 100px"></div></td>
+          <td><div class="skel skel-text" style="width: 100px"></div></td>
+          <td><div class="skel skel-text" style="width: 100px"></div></td>
+          <td><div class="skel skel-text" style="width: 85px"></div></td>
+          <td><div class="skel skel-badge" style="width: 72px"></div></td>
+          <td><div class="skel skel-text" style="width: 90px"></div></td>
+          <td><div class="skel skel-text" style="width: 150px"></div></td>
+          <td><div class="skel skel-text" style="width: 70px"></div></td>
+          <td><div class="skel skel-text" style="width: 80px"></div></td>
+          <td><div class="skel skel-text" style="width: 80px"></div></td>
+          <td></td>
+        </tr>
+      </tbody>
+
+      <!-- Real rows -->
+      <tbody *ngIf="!isLoadingFetchingPayments">
+        <tr *ngFor="let payment of payments">
+          <td style="cursor: pointer" (click)="redirectToDetails(payment.id)">
+            <span class="">
+              {{ payment.property?.idNumber }} - {{ payment.property?.address }}
+            </span>
+          </td>
+          <td style="cursor: pointer" (click)="redirectToDetails(payment.id)">
+            <span class=""> {{ payment.label }} </span>
+          </td>
+          <td
+            style="cursor: pointer"
+            (click)="redirectToDetails(payment.id)"
+            class="table-user"
+          >
+            <b>
+              <i
+                *ngIf="payment.type == 'expense'"
+                class="fas fa-arrow-down text-warning mr-3"
+              >
+              </i>
+              <i
+                *ngIf="payment.type == 'income'"
+                class="fas fa-arrow-up text-success mr-3"
+              >
+              </i>
+              {{ payment.amount | number: "1.3-3" }} TND
+            </b>
+          </td>
+          <td style="cursor: pointer" (click)="redirectToDetails(payment.id)">
+            <span class=""> {{ payment.category }} </span>
+          </td>
+
+          <td style="cursor: pointer" (click)="redirectToDetails(payment.id)">
+            <span class="">
+              {{ payment.paymentDate | date: "dd/MM/yyyy" }}
+            </span>
+          </td>
+          <td style="cursor: pointer" (click)="redirectToDetails(payment.id)">
+            <span class=""> {{ payment.method }} </span>
+          </td>
+
+          <td style="cursor: pointer" (click)="redirectToDetails(payment.id)">
+            <span class=""> {{ payment.owner?.fullname }} </span>
+          </td>
+
+          <td style="cursor: pointer" (click)="redirectToDetails(payment.id)">
+            <span class=""> {{ payment.createdAt | date: "dd/MM/yyyy" }} </span>
+          </td>
+
+          <td class="table-actions">
+            <a
+              (click)="deletePayment(payment.id, '')"
+              class="table-action table-action-delete"
+              tooltip="Delete product"
+              placement="top"
+              href="javascript:void(0)"
+            >
+              <i class="fas fa-trash"> </i>
+            </a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination Footer -->
+  <div class="card-footer payments-footer py-4">
+    <div class="d-flex align-items-center justify-content-between flex-wrap">
+      <span class="pagination-info text-muted">
+        Total : <strong>{{ totalLength }}</strong> opération(s)
+      </span>
+      <nav aria-label="Pagination des opérations">
+        <pagination
+          [totalItems]="totalLength"
+          [itemsPerPage]="pageSize"
+          [rotate]="false"
+          [boundaryLinks]="true"
+          [(ngModel)]="page"
+          firstText="&laquo;"
+          lastText="&raquo;"
+          [maxSize]="5"
+          class="justify-content-end mb-0"
+          [customPreviousTemplate]="prevTemplate"
+          (pageChanged)="pageChange($event)"
+          [customNextTemplate]="nextTemplate"
+        ></pagination>
+      </nav>
+    </div>
+
+    <ng-template #nextTemplate let-currentPage="currentPage">
+      <ng-container><i class="fas fa-angle-right"></i></ng-container>
+    </ng-template>
+    <ng-template #prevTemplate let-currentPage="currentPage">
+      <ng-container><i class="fas fa-angle-left"></i></ng-container>
+    </ng-template>
+  </div>
+</div>

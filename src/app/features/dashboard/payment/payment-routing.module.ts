@@ -1,9 +1,11 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { PaymentComponent } from './payment.component';
-import { PaymentListComponent } from './presentation/payment-list/payment-list.component';
-import { UpsertPaymentComponent } from './presentation/upsert-payment/upsert-payment.component';
+import { UpsertIncomePaymentComponent } from './presentation/upsert-income-payment/upsert-income-payment.component';
 import { PaymentDetailsComponent } from './presentation/payment-details/payment-details.component';
+import { IncomePaymentListComponent } from './presentation/income-payment-list/income-payment-list.component';
+import { ExpensePaymentListComponent } from './presentation/expense-payment-list/expense-payment-list.component';
+import { UpsertExpensePaymentComponent } from './presentation/upsert-expense-payment/upsert-expense-payment.component';
 
 const routes: Routes = [
   {
@@ -12,20 +14,28 @@ const routes: Routes = [
     children: [
       {
         path: '',
-        redirectTo: 'all-payments',
+        redirectTo: 'income-payments',
         pathMatch: 'full',
       },
       {
-        path: 'all-payments',
-        component: PaymentListComponent,
+        path: 'income-payments',
+        component: IncomePaymentListComponent,
       },
       {
-        path: 'create-payment',
-        component: UpsertPaymentComponent,
+        path: 'expense-payments',
+        component: ExpensePaymentListComponent,
       },
       {
-        path: 'create-payment/:idTenant',
-        component: UpsertPaymentComponent,
+        path: 'create-expense-payment',
+        component: UpsertExpensePaymentComponent,
+      },
+      {
+        path: 'create-income-payment',
+        component: UpsertIncomePaymentComponent,
+      },
+      {
+        path: 'create-income-payment/:idTenant',
+        component: UpsertIncomePaymentComponent,
       },
       {
         path: 'payment-details/:id',

@@ -10,10 +10,21 @@
         class="form-control search-input"
         (click)="showModal()"
         [value]="selectedValue"
-        placeholder="Chercher un local..."
+        [placeholder]="searchInputPlaceholder"
         readonly
         type="text"
       />
+      <div *ngIf="selectedValue" class="input-group-append">
+        <button
+          type="button"
+          class="input-group-text clear-search-btn"
+          title="Effacer"
+          aria-label="Effacer"
+          (click)="clearSelectedValue()"
+        >
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
     </div>
   </div>
 </div>
@@ -34,6 +45,7 @@
             </div>
 
             <input
+              #modalSearchInput
               (focus)="focus = true"
               (blur)="focus = false"
               [value]="searchInputValue"
@@ -42,6 +54,18 @@
               class="form-control"
               type="text"
             />
+
+            <div *ngIf="modalSearchInput.value" class="input-group-append">
+              <button
+                type="button"
+                class="input-group-text clear-search-btn"
+                title="Effacer la recherche"
+                aria-label="Effacer la recherche"
+                (click)="clearSearch(modalSearchInput)"
+              >
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
 
             <div
               *ngIf="suffixIcon"
@@ -57,7 +81,7 @@
           <div class="d-flex align-items-center mt-3">
             <ng-container *ngIf="!isLoadingFetchingApartments">
               <small *ngIf="totalLength > 0" class="text-muted">
-                <i class="ni ni-single-02 mr-1"></i>
+                <i class="fas fa-building mr-1"></i>
                 {{ totalLength }} local(s) trouvé(s)
               </small>
               <small *ngIf="totalLength === 0" class="text-muted">

@@ -2,10 +2,13 @@ import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { QueryStringBuilder } from '@core/query-string-builder/query-string-builder';
+import { Agreement } from '@dashboard/agreement/entity/agreement';
 import { AgreeementMapper } from '@dashboard/agreement/mappers/agreement.mapper';
 import { AgreementService } from '@dashboard/agreement/service/agreement.service';
+import { Apartment } from '@dashboard/apartment/entity/Apartment';
 import { ApartmentMapper } from '@dashboard/apartment/mappers/apartment-mapper';
 import { ApartmentService } from '@dashboard/apartment/service/apartment.service';
+import { Property } from '@dashboard/property/entity/property';
 import { Tenant } from '@dashboard/tenant/entity/tenant';
 import { TenantMapper } from '@dashboard/tenant/mappers/tenant-mapper';
 import { TenantService } from '@dashboard/tenant/service/tenant.service';
@@ -46,14 +49,11 @@ export class TenantsListComponent implements OnInit {
   filtersFormGroup: FormGroup;
   searchApartmentValue: string = '';
   searchAgreementValue: string = '';
+  searchPropertyValue: string = '';
 
   constructor(
     private formBuilder: FormBuilder,
     private confirmDialogService: ConfirmDialogService,
-    private apartmentService: ApartmentService,
-    private agreementService: AgreementService,
-    private agreeementMapper: AgreeementMapper,
-    private apartmentMapper: ApartmentMapper,
     private queryStringBuilder: QueryStringBuilder,
     private router: Router,
     private tenantService: TenantService,
@@ -63,6 +63,7 @@ export class TenantsListComponent implements OnInit {
       searchTerm: new FormControl(''),
       apartmentId: new FormControl(''),
       agreementId: new FormControl(''),
+      propertyId: new FormControl(''),
       tenantAgreement: new FormControl(''),
       tenantProperty: new FormControl(''),
     });
@@ -101,55 +102,20 @@ export class TenantsListComponent implements OnInit {
 
   exportAllEmployeeIsLoading = false;
 
-  onSearchApartmentValueChanged(searchValue?: string) {
-    const params = {
-      ...(searchValue && { searchTerm: searchValue }),
-      limit: `${defaultSearchLimit}`,
-    };
-
-    const queryString = new URLSearchParams(params).toString();
-
-    this.apartmentService.getAllApartments(`?${queryString}`).subscribe({
-      next: (value) => {
-        const apartments = ApartmentMapper.mapApartments(value.body.apartments);
-        this.apartmentOptions = apartments.map((item) => ({
-          id: item.id,
-          title: `${apartmentPrefix}${item.matricule} - ${item.address}`,
-        }));
-      },
-    });
-  }
-
   onSelectedStatusTenantSearchItem(searchResult: SearchResult) {
     this.filtersFormGroup.get('statusTenant')?.setValue(searchResult.id);
   }
 
-  onSelectedApartmentSearchItem(searchResult: SearchResult) {
-    this.filtersFormGroup.get('apartmentId')?.setValue(searchResult.id);
+  onSelectedApartmentSearchItem(apartment: Apartment | undefined) {
+    this.filtersFormGroup.get('apartmentId')?.setValue(apartment?.id ?? '');
   }
 
-  onSearchAgreementValueChanged(searchValue?: string) {
-    const params = {
-      ...(searchValue && { searchTerm: searchValue }),
-      limit: `${defaultSearchLimit}`,
-    };
-
-    const queryString = new URLSearchParams(params).toString();
-
-    this.agreementService.getAllAgreement(`?${queryString}`).subscribe({
-      next: (value) => {
-        const agreements = this.agreeementMapper.mapAgreements(
-          value.body.agreements,
-        );
-        this.agreementOptions = agreements.map((item) => ({
-          id: item.id,
-          title: `${item.matricule}`,
-        }));
-      },
-    });
+  onSelectedAgreementSearchItem(agreement: Agreement | undefined) {
+    this.filtersFormGroup.get('agreementId')?.setValue(agreement?.id ?? '');
   }
-  onSelectedAgreementSearchItem(searchResult: SearchResult) {
-    this.filtersFormGroup.get('agreementId')?.setValue(searchResult.id);
+
+  onSelectedPropertySearchItem(property: Property | undefined) {
+    this.filtersFormGroup.get('propertyId')?.setValue(property?.id ?? '');
   }
 
   clearInputValue = false;
@@ -171,7 +137,7 @@ export class TenantsListComponent implements OnInit {
     page: number,
     pageSize: number,
     filters?: Record<string, string>,
-    useCache = true,
+    useCache = false,
   ) {
     this.isLoadingFetchingTenants = true;
     const urlParameters = this.queryStringBuilder.create(

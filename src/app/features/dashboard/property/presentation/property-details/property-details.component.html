@@ -291,7 +291,7 @@
           <thead>
             <tr>
               <th scope="col">DATE</th>
-              <th scope="col">COMPTES</th>
+              <th scope="col">APART.</th>
               <th class="text-center" scope="col">LIBELLES</th>
               <th scope="col">DEBIT</th>
               <th scope="col">CREDIT</th>
@@ -328,14 +328,11 @@
                 <h4>{{ payment.paymentDate | date: "dd/MM/yyyy" }}</h4>
               </th>
               <td>
-                <h4>{{ payment.account }}</h4>
+                <h4>{{ payment.apartment?.idNumber }}</h4>
               </td>
               <td>
                 <div *ngIf="payment.type == 'income'" class="row">
-                  <div class="col-6">
-                    <h4>{{ payment.tenant?.fullname }}</h4>
-                  </div>
-                  <div class="col-6">
+                  <div class="col-12">
                     <h4 style="white-space: normal">{{ payment.reason }}</h4>
 
                     <h4 *ngIf="payment.extraCharge" style="white-space: normal">

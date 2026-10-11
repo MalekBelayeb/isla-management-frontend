@@ -56,7 +56,9 @@ export class UpsertPropertyComponent implements OnInit {
       if (this.propertyDetails) {
         this.formGroup.get('address')?.setValue(this.propertyDetails?.address);
         this.formGroup.get('type')?.setValue(this.propertyDetails?.type);
-        this.formGroup.get('ownerId')?.setValue(this.propertyDetails?.owner?.id);
+        this.formGroup
+          .get('ownerId')
+          ?.setValue(this.propertyDetails?.owner?.id);
         this.formGroup
           .get('profitInPercentage')
           ?.setValue(this.propertyDetails?.profitInPercentage);
@@ -80,12 +82,11 @@ export class UpsertPropertyComponent implements OnInit {
 
   searchOwnerValue: string = '';
 
-  onSelectedOwnerSearchItem(owner: Owner) {
-    this.formGroup.get('ownerId')?.setValue(owner.id);
+  onSelectedOwnerSearchItem(owner: Owner | undefined) {
+    this.formGroup.get('ownerId')?.setValue(owner?.id);
   }
 
   onSelectedPropertyTypeSearchItem(searchResult: SearchResult) {
-    console.log(searchResult);
     this.formGroup.get('type')?.setValue(searchResult.id);
   }
 

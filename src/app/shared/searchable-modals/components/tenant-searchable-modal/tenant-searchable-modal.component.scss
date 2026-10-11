@@ -1,7 +1,7 @@
 $primary: #5e72e4;
 $danger: #f5365c;
-$text-dark: #32325d;
-$text-muted: #8898aa;
+$text-dark: #12122e;
+$text-muted: #4a586c;
 $border: #e9ecef;
 
 .search-wrapper {
@@ -38,10 +38,27 @@ $border: #e9ecef;
     }
   }
 
+  .input-group .input-group-append .clear-search-btn {
+    padding-left: 0.5rem;
+    padding-right: 1rem;
+  }
+
   &.focused .input-group {
     background: #fff;
     border-color: $primary;
     box-shadow: 0 0 0 3px rgba(94, 114, 228, 0.1);
+  }
+}
+
+/* Clear (x) button inside the trigger and modal search inputs */
+.clear-search-btn {
+  border-left: none;
+  background: transparent;
+  color: $text-muted;
+  cursor: pointer;
+
+  &:hover {
+    color: $text-dark;
   }
 }
 

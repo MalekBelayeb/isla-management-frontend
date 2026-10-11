@@ -13,7 +13,6 @@ import { SearchResult } from '../../../search-input/search-input.component';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BsDropdownDirective } from 'ngx-bootstrap/dropdown';
 import { Router } from '@angular/router';
-import { SearchModalResultType } from '@shared/searchable-modals/types/search-modal-result.type';
 import { AgreementService } from '@dashboard/agreement/service/agreement.service';
 import { AgreeementMapper } from '@dashboard/agreement/mappers/agreement.mapper';
 import { Agreement } from '@dashboard/agreement/entity/agreement';
@@ -26,7 +25,7 @@ import { apartmentPrefix } from 'src/app/variables/consts';
   styleUrls: ['./agreement-searchable-modal.component.scss'],
   providers: [BsDropdownDirective],
 })
-export class AgreementSearchableModalComponent implements OnInit {
+export class AgreementSearchableModalComponent implements OnInit, OnChanges {
   @ViewChild('modalSearch') modalSearch?: TemplateRef<void>;
   searchModal?: BsModalRef;
 
@@ -36,13 +35,16 @@ export class AgreementSearchableModalComponent implements OnInit {
 
   @Input() prefixIcon?: string = 'fas fa-search';
   @Input() searchInputValue = '';
+  // Text shown in the trigger input; set by the consumer or on agreement selection
+  @Input() selectedValue = '';
   @Input() suffixIcon?: string;
   @Input() errorText?: string;
   @Input() searchResult: SearchResult[] = [];
 
   @Output() cancelClicked = new EventEmitter<void>();
-  @Output() agreementClicked = new EventEmitter<SearchModalResultType>();
+  @Output() agreementClicked = new EventEmitter<Agreement | undefined>();
 
+  @Input() searchInputPlaceholder = 'Chercher un contrat...';
   @Input() searchPlaceholder = 'Chercher par locataire, local, propriétaire...';
   searchResultIsLoading = false;
 
@@ -75,6 +77,17 @@ export class AgreementSearchableModalComponent implements OnInit {
   isLoadingFetchingAgreements = false;
 
   ngOnInit(): void {}
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['searchResult'] && !changes['searchResult'].firstChange) {
+      this.searchResult = changes['searchResult'].currentValue;
+      this.isEmptyResult = this.searchResult.length == 0;
+      this.searchResultIsLoading = false;
+    }
+
+    if (changes['clearInput'] && !changes['clearInput'].firstChange) {
+      this.searchInputValue = '';
+    }
+  }
 
   showModal() {
     this.searchModal = this.modalService.show(this.modalSearch!, {
@@ -99,12 +112,31 @@ export class AgreementSearchableModalComponent implements OnInit {
     }, this.debounceDelay);
   }
 
-  onItemClick(agreement: Agreement) {
-    this.agreementClicked.emit({
-      id: agreement.id,
-      label: `${agreement.matricule} - ${apartmentPrefix}${agreement.apartment.matricule} - ${agreement.apartment.address}`,
-    });
-    this.hideModal();
+  onAgreementClicked(agreement: Agreement) {
+    // An @Output always exists; `observed` tells whether a parent bound (agreementClicked)
+    if (this.agreementClicked.observed) {
+      this.selectedValue = `${agreement.matricule} - ${apartmentPrefix}${agreement.apartment.matricule} - ${agreement.apartment.address}`;
+      this.agreementClicked.emit(agreement);
+      this.hideModal();
+    } else {
+      this.moveToAgreementDetails(agreement.id);
+    }
+  }
+
+  clearSelectedValue() {
+    this.selectedValue = '';
+    this.searchValue.emit('');
+    this.agreementClicked.emit(undefined);
+  }
+
+  clearSearch(input: HTMLInputElement) {
+    if (this.timerId) {
+      clearTimeout(this.timerId);
+    }
+    input.value = '';
+    input.focus();
+    this.clearSelectedValue();
+    this.searchValueChanged('');
   }
 
   onCancel() {
@@ -130,7 +162,7 @@ export class AgreementSearchableModalComponent implements OnInit {
     page: number,
     pageSize: number,
     searchTerm?: string,
-    useCache = true,
+    useCache = false,
   ) {
     this.isLoadingFetchingAgreements = true;
 

@@ -40,8 +40,9 @@ export class ApartmentSearchableModalComponent implements OnInit, OnChanges {
   @Input() searchResult: SearchResult[] = [];
 
   @Output() cancelClicked = new EventEmitter<void>();
-  @Output() apartmentClicked = new EventEmitter<Apartment>();
+  @Output() apartmentClicked = new EventEmitter<Apartment | undefined>();
 
+  @Input() searchInputPlaceholder = 'Chercher un local...';
   @Input() searchPlaceholder = 'Chercher par adresse du local';
   searchResultIsLoading = false;
 
@@ -108,7 +109,7 @@ export class ApartmentSearchableModalComponent implements OnInit, OnChanges {
 
   moveToPaymentDetails(id: string) {
     const url = this.router.serializeUrl(
-      this.router.createUrlTree([`/dashboard/payment/create-payment/${id}`]),
+      this.router.createUrlTree([`/dashboard/payment/create-income-payment/${id}`]),
     );
 
     window.open(url, '_blank');
@@ -126,6 +127,22 @@ export class ApartmentSearchableModalComponent implements OnInit, OnChanges {
     }, this.debounceDelay);
   }
 
+  clearSelectedValue() {
+    this.selectedValue = '';
+    this.searchValue.emit('');
+    this.apartmentClicked.emit(undefined);
+  }
+
+  clearSearch(input: HTMLInputElement) {
+    if (this.timerId) {
+      clearTimeout(this.timerId);
+    }
+    input.value = '';
+    input.focus();
+    this.clearSelectedValue();
+    this.searchValueChanged('');
+  }
+
   onCancel() {
     this.cancelClicked.emit();
     this.hideModal();
@@ -140,7 +157,7 @@ export class ApartmentSearchableModalComponent implements OnInit, OnChanges {
     page: number,
     pageSize: number,
     searchTerm?: string,
-    useCache = true,
+    useCache = false,
   ) {
     this.isLoadingFetchingApartments = true;
     const urlParameters = new URLSearchParams({

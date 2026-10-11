@@ -61,25 +61,12 @@ export class ApartmentDetailsComponent implements OnInit {
       this.getAllPaymentByApartmentPage,
       this.getAllPaymentByApartmentPageSize,
     );
-    //this.getFinancialBalance();
   }
 
   getApartmentId(): string {
     return this.route.snapshot.paramMap.get('id') ?? '';
   }
 
-  getFinancialBalance() {
-    const params = {
-      apartmentId: this.getApartmentId(),
-    };
-
-    const queryString = new URLSearchParams(params).toString();
-    this.paymentService.getFinancialBalance(`?${queryString}`).subscribe({
-      next: (value) => {
-        this.financialBalance = PaymentMapper.mapFinancialBalance(value.body);
-      },
-    });
-  }
 
   getApartmentDetails() {
     this.apartmentService.getApartment(this.getApartmentId()).subscribe({
@@ -112,7 +99,7 @@ export class ApartmentDetailsComponent implements OnInit {
     page: number,
     pageSize: number,
     filters?: Record<string, string>,
-    useCache = true,
+    useCache = false,
   ) {
     this.isLoadingFetchingAgreements = true;
     const params = {
@@ -164,7 +151,7 @@ export class ApartmentDetailsComponent implements OnInit {
     page: number,
     pageSize: number,
     filters?: Record<string, string>,
-    useCache = true,
+    useCache = false,
   ) {
     this.isLoadingFetchingPayments = true;
     const params = {

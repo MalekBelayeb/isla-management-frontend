@@ -32,7 +32,7 @@
 .owners-title {
   font-size: 1rem;
   font-weight: 700;
-  color: #32325d;
+  color: #12122e;
   letter-spacing: 0.01em;
 }
 
@@ -79,7 +79,7 @@
   border-left: none;
   background: #ffffff;
   font-size: 0.875rem;
-  color: #32325d;
+  color: #12122e;
   border-radius: 0 0.375rem 0.375rem 0;
   transition: box-shadow 0.2s ease, border-color 0.2s ease;
 }
@@ -130,13 +130,13 @@
 .empty-title {
   font-size: 0.975rem;
   font-weight: 700;
-  color: #32325d;
+  color: #12122e;
   margin-bottom: 0.35rem;
 }
 
 .empty-subtitle {
   font-size: 0.85rem;
-  color: #8898aa;
+  color: #4a586c;
   margin-bottom: 1.25rem;
   max-width: 340px;
 }
@@ -185,7 +185,7 @@
 .modal-title-text {
   font-size: 0.975rem;
   font-weight: 700;
-  color: #32325d;
+  color: #12122e;
 }
 
 .modal-table thead th {
@@ -193,7 +193,7 @@
   font-weight: 700;
   letter-spacing: 0.07em;
   text-transform: uppercase;
-  color: #8898aa;
+  color: #4a586c;
   white-space: nowrap;
 }
 

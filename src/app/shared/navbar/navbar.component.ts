@@ -12,10 +12,10 @@ import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { SearchResult } from '../search-input/search-input.component';
 import { ConfirmDialogService } from '../confirm-dialog/confirm-dialog.service';
-import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { ToastAlertService } from '../toast-alert/toast-alert.service';
 import { DASHBOARD_ROUTES } from '@shared/sidebar/sidebar.component';
 import { User } from '@models/user';
+import { UserService } from '@auth/service/user.service';
 
 interface NotificationModel {
   id: string;
@@ -51,6 +51,7 @@ export class NavbarComponent implements OnInit {
     private router: Router,
     private confirmDialogService: ConfirmDialogService,
     private toastAlertService: ToastAlertService,
+    private userService: UserService,
   ) {
     this.location = location;
   }

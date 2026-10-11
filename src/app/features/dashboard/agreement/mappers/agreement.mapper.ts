@@ -11,6 +11,7 @@ import { GetOwnerDetailsMapper } from '@dashboard/owner/mappers/get-owner-detail
 import { PropertyMapper } from '@dashboard/property/mappers/property-mapper';
 import { TenantMapper } from '@dashboard/tenant/mappers/tenant-mapper';
 import { ApartmentMapper } from '@dashboard/apartment/mappers/apartment-mapper';
+import { PaymentMapper } from '@dashboard/payment/mappers/payment-mapper';
 
 @Injectable({ providedIn: 'root' })
 export class AgreeementMapper {
@@ -35,6 +36,10 @@ export class AgreeementMapper {
       documentUrl: data.documentUrl,
       firstDayOfPayment: data.firstDayOfPayment,
       notes: data.notes,
+      payment:
+        data.payments?.length > 0
+          ? PaymentMapper.mapPaymentDetails(data.payments[0])
+          : undefined,
       apartment: data.apartment
         ? ApartmentMapper.mapApartmentDetails(data.apartment)
         : undefined,

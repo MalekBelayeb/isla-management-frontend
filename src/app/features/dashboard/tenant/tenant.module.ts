@@ -27,6 +27,7 @@ import { SharedModule } from '@shared/shared.module';
     ReactiveFormsModule,
     PaginationModule.forRoot(),
     SearchInputModule,
+    SharedModule,
   ],
 })
 export class TenantModule {}

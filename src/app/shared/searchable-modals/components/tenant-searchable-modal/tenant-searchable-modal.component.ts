@@ -37,7 +37,9 @@ export class TenantSearchableModalComponent implements OnInit, OnChanges {
   @Input() searchResult: SearchResult[] = [];
 
   @Output() cancelClicked = new EventEmitter<void>();
-  @Output() tenantClicked = new EventEmitter<Tenant>();
+  @Output() tenantClicked = new EventEmitter<Tenant | undefined>();
+
+  @Input() searchInputPlaceholder = 'Chercher un locataire...';
 
   @Input() searchPlaceholder =
     'Chercher par tél, cin, prénom et nom, email, address...';
@@ -110,7 +112,7 @@ export class TenantSearchableModalComponent implements OnInit, OnChanges {
 
   moveToPaymentDetails(id: string) {
     const url = this.router.serializeUrl(
-      this.router.createUrlTree([`/dashboard/payment/create-payment/${id}`]),
+      this.router.createUrlTree([`/dashboard/payment/create-income-payment/${id}`]),
     );
 
     window.open(url, '_blank');
@@ -128,6 +130,22 @@ export class TenantSearchableModalComponent implements OnInit, OnChanges {
     }, this.debounceDelay);
   }
 
+  clearSelectedValue() {
+    this.selectedValue = '';
+    this.searchValue.emit('');
+    this.tenantClicked.emit(undefined);
+  }
+
+  clearSearch(input: HTMLInputElement) {
+    if (this.timerId) {
+      clearTimeout(this.timerId);
+    }
+    input.value = '';
+    input.focus();
+    this.clearSelectedValue();
+    this.searchValueChanged('');
+  }
+
   onCancel() {
     this.cancelClicked.emit();
     this.hideModal();
@@ -142,7 +160,7 @@ export class TenantSearchableModalComponent implements OnInit, OnChanges {
     page: number,
     pageSize: number,
     searchTerm?: string,
-    useCache = true,
+    useCache = false,
   ) {
     this.isLoadingFetchingTenants = true;
 

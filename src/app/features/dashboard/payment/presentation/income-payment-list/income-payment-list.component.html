@@ -4,23 +4,24 @@
     <div class="d-flex align-items-center justify-content-between flex-wrap">
       <div class="d-flex align-items-center">
         <div class="payments-header-icon mr-3">
-          <i class="fas fa-exchange-alt"></i>
+          <i class="fas fa-arrow-up"></i>
         </div>
         <div>
-          <h3 class="mb-0 payments-title">Liste des mouvements</h3>
+          <h3 class="mb-0 payments-title">Recettes</h3>
           <p class="text-muted text-sm mb-0 mt-1">
             <span class="payments-count-badge">{{ totalLength }}</span>
-            mouvement(s) de caisse au total
+            encaissement(s) — loyers, charges, cautions et autres
           </p>
         </div>
       </div>
       <a
-        class="btn btn-primary btn-sm btn-round btn-icon add-btn"
+        class="btn btn-success btn-sm btn-round btn-icon add-btn"
         href="javascript:void(0)"
-        routerLink="../create-payment"
+        routerLink="../create-income-payment"
+        [queryParams]="{ type: 'income' }"
       >
         <span class="btn-inner--icon"><i class="ni ni-fat-add"></i></span>
-        <span class="btn-inner--text">Créer un mouvement de caisse</span>
+        <span class="btn-inner--text">Nouvelle recette</span>
       </a>
     </div>
   </div>
@@ -29,120 +30,21 @@
   <div class="payments-filter-section">
     <form [formGroup]="filtersFormGroup" (ngSubmit)="filterPayments()">
       <!-- Row 1 -->
-      <div class="row">
-        <div class="col-md-3">
-          <div class="form-group" [ngClass]="{ focused: focus2 === true }">
-            <label class="filter-label">N° Contrat</label>
-            <div class="input-group input-group-merge">
-              <div class="input-group-prepend">
-                <span class="input-group-text prefix-text">{{
-                  agreementPrefix
-                }}</span>
-              </div>
-              <input
-                class="form-control"
-                [ngClass]="{ focused: focus2 === true }"
-                type="number"
-                min="1"
-                formControlName="paymentAgreement"
-                placeholder="Num contrat"
-                (focus)="focus2 = true"
-                (blur)="focus2 = false"
-              />
-            </div>
-          </div>
-        </div>
-
-        <div class="col-md-3">
-          <div class="form-group" [ngClass]="{ focused: focus3 === true }">
-            <label class="filter-label">N° Dossier</label>
-            <div class="input-group input-group-merge">
-              <div class="input-group-prepend">
-                <span class="input-group-text prefix-text">{{
-                  propertyPrefix
-                }}</span>
-              </div>
-              <input
-                class="form-control"
-                [ngClass]="{ focused: focus3 === true }"
-                type="number"
-                min="1"
-                formControlName="paymentProperty"
-                placeholder="Num dossier"
-                (focus)="focus3 = true"
-                (blur)="focus3 = false"
-              />
-            </div>
-          </div>
-        </div>
-
-        <div class="col-md-3">
-          <div class="form-group">
-            <label class="filter-label">Locataire</label>
-            <app-search-input
-              [clearInput]="false"
-              [prefixIcon]="'fas fa-user'"
-              [searchPlaceholder]="'Filtrer par locataire'"
-              [searchLabel]="'Résultats'"
-              [triggerSearchOnOpen]="true"
-              (searchValue)="onSearchTenantValueChanged($event)"
-              [searchInputValue]="searchTenantValue"
-              (selectedResultItem)="onSelectedTenantSearchItem($event)"
-              [searchResult]="tenantOptions"
-            ></app-search-input>
-          </div>
-        </div>
-
-        <div class="col-md-3">
-          <div class="form-group">
-            <label class="filter-label">Propriétaire</label>
-            <app-search-input
-              [clearInput]="false"
-              [prefixIcon]="'fas fa-user-tie'"
-              [searchPlaceholder]="'Filtrer par propriétaire'"
-              [searchLabel]="'Résultats'"
-              [maxSize]="5"
-              [triggerSearchOnOpen]="true"
-              (searchValue)="onSearchOwnerValueChanged($event)"
-              [searchInputValue]="searchOwnerValue"
-              (selectedResultItem)="onSelectedOwnerSearchItem($event)"
-              [searchResult]="ownerOptions"
-            ></app-search-input>
-          </div>
-        </div>
-      </div>
 
       <!-- Row 2 -->
       <div class="row">
         <div class="col-md-6">
           <div class="form-group">
-            <label class="filter-label">Période</label>
-            <app-date-range-picker
-              (startDate)="onStartDateChange($event)"
-              (endDate)="onEndDateChange($event)"
-            ></app-date-range-picker>
+            <label class="filter-label">Locataire</label>
+            <app-tenant-searchable-modal
+              [searchInputPlaceholder]="'Filtrer par locataire'"
+              [selectedValue]="searchTenantValue"
+              (tenantClicked)="onSelectedTenantSearchItem($event)"
+            />
           </div>
         </div>
 
-        <div class="col-md-3">
-          <div class="form-group">
-            <label class="filter-label">Type de paiement</label>
-            <app-search-input
-              [clearInput]="false"
-              [prefixIcon]="'fas fa-tags'"
-              [searchPlaceholder]="'Filtrer par type'"
-              [searchLabel]="'Résultats'"
-              [prefixText]="'Type:'"
-              [maxSize]="4"
-              [searchInputValue]="paymentTypeSearchValue.title"
-              (selectedResultItem)="onSelectedPaymentTypeSearchItem($event)"
-              [searchResult]="paymentTypes"
-              [isEditable]="false"
-            ></app-search-input>
-          </div>
-        </div>
-
-        <div class="col-md-3">
+        <div class="col-md-6">
           <div class="form-group">
             <label class="filter-label">Méthode de paiement</label>
             <app-search-input
@@ -162,7 +64,51 @@
           </div>
         </div>
       </div>
+      <div class="row">
+        <div class="col-md-3">
+          <div class="form-group" [ngClass]="{ focused: focus2 === true }">
+            <label class="filter-label">Contrat</label>
+            <app-agreement-searchable-modal
+              [searchInputPlaceholder]="'Filtrer par contrat'"
+              [selectedValue]="searchAgreementValue"
+              (agreementClicked)="onSelectedAgreementSearchItem($event)"
+            />
+          </div>
+        </div>
 
+        <div class="col-md-3">
+          <div class="form-group" [ngClass]="{ focused: focus3 === true }">
+            <label class="filter-label">Propriété (Bien)</label>
+            <app-property-searchable-modal
+              [searchInputPlaceholder]="'Filtrer par propriété (Bien)'"
+              [selectedValue]="searchPropertyValue"
+              (propertyClicked)="onSelectedPropertySearchItem($event)"
+            />
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="form-group">
+            <label class="filter-label">Local</label>
+            <app-apartment-searchable-modal
+              [searchInputPlaceholder]="'Filtrer par local'"
+              [selectedValue]="searchApartmentValue"
+              (apartmentClicked)="onSelectedApartmentSearchItem($event)"
+            />
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="form-group">
+            <label class="filter-label">Propriétaire</label>
+            <app-owner-searchable-modal
+              [searchInputPlaceholder]="'Filtrer par propriétaire'"
+              [selectedValue]="searchOwnerValue"
+              (ownerClicked)="onSelectedOwnerSearchItem($event)"
+            />
+          </div>
+        </div>
+      </div>
       <!-- Filter actions -->
       <div class="d-flex justify-content-end">
         <button class="btn btn-primary filter-btn" type="submit">
@@ -182,17 +128,17 @@
       <div class="empty-icon-wrapper">
         <i class="fas fa-exchange-alt"></i>
       </div>
-      <h5 class="empty-title">Aucun mouvement trouvé</h5>
+      <h5 class="empty-title">Aucune opération trouvée</h5>
       <p class="empty-subtitle">
-        Modifiez vos critères de recherche ou créez un nouveau mouvement de
-        caisse.
+        Modifiez vos critères de recherche ou créez une nouvelle opération de
+        recette.
       </p>
       <a
         class="btn btn-outline-primary btn-sm btn-round"
         href="javascript:void(0)"
-        routerLink="../create-payment"
+        routerLink="../create-income-payment"
       >
-        <i class="ni ni-fat-add mr-1"></i>Créer un mouvement
+        <i class="ni ni-fat-add mr-1"></i>Créer une opération de recette
       </a>
     </div>
 
@@ -204,19 +150,17 @@
     >
       <thead class="thead-light">
         <tr>
-          <th>Num contrat</th>
-          <th>Libellé</th>
           <th>Locataire</th>
+          <th>Libellé</th>
+          <th>Montant (TND)</th>
+          <th>Catégorie</th>
+          <th>Période couverte</th>
+          <th>Date de paiement</th>
+          <th>Méthode</th>
+          <th>Num contrat</th>
           <th>Local</th>
           <th>Propriété (Bien)</th>
           <th>Propriétaire</th>
-          <th>Montant (TND)</th>
-          <th>Type</th>
-          <th>Catégorie</th>
-          <th>Période couverte</th>
-          <th>Méthode</th>
-          <th>Fréquence de paiement</th>
-          <th>Date de paiement</th>
           <th>Date de création</th>
           <th></th>
         </tr>
@@ -238,7 +182,6 @@
           <td><div class="skel skel-text" style="width: 70px"></div></td>
           <td><div class="skel skel-text" style="width: 80px"></div></td>
           <td><div class="skel skel-text" style="width: 80px"></div></td>
-          <td><div class="skel skel-text" style="width: 80px"></div></td>
           <td></td>
         </tr>
       </tbody>
@@ -247,27 +190,10 @@
       <tbody *ngIf="!isLoadingFetchingPayments">
         <tr *ngFor="let payment of payments">
           <td style="cursor: pointer" (click)="redirectToDetails(payment.id)">
-            <span class=""> {{ payment.agreement?.matricule }} </span>
-          </td>
-          <td style="cursor: pointer" (click)="redirectToDetails(payment.id)">
-            <span class=""> {{ payment.label }} </span>
-          </td>
-          <td style="cursor: pointer" (click)="redirectToDetails(payment.id)">
             <span class=""> {{ payment.tenant?.fullname }} </span>
           </td>
           <td style="cursor: pointer" (click)="redirectToDetails(payment.id)">
-            <span class="">
-              {{ payment.apartment?.idNumber }} -
-              {{ payment.apartment?.address }}
-            </span>
-          </td>
-          <td style="cursor: pointer" (click)="redirectToDetails(payment.id)">
-            <span class="">
-              {{ payment.property?.idNumber }} - {{ payment.property?.address }}
-            </span>
-          </td>
-          <td style="cursor: pointer" (click)="redirectToDetails(payment.id)">
-            <span class=""> {{ payment.owner?.fullname }} </span>
+            <span class=""> {{ payment.label }} </span>
           </td>
           <td
             style="cursor: pointer"
@@ -288,31 +214,9 @@
               {{ payment.amount | number: "1.3-3" }} TND
             </b>
           </td>
-          <td
-            style="cursor: pointer"
-            (click)="redirectToDetails(payment.id)"
-            class="table-user"
-          >
-            <div class="col-auto">
-              <span
-                *ngIf="payment.type == 'income'"
-                class="badge badge-lg badge-success"
-              >
-                Recette
-              </span>
-
-              <span
-                *ngIf="payment.type == 'expense'"
-                class="badge badge-lg badge-warning"
-              >
-                Dépense
-              </span>
-            </div>
-          </td>
           <td style="cursor: pointer" (click)="redirectToDetails(payment.id)">
             <span class=""> {{ payment.category }} </span>
           </td>
-
           <td style="cursor: pointer" (click)="redirectToDetails(payment.id)">
             <span class="">
               {{ payment.rentStartDate | date: "dd/MM/yyyy" }} -
@@ -320,17 +224,32 @@
             </span>
           </td>
           <td style="cursor: pointer" (click)="redirectToDetails(payment.id)">
-            <span class=""> {{ payment.method }} </span>
-          </td>
-
-          <td style="cursor: pointer" (click)="redirectToDetails(payment.id)">
-            <span class=""> {{ payment.payementFrequency }} </span>
-          </td>
-          <td style="cursor: pointer" (click)="redirectToDetails(payment.id)">
             <span class="">
               {{ payment.paymentDate | date: "dd/MM/yyyy" }}
             </span>
           </td>
+          <td style="cursor: pointer" (click)="redirectToDetails(payment.id)">
+            <span class=""> {{ payment.method }} </span>
+          </td>
+          <td style="cursor: pointer" (click)="redirectToDetails(payment.id)">
+            <span class=""> {{ payment.agreement?.matricule }} </span>
+          </td>
+
+          <td style="cursor: pointer" (click)="redirectToDetails(payment.id)">
+            <span class="">
+              {{ payment.apartment?.idNumber }} -
+              {{ payment.apartment?.address }}
+            </span>
+          </td>
+          <td style="cursor: pointer" (click)="redirectToDetails(payment.id)">
+            <span class="">
+              {{ payment.property?.idNumber }} - {{ payment.property?.address }}
+            </span>
+          </td>
+          <td style="cursor: pointer" (click)="redirectToDetails(payment.id)">
+            <span class=""> {{ payment.owner?.fullname }} </span>
+          </td>
+
           <td style="cursor: pointer" (click)="redirectToDetails(payment.id)">
             <span class=""> {{ payment.createdAt | date: "dd/MM/yyyy" }} </span>
           </td>
@@ -355,9 +274,9 @@
   <div class="card-footer payments-footer py-4">
     <div class="d-flex align-items-center justify-content-between flex-wrap">
       <span class="pagination-info text-muted">
-        Total : <strong>{{ totalLength }}</strong> mouvement(s)
+        Total : <strong>{{ totalLength }}</strong> opération(s)
       </span>
-      <nav aria-label="Pagination des mouvements">
+      <nav aria-label="Pagination des opérations">
         <pagination
           [totalItems]="totalLength"
           [itemsPerPage]="pageSize"

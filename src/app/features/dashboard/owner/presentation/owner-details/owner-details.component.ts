@@ -73,24 +73,10 @@ export class OwnerDetailsComponent implements OnInit {
       { ownerId: this.getOwnerId() },
       false,
     );
-    this.getFinancialBalance();
   }
 
   getOwnerId(): string {
     return this.route.snapshot.paramMap.get('id') ?? '';
-  }
-
-  getFinancialBalance() {
-    const params = {
-      ownerId: this.getOwnerId(),
-    };
-
-    const queryString = new URLSearchParams(params).toString();
-    this.paymentService.getFinancialBalance(`?${queryString}`).subscribe({
-      next: (value) => {
-        this.financialBalance = PaymentMapper.mapFinancialBalance(value.body);
-      },
-    });
   }
 
   propertyOptions: SearchResult[] = [];
@@ -143,7 +129,7 @@ export class OwnerDetailsComponent implements OnInit {
     page: number,
     pageSize: number,
     filters?: Record<string, string>,
-    useCache = true,
+    useCache = false,
   ) {
     this.isLoadingFetchingProperties = true;
     const params = { page: `${page}`, limit: `${pageSize}`, ...filters };

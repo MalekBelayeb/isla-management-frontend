@@ -76,7 +76,6 @@ export class PaymentMapper {
   }
 
   static mapPaymentReceipeDetails(data: any): PaymentReceiptDetails {
-    console.log(data);
     const owner = data.property?.owner
       ? GetOwnerDetailsMapper.fromResponse(data.property?.owner)
       : undefined;
@@ -184,6 +183,7 @@ export class PaymentMapper {
       return item.label;
     }
 
+    if (item.category != 'rent') return '';
     return `${
       DataTypes.incomePaymentCategoryList.find(
         (category) => category.id === item.category,

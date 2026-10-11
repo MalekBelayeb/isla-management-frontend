@@ -11,6 +11,7 @@ import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.componen
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { ConfirmDialogService } from './confirm-dialog/confirm-dialog.service';
 import { DateShiftPipe } from '@core/pipes/date-shift.pipe';
+import { AmountInWordsPipe } from '@core/pipes/amount-in-words.pipe';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TenantSearchableModalComponent } from './searchable-modals/components/tenant-searchable-modal/tenant-searchable-modal.component';
 import { AgreementSearchableModalComponent } from './searchable-modals/components/agreement-searchable-modal/agreement-searchable-modal.component';
@@ -21,6 +22,7 @@ import { OwnerSearchableModalComponent } from './searchable-modals/components/ow
 @NgModule({
   declarations: [
     DateShiftPipe,
+    AmountInWordsPipe,
     FooterComponent,
     NavbarComponent,
     SidebarComponent,
@@ -36,6 +38,7 @@ import { OwnerSearchableModalComponent } from './searchable-modals/components/ow
     NavbarComponent,
     SidebarComponent,
     DateShiftPipe,
+    AmountInWordsPipe,
     TenantSearchableModalComponent,
     AgreementSearchableModalComponent,
     ApartmentSearchableModalComponent,

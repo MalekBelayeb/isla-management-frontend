@@ -8,13 +8,24 @@
       </div>
       <input
         class="form-control search-input"
+        [class.is-invalid]="!!errorText"
         (click)="showModal()"
-        placeholder="Chercher un contrat..."
+        [value]="selectedValue"
+        [placeholder]="searchInputPlaceholder"
         readonly
-        [(ngModel)]="searchInputValue"
-        [ngClass]="'focused is-invalid'"
         type="text"
       />
+      <div *ngIf="selectedValue" class="input-group-append">
+        <button
+          type="button"
+          class="input-group-text clear-search-btn"
+          title="Effacer"
+          aria-label="Effacer"
+          (click)="clearSelectedValue()"
+        >
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
     </div>
     <div *ngIf="errorText" class="error-text">{{ errorText }}.</div>
   </div>
@@ -36,6 +47,7 @@
             </div>
 
             <input
+              #modalSearchInput
               (focus)="focus = true"
               (blur)="focus = false"
               [value]="searchInputValue"
@@ -45,6 +57,18 @@
               type="text"
               autocomplete="off"
             />
+
+            <div *ngIf="modalSearchInput.value" class="input-group-append">
+              <button
+                type="button"
+                class="input-group-text modal-search-icon clear-search-btn"
+                title="Effacer la recherche"
+                aria-label="Effacer la recherche"
+                (click)="clearSearch(modalSearchInput)"
+              >
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
 
             <div *ngIf="suffixIcon" class="input-group-append">
               <span class="input-group-text modal-search-icon">
@@ -166,24 +190,25 @@
         <tr
           *ngFor="let agreement of agreements"
           style="cursor: pointer; vertical-align: middle"
+          (click)="onAgreementClicked(agreement)"
         >
-          <td (click)="onItemClick(agreement)" class="pl-4">
+          <td class="pl-4">
             <span class="font-weight-bold">{{ agreement.matricule }}</span>
           </td>
-          <td (click)="onItemClick(agreement)">
+          <td>
             {{ agreement.tenant.fullname }}
           </td>
-          <td (click)="onItemClick(agreement)">
+          <td>
             {{ agreement.apartment.idNumber }} -
             {{ agreement.apartment.address }}
           </td>
-          <td (click)="onItemClick(agreement)">
+          <td>
             {{ agreement.property.idNumber }} - {{ agreement.property.address }}
           </td>
-          <td (click)="onItemClick(agreement)">
+          <td>
             {{ agreement.owner.fullname }}
           </td>
-          <td (click)="onItemClick(agreement)">
+          <td>
             <span
               *ngIf="agreement.status == 'ACTIVE'"
               class="badge badge-lg badge-success"
@@ -198,14 +223,19 @@
               Suspendu
             </span>
           </td>
-          <td (click)="onItemClick(agreement)">
+          <td>
             {{ agreement.startDate | date: "dd/MM/yyyy" }}
           </td>
 
-          <td (click)="onItemClick(agreement)" style="white-space: nowrap">
+          <td style="white-space: nowrap">
             {{ agreement.createdAt | date: "dd/MM/yyyy" }}
           </td>
-          <td class="pr-3" style="white-space: nowrap">
+          <!-- Actions menu must not trigger the row click -->
+          <td
+            class="pr-3"
+            style="white-space: nowrap"
+            (click)="$event.stopPropagation()"
+          >
             <li class="nav-item dropdown" dropdown placement="bottom-right">
               <button
                 dropdownToggle

@@ -39,8 +39,9 @@ export class PropertySearchableModalComponent implements OnInit, OnChanges {
   @Input() searchResult: SearchResult[] = [];
 
   @Output() cancelClicked = new EventEmitter<void>();
-  @Output() propertyClicked = new EventEmitter<Property>();
+  @Output() propertyClicked = new EventEmitter<Property | undefined>();
 
+  @Input() searchInputPlaceholder = 'Chercher une propriété...';
   @Input() searchPlaceholder = 'Chercher par adresse de la propriété';
   searchResultIsLoading = false;
 
@@ -117,6 +118,22 @@ export class PropertySearchableModalComponent implements OnInit, OnChanges {
     }, this.debounceDelay);
   }
 
+  clearSelectedValue() {
+    this.selectedValue = '';
+    this.searchValue.emit('');
+    this.propertyClicked.emit(undefined);
+  }
+
+  clearSearch(input: HTMLInputElement) {
+    if (this.timerId) {
+      clearTimeout(this.timerId);
+    }
+    input.value = '';
+    input.focus();
+    this.clearSelectedValue();
+    this.searchValueChanged('');
+  }
+
   onCancel() {
     this.cancelClicked.emit();
     this.hideModal();
@@ -130,7 +147,7 @@ export class PropertySearchableModalComponent implements OnInit, OnChanges {
     page: number,
     pageSize: number,
     searchTerm?: string,
-    useCache = true,
+    useCache = false,
   ) {
     this.isLoadingFetchingProperties = true;
     const urlParameters = new URLSearchParams({

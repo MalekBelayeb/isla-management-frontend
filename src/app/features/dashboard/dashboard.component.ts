@@ -23,17 +23,7 @@ export class DashboardComponent implements OnInit {
   fetchUserIsLoading = false;
 
   ngOnInit(): void {
-    this.user = {
-      id: '',
-      email: '',
-      firstname: '',
-      lastname: '',
-      societyId: '',
-      societyLogo: 'isla-immobiliere-logo.png',
-      societyName: 'ISLA Immobilière',
-      type: 'admin',
-      webSite: '',
-    };
+    this.user = this.userService.getUser();
   }
 
   logoutUser() {

@@ -1,0 +1,268 @@
+<div class="card">
+  <div class="card-header">
+    <div class="row align-items-center">
+      <div class="col-8">
+        <h3 class="mb-0">Extraction du reçu</h3>
+      </div>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="form-group row">
+      <div class="row d-flex w-100 justify-content-end">
+        <a
+          style="cursor: pointer"
+          class="btn btn-link text-primary p-0"
+          (click)="(exportExpenseVoucherToPdf)"
+        >
+          <i class="fas fa-file-export mr-1"></i>Exporter sous format PDF
+        </a>
+      </div>
+    </div>
+
+    <div class="expense-voucher-wrapper" #expenseVoucher>
+      <style>
+        /* ========================================== PAGE WRAPPER ========================================== */
+
+        .expense-voucher-wrapper {
+          display: flex;
+          justify-content: center;
+          padding: 40px;
+          background: #f5f6fa;
+        }
+
+        /* ========================================== DOCUMENT ========================================== */
+
+        .expense-voucher {
+          width: 850px;
+          min-height: 1100px;
+          background: #ffffff;
+          padding: 50px 70px;
+          box-sizing: border-box;
+          font-family: "Times New Roman", serif;
+          color: #000;
+          box-shadow: 0 5px 25px rgba(0, 0, 0, 0.08);
+        }
+
+        /* ========================================== HEADER ========================================== */
+
+        .expense-voucher .voucher-header {
+          display: grid;
+          grid-template-columns: 220px 1fr 220px;
+          align-items: start;
+          gap: 25px;
+        }
+
+        .expense-voucher .voucher-company {
+          text-align: center;
+        }
+
+        .expense-voucher .voucher-logo img {
+          width: 170px;
+          max-width: 100%;
+          height: auto;
+        }
+
+        .expense-voucher .voucher-company-address {
+          margin-top: 12px;
+          font-size: 16px;
+          line-height: 1.7;
+        }
+
+        .expense-voucher .voucher-title-box {
+          height: 60px;
+          border: 4px solid #444;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 24px;
+          font-weight: bold;
+          letter-spacing: 1px;
+        }
+
+        .expense-voucher .voucher-amount-box {
+          display: flex;
+          align-items: center;
+          gap: 15px;
+          border-bottom: 3px solid #444;
+          padding-bottom: 8px;
+          margin-top: 15px;
+          font-size: 20px;
+          font-weight: bold;
+        }
+
+        /* ========================================== META ========================================== */
+
+        .expense-voucher .voucher-meta {
+          width: 180px;
+          margin-left: auto;
+          margin-top: 80px;
+        }
+
+        .expense-voucher .voucher-meta-row {
+          display: flex;
+          gap: 12px;
+          margin-bottom: 12px;
+          font-size: 18px;
+        }
+
+        .expense-voucher .voucher-meta-row strong {
+          font-weight: bold;
+        }
+
+        /* ========================================== CONTENT ========================================== */
+
+        .expense-voucher .voucher-content {
+          margin-top: 80px;
+        }
+
+        .expense-voucher .voucher-row {
+          display: flex;
+          align-items: flex-start;
+          margin-bottom: 40px;
+          font-size: 18px;
+        }
+
+        .expense-voucher .voucher-label {
+          width: 180px;
+          flex-shrink: 0;
+          font-weight: bold;
+          white-space: nowrap;
+        }
+
+        .expense-voucher .voucher-separator {
+          width: 30px;
+          text-align: center;
+          font-weight: bold;
+        }
+
+        .expense-voucher .voucher-value {
+          flex: 1;
+          line-height: 1.6;
+        }
+
+        /* ========================================== FOOTER ========================================== */
+
+        .expense-voucher .voucher-footer {
+          margin-top: 180px;
+          display: flex;
+          justify-content: flex-end;
+        }
+
+        .expense-voucher .voucher-signature-section {
+          width: 280px;
+          text-align: center;
+        }
+
+        .expense-voucher .voucher-date {
+          font-size: 18px;
+          margin-bottom: 35px;
+        }
+
+        .expense-voucher .voucher-signature-title {
+          font-size: 18px;
+          font-weight: bold;
+        }
+
+        /* ========================================== BOTTOM LINE ========================================== */
+
+        .expense-voucher .voucher-bottom-line {
+          width: 350px;
+          border-bottom: 2px solid #555;
+          margin-top: 120px;
+        }
+
+        /* ========================================== PRINT ========================================== */
+
+        @media print {
+          .expense-voucher-wrapper {
+            padding: 0;
+            background: white;
+          }
+
+          .expense-voucher {
+            width: 100%;
+            min-height: auto;
+            box-shadow: none;
+            margin: 0;
+            padding: 40px;
+          }
+        }
+      </style>
+      <div class="expense-voucher">
+        <!-- HEADER -->
+        <div class="voucher-header">
+          <div class="voucher-company">
+            <div class="voucher-logo">
+              <img
+                src="https://backoffice.isla-immobiliere.tn/assets/img/isla-immobiliere-logo.png"
+                alt="Logo"
+              />
+            </div>
+
+            <div class="voucher-company-address">
+              <div>26, Rue de Koweït Tunis</div>
+              <div>Tél : 5643943</div>
+            </div>
+          </div>
+
+          <div class="voucher-title-box">DEPENSE</div>
+
+          <div class="voucher-amount-box">
+            <span>P.D :</span>
+            <span
+              >{{ paymentReceiptDetails?.amount | number: "1.3-3" }} TND</span
+            >
+          </div>
+        </div>
+
+        <!-- NUMBER -->
+        <div class="voucher-meta">
+          <div class="voucher-meta-row">
+            <span>Num Dossier:</span>
+            <strong>{{ paymentReceiptDetails?.propertyNumber }}</strong>
+          </div>
+        </div>
+
+        <!-- CONTENT -->
+        <div class="voucher-content">
+          <div class="voucher-row">
+            <div class="voucher-label">BENEFICIAIRE</div>
+            <div class="voucher-separator">:</div>
+            <div class="voucher-value">
+              {{ paymentReceiptDetails?.recipientName }}
+            </div>
+          </div>
+
+          <div class="voucher-row">
+            <div class="voucher-label">LA SOMME DE</div>
+            <div class="voucher-separator">:</div>
+            <div class="voucher-value">
+              {{ paymentReceiptDetails?.amount | amountInWords }}
+            </div>
+          </div>
+
+          <div class="voucher-row">
+            <div class="voucher-label">A TITRE DE</div>
+            <div class="voucher-separator">:</div>
+            <div class="voucher-value">
+              {{ paymentReceiptDetails?.paymentLabel }}
+            </div>
+          </div>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="voucher-footer">
+          <div class="voucher-signature-section">
+            <div class="voucher-date">
+              TUNIS LE {{ todayDate | date: "dd/MM/yyyy" }}
+            </div>
+
+            <div class="voucher-signature-title">Signature :</div>
+          </div>
+        </div>
+
+        <div class="voucher-bottom-line"></div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,545 @@
+<div class="card">
+  <div class="card-header">
+    <h3 *ngIf="paymentDetails" class="mb-0">Modifier opération de recette</h3>
+    <ng-container>
+      <small> <i class="fas fa-arrow-up text-success mr-1"> </i> Recette</small>
+    </ng-container>
+
+    <h3 *ngIf="!paymentDetails" class="mb-0">Créer une opération de recette</h3>
+  </div>
+
+  <div class="card-body">
+    <form [formGroup]="incomeFormGroup" (ngSubmit)="upsertPayment()">
+      <div class="form-group row">
+        <label
+          class="col-md-2 col-form-label form-control-label"
+          for="example-text-input"
+        >
+          Montant total en DT (TTC) <span class="text-danger">*</span>
+        </label>
+
+        <div class="col-md-10">
+          <div class="input-group input-group-merge">
+            <input
+              formControlName="amount"
+              class="form-control"
+              id="example-text-input"
+              placeholder=""
+              type="number"
+              value=""
+              [ngClass]="{
+                focused: focus1 === true,
+                'is-invalid':
+                  submitted &&
+                  incomeFormGroup.controls['amount'].errors?.['required'],
+              }"
+              (focus)="focus1 = true"
+              (blur)="focus1 = false"
+            />
+          </div>
+          <div
+            *ngIf="
+              submitted &&
+              incomeFormGroup.controls['amount'].errors?.['required']
+            "
+            class="error-text"
+          >
+            Champs incorrect, Montant est obligatoire.
+          </div>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label
+          class="col-md-2 col-form-label form-control-label"
+          for="example-text-input"
+        >
+          Charge en DT
+        </label>
+
+        <div class="col-md-10">
+          <div class="input-group input-group-merge">
+            <input
+              formControlName="extraCharge"
+              class="form-control"
+              id="example-text-input"
+              placeholder=""
+              type="number"
+              value=""
+              [ngClass]="{
+                focused: focus12 === true,
+              }"
+              (focus)="focus12 = true"
+              (blur)="focus12 = false"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label
+          class="col-md-2 col-form-label form-control-label"
+          for="example-text-input"
+        >
+          Catégorie de paiement <span class="text-danger">*</span>
+        </label>
+
+        <div class="col-md-10">
+          <app-search-input
+            [clearInput]="false"
+            [searchInputValue]="searchIncomePaymentCategoryValue"
+            [prefixIcon]="'fas fa-search'"
+            [searchPlaceholder]="'Catégorie de paiement'"
+            [searchLabel]="'Résultats'"
+            [maxSize]="3"
+            [isInvalid]="
+              submitted &&
+              incomeFormGroup.controls['category'].errors?.['required']
+            "
+            [errorMessage]="
+              'Champs incorrect, Catégorie de paiment est obligatoire'
+            "
+            (selectedResultItem)="selectedPaymentCategory($event)"
+            [searchResult]="incomePaymentCategoryList"
+            [isEditable]="false"
+          ></app-search-input>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label
+          class="col-md-2 col-form-label form-control-label"
+          for="example-text-input"
+        >
+          Libellé
+        </label>
+
+        <div class="col-md-10">
+          <div class="input-group input-group-merge">
+            <input
+              formControlName="label"
+              class="form-control"
+              id="example-text-input"
+              placeholder=""
+              type="text"
+              value=""
+              (focus)="focus1 = true"
+              (blur)="focus1 = false"
+            />
+          </div>
+        </div>
+      </div>
+      <div
+        *ngIf="incomeFormGroup.get('category')?.value === 'rent'"
+        class="row mb-4"
+      >
+        <label
+          class="col-md-2 col-form-label form-control-label"
+          for="example-time-input"
+        >
+          Période couverte <span class="text-danger">*</span>
+        </label>
+        <div class="col-md-10">
+          <div
+            *ngIf="agreement"
+            class="last-rent-payment-reminder mb-3"
+            role="status"
+          >
+            <ng-container
+              *ngIf="agreement.payment as lastPayment; else noLastRentPayment"
+            >
+              <div class="d-flex align-items-center mb-2">
+                <i class="fas fa-history text-info mr-2"></i>
+                <span class="font-weight-bold">Dernier loyer payé</span>
+              </div>
+              <div class="row">
+                <div class="col-sm-6 mb-1">
+                  <small class="text-muted d-block">Période couverte</small>
+                  <span
+                    *ngIf="
+                      lastPayment.rentStartDate && lastPayment.rentEndDate;
+                      else noPeriod
+                    "
+                  >
+                    Du {{ lastPayment.rentStartDate | date: "dd/MM/yyyy" }} au
+                    {{ lastPayment.rentEndDate | date: "dd/MM/yyyy" }}
+                  </span>
+                  <ng-template #noPeriod>
+                    <span class="text-muted">Non renseignée</span>
+                  </ng-template>
+                </div>
+                <div class="col-sm-6 mb-1">
+                  <small class="text-muted d-block">Montant</small>
+                  <span>{{ lastPayment.amount }} DT</span>
+                </div>
+                <div class="col-sm-6 mb-1">
+                  <small class="text-muted d-block">Date du paiement</small>
+                  <span>{{
+                    lastPayment.paymentDate | date: "dd/MM/yyyy"
+                  }}</span>
+                </div>
+                <div class="col-sm-6 mb-1">
+                  <small class="text-muted d-block">Méthode</small>
+                  <span>{{ lastPayment.method }}</span>
+                </div>
+              </div>
+            </ng-container>
+            <ng-template #noLastRentPayment>
+              <div class="d-flex align-items-center">
+                <i class="fas fa-info-circle text-info mr-2"></i>
+                <span>
+                  Aucun paiement de loyer précédent
+                  <ng-container *ngIf="agreement.startDate">
+                    — début du contrat le
+                    {{ agreement.startDate | date: "dd/MM/yyyy" }}
+                  </ng-container>
+                </span>
+              </div>
+            </ng-template>
+          </div>
+          <app-date-range-picker
+            [startDateValue]="incomeFormGroup.controls['rentStartDate']?.value"
+            [endDateValue]="incomeFormGroup.controls['rentEndDate']?.value"
+            (startDate)="onStartDateChange($event)"
+            (endDate)="onEndDateChange($event)"
+            [startDateErrorMessage]="
+              'Champs incorrect, Date de début est obligatoire'
+            "
+            [endDateErrorMessage]="
+              'Champs incorrect, Date de fin est obligatoire'
+            "
+          ></app-date-range-picker>
+          <small class="text-muted font-weight-light">
+            Période concernée par le paiement, ex: ce paiement couvre la période
+            du 1er au 31 octobre 2025
+          </small>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label
+          class="col-md-2 col-form-label form-control-label"
+          for="example-text-input"
+        >
+          Méthode de paiment <span class="text-danger">*</span>
+        </label>
+
+        <div class="col-md-10">
+          <app-search-input
+            [clearInput]="false"
+            [searchInputValue]="searchIncomePaymentMethodValue"
+            [prefixIcon]="'fas fa-search'"
+            [searchPlaceholder]="'Methode de paiment'"
+            [searchLabel]="'Résultats'"
+            [maxSize]="3"
+            [isInvalid]="
+              submitted &&
+              incomeFormGroup.controls['methods']?.errors?.['required']
+            "
+            [errorMessage]="
+              'Champs incorrect, Méthode de paiment est obligatoire'
+            "
+            (selectedResultItem)="selectedPaymentMethod($event)"
+            [searchResult]="paymentMethodTypeList"
+            [isEditable]="false"
+          ></app-search-input>
+        </div>
+      </div>
+      <div
+        *ngIf="incomeFormGroup.get('method')?.value == 'check'"
+        class="form-group row"
+      >
+        <label
+          class="col-md-2 col-form-label form-control-label"
+          for="example-text-input"
+        >
+          Banque <span class="text-danger">*</span>
+        </label>
+
+        <div class="col-md-10">
+          <div class="input-group input-group-merge">
+            <input
+              formControlName="bank"
+              class="form-control"
+              id="example-text-input"
+              placeholder=""
+              type="text"
+              [ngClass]="{
+                focused: focus1 === true,
+                'is-invalid':
+                  submitted && incomeFormGroup.errors?.['bankFieldIsRequired'],
+              }"
+              (focus)="focus10 = true"
+              (blur)="focus10 = false"
+            />
+          </div>
+
+          <div
+            *ngIf="submitted && incomeFormGroup.errors?.['bankFieldIsRequired']"
+            class="error-text"
+          >
+            Champs incorrect, Banque est obligatoire.
+          </div>
+        </div>
+      </div>
+      <div
+        *ngIf="incomeFormGroup.get('method')?.value == 'check'"
+        class="form-group row"
+      >
+        <label
+          class="col-md-2 col-form-label form-control-label"
+          for="example-text-input"
+        >
+          Numéro de chéque <span class="text-danger">*</span>
+        </label>
+
+        <div class="col-md-10">
+          <div class="input-group input-group-merge">
+            <input
+              formControlName="checkNumber"
+              class="form-control"
+              id="example-text-input"
+              type="text"
+              [ngClass]="{
+                focused: focus1 === true,
+                'is-invalid':
+                  submitted &&
+                  incomeFormGroup.errors?.['checkNumberFieldIsIncorrect'],
+              }"
+              (focus)="focus9 = true"
+              (blur)="focus9 = false"
+            />
+          </div>
+          <div
+            *ngIf="
+              submitted &&
+              incomeFormGroup.errors?.['checkNumberFieldIsIncorrect']
+            "
+            class="error-text"
+          >
+            Champs incorrect, Numéro de chéque est incorrect.
+          </div>
+        </div>
+      </div>
+      <div
+        *ngIf="incomeFormGroup.get('method')?.value == 'transfer'"
+        class="form-group row"
+      >
+        <label
+          class="col-md-2 col-form-label form-control-label"
+          for="example-text-input"
+        >
+          Numéro de virement <span class="text-danger">*</span>
+        </label>
+
+        <div class="col-md-10">
+          <div class="input-group input-group-merge">
+            <input
+              formControlName="transferNumber"
+              class="form-control"
+              id="example-text-input"
+              type="text"
+              [ngClass]="{
+                focused: focus1 === true,
+                'is-invalid':
+                  submitted &&
+                  incomeFormGroup.errors?.['transferNumberFieldIsIncorrect'],
+              }"
+              (focus)="focus11 = true"
+              (blur)="focus11 = false"
+            />
+          </div>
+          <div
+            *ngIf="
+              submitted &&
+              incomeFormGroup.errors?.['transferNumberFieldIsIncorrect']
+            "
+            class="error-text"
+          >
+            Champs incorrect, Numéro de virement est incorrect.
+          </div>
+        </div>
+      </div>
+      <div class="row mb-4">
+        <label
+          class="col-md-2 col-form-label form-control-label"
+          for="example-time-input"
+        >
+          Contrat
+          <span
+            *ngIf="this.incomeFormGroup.get('category')?.value === 'rent'"
+            class="text-danger"
+            >*</span
+          >
+        </label>
+        <div class="col-md-10">
+          <app-agreement-searchable-modal
+            [selectedValue]="searchAgreementValue"
+            [errorText]="
+              submitted &&
+              incomeFormGroup.controls['agreementId']?.errors?.['required']
+                ? 'Champs incorrect, contrat est obligatoire'
+                : ''
+            "
+            (agreementClicked)="onAgreementSelected($event)"
+          ></app-agreement-searchable-modal>
+          <small
+            *ngIf="
+              !(
+                submitted &&
+                incomeFormGroup.controls['agreementId']?.errors?.['required']
+              )
+            "
+            class="text-muted font-weight-light"
+          >
+            Cliquez pour lancer une recherche avancée
+          </small>
+        </div>
+      </div>
+
+      <div class="row mb-4">
+        <label
+          class="col-md-2 col-form-label form-control-label"
+          for="example-datetime-local-input"
+        >
+          Date du mouvement <span class="text-danger">*</span>
+        </label>
+
+        <div class="col-md-10">
+          <app-date-range-picker
+            [startDateValue]="incomeFormGroup.controls['paymentDate'].value"
+            (startDate)="onPaymentDateChange($event)"
+            [startDateInvalid]="
+              submitted &&
+              incomeFormGroup.controls['paymentDate']?.errors?.['required']
+            "
+            [startDateErrorMessage]="
+              'Champs incorrect, Date de début est obligatoire'
+            "
+            [useSingleInputDate]="true"
+            [isTodayMinDate]="false"
+          ></app-date-range-picker>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label
+          class="col-md-2 col-form-label form-control-label"
+          for="example-text-input"
+        >
+          TVA
+        </label>
+
+        <div class="col-md-10">
+          <div class="input-group">
+            <div class="row ml-1 mb-1">
+              <div
+                style="cursor: pointer"
+                class="custom-control custom-radio mb-3"
+                (click)="onChangeWithTaxType(true)"
+              >
+                <input
+                  class="custom-control-input"
+                  id="customRadio13"
+                  [checked]="withTax"
+                  type="radio"
+                />
+
+                <label
+                  class="custom-control-label"
+                  style="padding-left: 12px; padding-top: 12px"
+                  for="customRadio13"
+                >
+                  Avec TVA
+                </label>
+              </div>
+
+              <div
+                style="cursor: pointer"
+                class="custom-control custom-radio ml-4 mb-3"
+                (click)="onChangeWithTaxType(false)"
+              >
+                <input
+                  class="custom-control-input"
+                  id="customRadio12"
+                  [checked]="!withTax"
+                  type="radio"
+                />
+
+                <label
+                  class="custom-control-label"
+                  style="padding-left: 12px; padding-top: 12px"
+                  for="customRadio12"
+                >
+                  Sans TVA
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="withTax" class="form-group row">
+        <label
+          class="col-md-2 col-form-label form-control-label"
+          for="example-text-input"
+        >
+          Taux TVA (%)
+        </label>
+
+        <div class="col-md-10">
+          <div class="input-group input-group-merge">
+            <input
+              formControlName="tva"
+              class="form-control"
+              id="example-text-input"
+              placeholder=""
+              type="number"
+              min="1"
+              value=""
+              (focus)="focus1 = true"
+              (blur)="focus1 = false"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="form-group row mt-4">
+        <label
+          class="col-md-2 col-form-label form-control-label"
+          for="example-text-input"
+        >
+          Notes
+        </label>
+
+        <div class="col-md-10">
+          <div class="input-group input-group-merge">
+            <textarea
+              formControlName="notes"
+              class="form-control"
+              id="example-text-input"
+              type="text"
+              value=""
+              rows="4"
+              placeholder="Description"
+              (focus)="focus7 = true"
+              (blur)="focus7 = false"
+            ></textarea>
+          </div>
+        </div>
+      </div>
+      <hr />
+
+      <div class="mt-5 d-flex w-100 flex-row justify-content-end">
+        <button *ngIf="!isLoading" class="btn btn-primary" type="submit">
+          Confirmer
+        </button>
+        <div
+          *ngIf="isLoading"
+          class="spinner-border text-primary mr-5"
+          role="status"
+        ></div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<ng-container *ngIf="paymentId">
+  <app-receipt-income-payment
+    [paymentId]="paymentId"
+  ></app-receipt-income-payment>
+</ng-container>

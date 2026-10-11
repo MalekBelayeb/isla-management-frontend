@@ -3,9 +3,9 @@ import {
   Input,
   OnInit,
   SimpleChanges,
-  TemplateRef,
   ViewChild,
 } from '@angular/core';
+import { ReceiptExpensePaymentComponent } from '@dashboard/payment/presentation/receipt-expense-payment/receipt-expense-payment.component';
 import {
   FormBuilder,
   FormControl,
@@ -21,26 +21,24 @@ import {
 } from '@core/form-validators/form-validators';
 import { Agreement } from '@dashboard/agreement/entity/agreement';
 import { AgreementDetails } from '@dashboard/agreement/entity/agreement-details';
-import { AgreeementMapper } from '@dashboard/agreement/mappers/agreement.mapper';
-import { AgreementService } from '@dashboard/agreement/service/agreement.service';
 import { PaymentDetails } from '@dashboard/payment/entity/payment-details';
 import { PaymentService } from '@dashboard/payment/service/payment.service';
+import { RentPaymentPeriodService } from '@dashboard/payment/service/rent-payment-period.service';
 import { Property } from '@dashboard/property/entity/property';
 import { TenantMapper } from '@dashboard/tenant/mappers/tenant-mapper';
 import { TenantService } from '@dashboard/tenant/service/tenant.service';
 import { DataTypes } from '@models/data';
 import { SearchResult } from '@shared/search-input/search-input.component';
-import { SearchModalResultType } from '@shared/searchable-modals/types/search-modal-result.type';
 import { ToastAlertService } from '@shared/toast-alert/toast-alert.service';
-import { defaultSearchLimit, propertyPrefix } from 'src/app/variables/consts';
+import { propertyPrefix } from 'src/app/variables/consts';
 
 @Component({
-  selector: 'app-upsert-payment',
-  templateUrl: './upsert-payment.component.html',
-  styleUrl: './upsert-payment.component.css',
+  selector: 'app-upsert-expense-payment',
+  templateUrl: './upsert-expense-payment.component.html',
+  styleUrl: './upsert-expense-payment.component.css',
 })
-export class UpsertPaymentComponent implements OnInit {
-  incomeFormGroup: FormGroup;
+export class UpsertExpensePaymentComponent implements OnInit {
+
   expenseFormGroup: FormGroup;
 
   submitted = false;
@@ -61,6 +59,10 @@ export class UpsertPaymentComponent implements OnInit {
   withTax: boolean = false;
 
   @Input() paymentDetails?: PaymentDetails;
+  paymentId?: string;
+
+  @ViewChild(ReceiptExpensePaymentComponent)
+  receiptExpenseComponent?: ReceiptExpensePaymentComponent;
 
   agreement?: AgreementDetails;
 
@@ -74,8 +76,8 @@ export class UpsertPaymentComponent implements OnInit {
     private paymentService: PaymentService,
     private tenantService: TenantService,
     private toastAlertService: ToastAlertService,
+    private rentPaymentPeriodService: RentPaymentPeriodService,
   ) {
-    this.incomeFormGroup = this.formBuilder.group({});
     this.expenseFormGroup = this.formBuilder.group({});
     this.setFormToDefaultState();
   }
@@ -101,43 +103,9 @@ export class UpsertPaymentComponent implements OnInit {
   searchIncomePaymentMethodValue: string = this.paymentMethodTypeList[0].title;
   searchExpensePaymentMethodValue: string = this.paymentMethodTypeList[0].title;
 
-  agreementSearchModalResult?: SearchModalResultType;
   propertySelectedValue = '';
 
   setFormToDefaultState() {
-    this.incomeFormGroup = this.formBuilder.group(
-      {
-        amount: new FormControl('', Validators.required),
-        extraCharge: new FormControl(0),
-        label: new FormControl(''),
-        rentStartDate: new FormControl(''),
-        rentEndDate: new FormControl(''),
-        paymentDate: new FormControl(''),
-        category: new FormControl(
-          this.incomePaymentCategoryList[0].id,
-          Validators.required,
-        ),
-        method: new FormControl(
-          this.paymentMethodTypeList[0].id,
-          Validators.required,
-        ),
-        agreementId: new FormControl('', Validators.required),
-        tva: new FormControl(19),
-        notes: new FormControl(''),
-        bank: new FormControl(''),
-        checkNumber: new FormControl(''),
-        transferNumber: new FormControl(''),
-      },
-      {
-        validators: [
-          agreementIdFieldRequiredIfcategoryIsRentValidator,
-          bankFieldRequiredIfMethodIsCheckValidator,
-          checkNumberFieldRequiredIfMethodIsCheckValidator,
-          transferNumberFieldRequiredIfMethodIsTransferValidator,
-        ],
-      },
-    );
-
     this.expenseFormGroup = this.formBuilder.group(
       {
         amount: new FormControl('', Validators.required),
@@ -151,10 +119,7 @@ export class UpsertPaymentComponent implements OnInit {
           this.paymentMethodTypeList[0].id,
           Validators.required,
         ),
-        propertyId: new FormControl(
-          '',
-          this.paymentType === 'expense' ? Validators.required : null,
-        ),
+        propertyId: new FormControl('', Validators.required),
         notes: new FormControl(''),
         bank: new FormControl(''),
         checkNumber: new FormControl(''),
@@ -172,72 +137,19 @@ export class UpsertPaymentComponent implements OnInit {
     this.setDefaultStartDateAndEndDate();
   }
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['paymentDetails'] && !changes['paymentDetails'].firstChange) {
+    // No firstChange guard: the parent renders this form only once paymentDetails
+    // is loaded, so the value already arrives on the first change
+    if (changes['paymentDetails']) {
       this.paymentDetails = changes['paymentDetails'].currentValue;
+      this.paymentId = this.paymentDetails?.id;
 
       if (this.paymentDetails) {
         this.paymentType = this.paymentDetails.type as typeof this.paymentType;
-        const categoryId =
-          DataTypes.incomePaymentCategoryList.find((item) => {
-            return item.title === this.paymentDetails?.category;
-          })?.id ?? '';
+
         const paymentMethodId =
           DataTypes.paymentMethodTypeList.find((item) => {
             return item.title === this.paymentDetails?.method;
           })?.id ?? '';
-        if (this.paymentType === 'income') {
-          this.incomeFormGroup
-            .get('amount')
-            ?.setValue(this.paymentDetails?.amount);
-          this.incomeFormGroup
-            .get('extraCharge')
-            ?.setValue(this.paymentDetails?.extraCharge);
-          this.incomeFormGroup.get('method')?.setValue(paymentMethodId);
-          this.incomeFormGroup
-            .get('label')
-            ?.setValue(this.paymentDetails?.label);
-          this.incomeFormGroup
-            .get('rentStartDate')
-            ?.setValue(
-              this.paymentDetails?.rentStartDate?.toString().split('T')[0],
-            );
-          this.incomeFormGroup
-            .get('rentEndDate')
-            ?.setValue(
-              this.paymentDetails?.rentEndDate?.toString().split('T')[0],
-            );
-          this.incomeFormGroup.get('type')?.setValue(this.paymentDetails?.type);
-          this.incomeFormGroup.get('tva')?.setValue(this.paymentDetails?.tva);
-          this.incomeFormGroup.get('bank')?.setValue(this.paymentDetails?.bank);
-          this.incomeFormGroup
-            .get('checkNumber')
-            ?.setValue(this.paymentDetails?.checkNumber ?? '');
-          this.incomeFormGroup
-            .get('transferNumber')
-            ?.setValue(this.paymentDetails?.transferNumber ?? '');
-
-          this.incomeFormGroup.get('category')?.setValue(categoryId);
-          this.incomeFormGroup
-            .get('agreementId')
-            ?.setValue(this.paymentDetails?.agreementId);
-
-          this.incomeFormGroup
-            .get('paymentDate')
-            ?.setValue(
-              this.paymentDetails?.paymentDate.toString().split('T')[0],
-            );
-          this.incomeFormGroup
-            .get('notes')
-            ?.setValue(this.paymentDetails?.notes);
-
-          this.searchIncomePaymentCategoryValue = this.paymentDetails?.category;
-
-          this.searchIncomePaymentMethodValue =
-            this.paymentDetails?.method ?? '';
-          
-          this.searchAgreementValue = `${this.paymentDetails.agreement} - ${this.paymentDetails.apartment}`
-          this.withTax = !!this.paymentDetails.tva;
-        }
 
         if (
           this.paymentType === 'expense' ||
@@ -292,17 +204,17 @@ export class UpsertPaymentComponent implements OnInit {
   }
 
   selectedPaymentCategory(resultItem: SearchResult) {
-    this.activeForm.get('category')?.setValue(resultItem.id);
+    this.expenseFormGroup.get('category')?.setValue(resultItem.id);
     if (resultItem.id !== 'rent') {
-      this.activeForm.get('rentStartDate')?.setValue(undefined);
-      this.activeForm.get('rentEndDate')?.setValue(undefined);
+      this.expenseFormGroup.get('rentStartDate')?.setValue(undefined);
+      this.expenseFormGroup.get('rentEndDate')?.setValue(undefined);
     } else {
-      this.setDefaultRentStartDateAndRentEndDate();
+      this.setRentIntervalToCurrentMonth();
     }
   }
 
   selectedPaymentMethod(resultItem: SearchResult) {
-    this.activeForm.get('method')?.setValue(resultItem.id);
+    this.expenseFormGroup.get('method')?.setValue(resultItem.id);
     this.submitted = false;
   }
 
@@ -319,13 +231,7 @@ export class UpsertPaymentComponent implements OnInit {
     this.withTax = $event;
   }
 
-  get activeForm(): FormGroup {
-    return this.paymentType === 'income'
-      ? this.incomeFormGroup
-      : this.expenseFormGroup;
-  }
-
-  setDefaultRentStartDateAndRentEndDate() {
+  setRentIntervalToCurrentMonth() {
     const now = new Date();
 
     const startDate = new Date(
@@ -346,11 +252,6 @@ export class UpsertPaymentComponent implements OnInit {
     ).toLocaleDateString('en-CA', {
       timeZone: 'Africa/Tunis',
     });
-    this.incomeFormGroup
-      .get('rentStartDate')
-      ?.setValue(startDate.split('T')[0]);
-
-    this.incomeFormGroup.get('rentEndDate')?.setValue(endDate.split('T')[0]);
   }
 
   setDefaultPaymentDate() {
@@ -358,16 +259,24 @@ export class UpsertPaymentComponent implements OnInit {
     const todayDate = now.toLocaleDateString('en-CA', {
       timeZone: 'Africa/Tunis',
     });
-    this.incomeFormGroup.get('paymentDate')?.setValue(todayDate.split('T')[0]);
     this.expenseFormGroup.get('paymentDate')?.setValue(todayDate.split('T')[0]);
   }
 
   setDefaultStartDateAndEndDate() {
-    this.setDefaultRentStartDateAndRentEndDate();
     this.setDefaultPaymentDate();
   }
 
   ngOnInit(): void {
+    // Edit mode: keep the values filled by ngOnChanges
+    if (this.paymentDetails) return;
+
+    // Preselect the type when coming from the income or expense list
+    const type = this.route.snapshot.queryParamMap.get('type');
+    if (!this.paymentDetails && type === 'expense') {
+      this.paymentType = 'expense';
+      this.setFormToDefaultState();
+    }
+
     this.setDefaultStartDateAndEndDate();
 
     this.setAgreementByTenant();
@@ -379,69 +288,53 @@ export class UpsertPaymentComponent implements OnInit {
       this.tenantService.getTenant(idTenant).subscribe({
         next: (value) => {
           this.agreement = TenantMapper.mapTenantDetails(value.body).agreement;
-          this.incomeFormGroup
-            .get('amount')
-            ?.setValue(this.agreement?.rentAmount);
-          this.searchAgreementValue = `${this.agreement?.matricule} - ${this.agreement?.apartment}`;
-          this.incomeFormGroup
-            .get('agreementId')
-            ?.setValue(this.agreement?.id ?? '');
+          console.log(this.agreement);
+          if (!this.agreement) return;
+          let paymentDateRange;
+          if (this.agreement?.payment?.rentStartDate) {
+            paymentDateRange =
+              this.rentPaymentPeriodService.getNextRentPaymentPeriod(
+                this.agreement?.payment?.rentStartDate,
+                this.agreement?.payment?.rentEndDate,
+              );
+          } else {
+            if (this.agreement?.startDate) {
+              paymentDateRange =
+                this.rentPaymentPeriodService.getNextRentPaymentPeriod(
+                  this.agreement?.startDate,
+                );
+            } else {
+              this.setDefaultStartDateAndEndDate();
+            }
+          }
+
+          this.searchAgreementValue = `${this.agreement?.matricule} - ${this.agreement?.apartment?.idNumber} - ${this.agreement?.apartment?.address}`;
         },
       });
     }
   }
-
-  onAgreementSelected(searchModalResult: SearchModalResultType) {
-    this.incomeFormGroup.get('agreementId')?.setValue(searchModalResult.id);
-    this.agreementSearchModalResult = searchModalResult;
-  }
-
-  onPropertySelected(property: Property) {
-    this.expenseFormGroup.get('propertyId')?.setValue(property.id);
-    this.propertySelectedValue = `${property.idNumber} - ${property.address}`;
-  }
-
-  get upsertPaymentForm() {
-    return this.incomeFormGroup.controls;
-  }
-  onStartDateChange($event: Date) {
-    this.incomeFormGroup
-      .get('rentStartDate')
-      ?.setValue($event.toISOString().split('T')[0]);
+  onPropertySelected(property: Property | undefined) {
+    this.expenseFormGroup.get('propertyId')?.setValue(property?.id ?? '');
+    this.propertySelectedValue = property
+      ? `${property.idNumber} - ${property.address}`
+      : '';
   }
 
   onPaymentDateChange($event: Date) {
-    this.activeForm
+    this.expenseFormGroup
       .get('paymentDate')
       ?.setValue($event.toISOString().split('T')[0]);
   }
 
-  onEndDateChange($event: Date) {
-    this.incomeFormGroup
-      .get('rentEndDate')
-      ?.setValue($event?.toISOString().split('T')[0]);
-  }
-
-  getTVAValue() {
-    if (this.withTax) {
-      return this.incomeFormGroup.get('tva')?.value;
-    }
-
-    return null;
-  }
-
   upsertPayment() {
     this.submitted = true;
-    console.log(this.activeForm);
-    if (this.activeForm.invalid) return;
+    if (this.expenseFormGroup.invalid) return;
     this.isLoading = true;
-    let incomeBody = {};
     let expenseBody = {};
     let expenseAgencyBody = {};
 
     const getPaymentDate = () => {
-      console.log(this.expenseFormGroup.get('paymentDate')?.value);
-      const d = new Date(this.activeForm.get('paymentDate')?.value);
+      const d = new Date(this.expenseFormGroup.get('paymentDate')?.value);
       const n = new Date();
       d.setHours(
         n.getHours(),
@@ -451,36 +344,6 @@ export class UpsertPaymentComponent implements OnInit {
       );
       return d;
     }; // add current time to date (for exact sorting)
-
-    if (this.paymentType === 'income') {
-      incomeBody = {
-        type: 'income',
-        amount: this.incomeFormGroup.get('amount')?.value,
-        extraCharge: this.incomeFormGroup.get('extraCharge')?.value,
-        category: this.incomeFormGroup.get('category')?.value,
-        label: this.incomeFormGroup.get('label')?.value,
-        ...(this.paymentType === 'income' && {
-          rentStartDate: this.incomeFormGroup.get('rentStartDate')?.value
-            ? new Date(this.incomeFormGroup.get('rentStartDate')?.value)
-            : null,
-        }),
-        ...(this.paymentType === 'income' && {
-          rentEndDate: this.incomeFormGroup.get('rentEndDate')?.value
-            ? new Date(this.incomeFormGroup.get('rentEndDate')?.value)
-            : null,
-        }),
-        method: this.incomeFormGroup.get('method')?.value,
-        agreementId: this.incomeFormGroup.get('agreementId')?.value,
-        paymentDate: getPaymentDate(),
-        ...(this.incomeFormGroup.get('notes')?.value && {
-          notes: this.incomeFormGroup.get('notes')?.value,
-        }),
-        tva: this.getTVAValue(),
-        bank: this.incomeFormGroup.get('bank')?.value,
-        checkNumber: `${this.incomeFormGroup.get('checkNumber')?.value}`,
-        transferNumber: `${this.incomeFormGroup.get('transferNumber')?.value}`,
-      };
-    }
 
     if (this.paymentType === 'expense') {
       expenseBody = {
@@ -523,7 +386,6 @@ export class UpsertPaymentComponent implements OnInit {
 
     let body: any = {
       ...(this.paymentDetails && { id: this.paymentDetails.id }),
-      ...(this.paymentType === 'income' && { ...incomeBody }),
       ...(this.paymentType === 'expense' && { ...expenseBody }),
       ...(this.paymentType === 'expense_agency' && { ...expenseAgencyBody }),
     };
@@ -534,9 +396,14 @@ export class UpsertPaymentComponent implements OnInit {
         .subscribe({
           next: (value) => {
             console.log(value.body);
+            const result = value.body;
+            this.paymentId = result.id;
+            // Same id after an update: the input setter won't fire, so reload explicitly
+            this.receiptExpenseComponent?.getPaymentDetails(this.paymentId);
+
             this.toastAlertService.showSuccessNotification(
-              'Paiement modifié avec succés',
-              'Paiement a été modifier avec succés',
+              'Opération modifiée avec succès',
+              'Opération modifiée avec succès',
             );
             this.isLoading = false;
           },
@@ -547,9 +414,14 @@ export class UpsertPaymentComponent implements OnInit {
     } else {
       this.paymentService.createPayment(body).subscribe({
         next: (value) => {
+          const result = value.body;
+          // The receipt doesn't exist yet (*ngIf): setting the id renders it,
+          // and its paymentId input setter loads the data
+          this.paymentId = result.id;
+
           this.toastAlertService.showSuccessNotification(
-            'Paiement ajoutée avec succés',
-            'Paiement a été créer avec succés',
+            'Opération ajoutée avec succès',
+            'Opération ajoutée avec succès',
           );
           this.isLoading = false;
         },

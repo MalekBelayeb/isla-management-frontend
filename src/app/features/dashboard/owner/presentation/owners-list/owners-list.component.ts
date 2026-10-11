@@ -104,7 +104,7 @@ export class OwnersListComponent {
     page: number,
     pageSize: number,
     filters?: Record<string, string>,
-    useCache = true,
+    useCache = false,
   ) {
     this.isLoadingFetchingOwners = true;
     const urlParameters = this.queryStringBuilder.create(
