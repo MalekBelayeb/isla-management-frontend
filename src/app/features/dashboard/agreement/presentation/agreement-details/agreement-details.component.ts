@@ -6,7 +6,6 @@ import { AgreementService } from '@dashboard/agreement/service/agreement.service
 import { DataTypes } from '@models/data';
 import { ConfirmDialogService } from '@shared/confirm-dialog/confirm-dialog.service';
 import { ToastAlertService } from '@shared/toast-alert/toast-alert.service';
-import { BsModalService } from 'ngx-bootstrap/modal';
 
 @Component({
   selector: 'app-agreement-details',
@@ -18,7 +17,6 @@ export class AgreementDetailsComponent implements OnInit {
     private route: ActivatedRoute,
     private agreementService: AgreementService,
     private confirmDialogService: ConfirmDialogService,
-    private modalService: BsModalService,
     private toastAlertService: ToastAlertService,
   ) {}
 

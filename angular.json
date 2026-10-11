@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "wassalni-business-dashboard": {
+    "isla-management-frontend": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -13,7 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser-esbuild",
           "options": {
-            "outputPath": "dist/wassalni-business-dashboard",
+            "outputPath": "dist/isla-management-frontend",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -67,14 +67,14 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "buildTarget": "wassalni-business-dashboard:build"
+            "buildTarget": "isla-management-frontend:build"
           },
           "configurations": {
             "production": {
-              "buildTarget": "wassalni-business-dashboard:build:production"
+              "buildTarget": "isla-management-frontend:build:production"
             },
             "development": {
-              "buildTarget": "wassalni-business-dashboard:build:development"
+              "buildTarget": "isla-management-frontend:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -82,7 +82,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "buildTarget": "wassalni-business-dashboard:build"
+            "buildTarget": "isla-management-frontend:build"
           }
         },
         "test": {

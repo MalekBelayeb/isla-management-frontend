@@ -7,7 +7,7 @@ import { AgreementsListComponent } from './presentation/agreements-list/agreemen
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { UpsertAgreementComponent } from './presentation/upsert-agreement/upsert-agreement.component';
-import { AgreementDetailsComponent } from './presentation/agreement-details/Agreement-details.component';
+import { AgreementDetailsComponent } from './presentation/agreement-details/agreement-details.component';
 import { DateRangePickerModule } from '@shared/form-inputs/date-range-picker/date-range-picker.module';
 import { SearchInputModule } from '@shared/search-input/search-input.module';
 import { SharedModule } from '@shared/shared.module';

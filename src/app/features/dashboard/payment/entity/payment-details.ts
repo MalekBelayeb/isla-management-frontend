@@ -6,7 +6,7 @@ export interface PaymentDetails {
   id: string;
   amount: string;
   extraCharge?: string;
-  tva?: string;
+  tva?: number;
   paymentDate: string;
   method: string;
   label: string;

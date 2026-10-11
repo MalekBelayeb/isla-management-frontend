@@ -184,7 +184,7 @@ export class UpsertIncomePaymentComponent implements OnInit {
         this.searchIncomePaymentMethodValue = this.paymentDetails?.method ?? '';
 
         this.searchAgreementValue = `${this.paymentDetails.agreement} - ${this.paymentDetails.apartment}`;
-        this.withTax = !!this.paymentDetails.tva;
+        this.withTax = this.paymentDetails.tva != 0;
       }
     }
   }
@@ -348,6 +348,7 @@ export class UpsertIncomePaymentComponent implements OnInit {
   upsertPayment() {
     this.submitted = true;
     console.log(this.incomeFormGroup.errors);
+    console.log(this.incomeFormGroup.value);
     if (this.incomeFormGroup.invalid) return;
     this.isLoading = true;
     let incomeBody = {};

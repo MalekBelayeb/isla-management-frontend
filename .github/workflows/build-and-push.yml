@@ -1,0 +1,90 @@
+name: Isla management frontend CI/CD
+
+on:
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Build and Deploy Isla Management Frontend
+    runs-on: ubuntu-latest
+
+    steps:
+      # --------------------------------------------------
+      # Checkout
+      # --------------------------------------------------
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        
+      # --------------------------------------------------
+      # Setup pnpm
+      # --------------------------------------------------
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      # --------------------------------------------------
+      # Setup Node.js
+      # --------------------------------------------------
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.23.1"
+          cache: "pnpm"
+
+      # --------------------------------------------------
+      # Verify versions
+      # --------------------------------------------------
+      - name: Check Node and pnpm versions
+        run: |
+          node --version
+          pnpm --version
+      # --------------------------------------------------
+      # Install Dependencies
+      # --------------------------------------------------
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+      # --------------------------------------------------
+      # Build
+      # --------------------------------------------------
+      - name: Build Angular Application
+        run: pnpm run build-prod
+
+      # --------------------------------------------------
+      # Verify Build
+      # --------------------------------------------------
+      - name: Verify Build
+        run: |
+          test -f dist/isla-management-frontend/index.html
+          echo "Angular build verified successfully"
+
+      # --------------------------------------------------
+      # Clean Remote Directory
+      # --------------------------------------------------
+      - name: Clean Remote Directory
+        uses: appleboy/ssh-action@v1.2.2
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            rm -rf /var/www/backoffice.isla-immobiliere/*
+
+      # --------------------------------------------------
+      # Deploy
+      # --------------------------------------------------
+      - name: Deploy to OVH
+        uses: appleboy/scp-action@v1.0.0
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          source: "dist/isla-management-frontend/*"
+          target: "/var/www/backoffice.isla-immobiliere"
+          strip_components: 3

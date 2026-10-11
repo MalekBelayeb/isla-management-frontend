@@ -3,7 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { AgreementComponent } from './agreement.component';
 import { AgreementsListComponent } from './presentation/agreements-list/agreements-list.component';
 import { UpsertAgreementComponent } from './presentation/upsert-agreement/upsert-agreement.component';
-import { AgreementDetailsComponent } from './presentation/agreement-details/Agreement-details.component';
+import { AgreementDetailsComponent } from './presentation/agreement-details/agreement-details.component';
 
 const routes: Routes = [
   {

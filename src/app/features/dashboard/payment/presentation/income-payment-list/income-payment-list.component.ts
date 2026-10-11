@@ -3,7 +3,7 @@ import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { QueryStringBuilder } from '@core/query-string-builder/query-string-builder';
 import { Agreement } from '@dashboard/agreement/entity/agreement';
-import { Apartment } from '@dashboard/apartment/entity/Apartment';
+import { Apartment } from '@dashboard/apartment/entity/apartment';
 import { Owner } from '@dashboard/owner/entity/owner';
 import { Payment } from '@dashboard/payment/entity/payment';
 import { PaymentMapper } from '@dashboard/payment/mappers/payment-mapper';

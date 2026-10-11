@@ -1,4 +1,4 @@
-import { Component, TemplateRef, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { QueryStringBuilder } from '@core/query-string-builder/query-string-builder';
@@ -9,14 +9,9 @@ import { Seed } from '@models/seed';
 import { ConfirmDialogService } from '@shared/confirm-dialog/confirm-dialog.service';
 import { SearchResult } from '@shared/search-input/search-input.component';
 import { PageChangedEvent } from 'ngx-bootstrap/pagination';
-import { Apartment } from '@dashboard/apartment/entity/Apartment';
-import {
-  apartmentPrefix,
-  defaultSearchLimit,
-  propertyPrefix,
-} from 'src/app/variables/consts';
+import { Apartment } from '@dashboard/apartment/entity/apartment';
+import { apartmentPrefix, propertyPrefix } from 'src/app/variables/consts';
 import { OwnerService } from '@dashboard/owner/service/owner.service';
-import { GetAllOwnersMapper } from '@dashboard/owner/mappers/get-all-owners-mapper';
 import { Owner } from '@dashboard/owner/entity/owner';
 import { Property } from '@dashboard/property/entity/property';
 

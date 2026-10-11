@@ -4,7 +4,7 @@ import { DataTypes } from '@models/data';
 import { apartmentPrefix, propertyPrefix } from 'src/app/variables/consts';
 import { PropertyMapper } from '@dashboard/property/mappers/property-mapper';
 import { GetOwnerDetailsMapper } from '@dashboard/owner/mappers/get-owner-details';
-import { Apartment } from '../entity/Apartment';
+import { Apartment } from '../entity/apartment';
 
 @Injectable({ providedIn: 'root' })
 export class ApartmentMapper {

@@ -3,28 +3,17 @@ import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { QueryStringBuilder } from '@core/query-string-builder/query-string-builder';
 import { Agreement } from '@dashboard/agreement/entity/agreement';
-import { AgreeementMapper } from '@dashboard/agreement/mappers/agreement.mapper';
-import { AgreementService } from '@dashboard/agreement/service/agreement.service';
-import { Apartment } from '@dashboard/apartment/entity/Apartment';
-import { ApartmentMapper } from '@dashboard/apartment/mappers/apartment-mapper';
-import { ApartmentService } from '@dashboard/apartment/service/apartment.service';
+import { Apartment } from '@dashboard/apartment/entity/apartment';
 import { Property } from '@dashboard/property/entity/property';
 import { Tenant } from '@dashboard/tenant/entity/tenant';
 import { TenantMapper } from '@dashboard/tenant/mappers/tenant-mapper';
 import { TenantService } from '@dashboard/tenant/service/tenant.service';
-import { DataTypes } from '@models/data';
 import { Seed } from '@models/seed';
 import { ConfirmDialogService } from '@shared/confirm-dialog/confirm-dialog.service';
 import { SearchResult } from '@shared/search-input/search-input.component';
-import { ToastAlertService } from '@shared/toast-alert/toast-alert.service';
-import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalRef } from 'ngx-bootstrap/modal';
 import { PageChangedEvent } from 'ngx-bootstrap/pagination';
-import {
-  agreementPrefix,
-  apartmentPrefix,
-  defaultSearchLimit,
-  propertyPrefix,
-} from 'src/app/variables/consts';
+import { agreementPrefix, propertyPrefix } from 'src/app/variables/consts';
 
 @Component({
   selector: 'app-tenants-list',

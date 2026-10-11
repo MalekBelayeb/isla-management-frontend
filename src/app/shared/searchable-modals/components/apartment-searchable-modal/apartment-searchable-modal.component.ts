@@ -15,7 +15,7 @@ import { BsDropdownDirective } from 'ngx-bootstrap/dropdown';
 import { Router } from '@angular/router';
 import { ApartmentService } from '@dashboard/apartment/service/apartment.service';
 import { ApartmentMapper } from '@dashboard/apartment/mappers/apartment-mapper';
-import { Apartment } from '@dashboard/apartment/entity/Apartment';
+import { Apartment } from '@dashboard/apartment/entity/apartment';
 import { apartmentPrefix } from 'src/app/variables/consts';
 
 @Component({

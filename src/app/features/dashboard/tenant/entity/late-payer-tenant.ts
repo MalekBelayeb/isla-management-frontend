@@ -1,5 +1,3 @@
-import { Agreement } from '@dashboard/agreement/entity/agreement';
-import { Apartment } from '@dashboard/apartment/entity/Apartment';
 import { TenantType } from './tenant-details';
 import { AgreementDetails } from '@dashboard/agreement/entity/agreement-details';
 import { ApartmentDetails } from '@dashboard/apartment/entity/apartment-details';

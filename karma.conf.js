@@ -25,7 +25,7 @@ module.exports = function (config) {
       suppressAll: true // removes the duplicated traces
     },
     coverageReporter: {
-      dir: require('path').join(__dirname, './coverage/wassalni-business-dashboard'),
+      dir: require('path').join(__dirname, './coverage/isla-management-frontend'),
       subdir: '.',
       reporters: [
         { type: 'html' },

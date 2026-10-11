@@ -19,7 +19,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { PageChangedEvent } from 'ngx-bootstrap/pagination';
-import { Apartment } from '@dashboard/apartment/entity/Apartment';
+import { Apartment } from '@dashboard/apartment/entity/apartment';
 
 type Trimester = {
   name: string;
