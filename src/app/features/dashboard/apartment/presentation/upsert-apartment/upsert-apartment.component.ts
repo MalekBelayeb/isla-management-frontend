@@ -70,7 +70,7 @@ export class UpsertApartmentComponent {
         this.formGroup
           .get('description')
           ?.setValue(this.apartmentDetails?.description);
-        this.searchPropertyValue = `${this.apartmentDetails.idNumber} - ${this.apartmentDetails.address}`;
+        this.searchPropertyValue = `${this.apartmentDetails.property?.idNumber} - ${this.apartmentDetails.address}`;
       }
     }
   }

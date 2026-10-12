@@ -3,12 +3,8 @@ import { ActivatedRoute } from '@angular/router';
 import { ApartmentService } from '@dashboard/apartment/service/apartment.service';
 import { ApartmentDetails } from '@dashboard/apartment/entity/apartment-details';
 import { ApartmentMapper } from '@dashboard/apartment/mappers/apartment-mapper';
-import { ConfirmDialogService } from '@shared/confirm-dialog/confirm-dialog.service';
 import { SearchResult } from '@shared/search-input/search-input.component';
-import { ToastAlertService } from '@shared/toast-alert/toast-alert.service';
-import { BsModalService } from 'ngx-bootstrap/modal';
 import { AgreementService } from '@dashboard/agreement/service/agreement.service';
-import { conts, defaultSearchLimit } from 'src/app/variables/consts';
 import { Agreement } from '@dashboard/agreement/entity/agreement';
 import { AgreeementMapper } from '@dashboard/agreement/mappers/agreement.mapper';
 import { Payment } from '@dashboard/payment/entity/payment';
@@ -38,7 +34,6 @@ export class ApartmentDetailsComponent implements OnInit {
     private agreementService: AgreementService,
     private paymentService: PaymentService,
     private agreeementMapper: AgreeementMapper,
-    private apartmentMapper: ApartmentMapper,
   ) {
     this.maxDate.setDate(this.maxDate.getDate() + 7);
     this.bsRangeValue = [this.bsValue, this.maxDate];
@@ -47,10 +42,6 @@ export class ApartmentDetailsComponent implements OnInit {
   apartmentDetails?: ApartmentDetails;
   financialBalance?: FinancialBalance;
 
-  propertiesInitialList: SearchResult[] = [
-    { id: '', title: 'B9 - 12 Rue Nozha, Ariana, Tunis' },
-    { id: '', title: 'B6 - 36 Rue Yasmine, Ariana, Tunis' },
-  ];
   ngOnInit(): void {
     this.getApartmentDetails();
     this.getAllAgreementByApartment(

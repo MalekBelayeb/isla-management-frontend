@@ -87,4 +87,4 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           source: "dist/isla-management-frontend/*"
           target: "/var/www/backoffice.isla-immobiliere"
-          strip_components: 3
+          strip_components: 2

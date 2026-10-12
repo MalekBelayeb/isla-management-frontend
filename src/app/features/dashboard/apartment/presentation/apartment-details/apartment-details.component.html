@@ -56,7 +56,8 @@
             </h5>
 
             <h5 class="h2 font-weight-bold mb-0 mt-1">
-              {{ apartmentDetails?.property?.idNumber }} - {{ apartmentDetails?.property?.address }}
+              {{ apartmentDetails?.property?.idNumber }} -
+              {{ apartmentDetails?.property?.address }}
             </h5>
           </div>
         </div>
@@ -127,10 +128,10 @@
           <tbody>
             <tr *ngFor="let payment of payments">
               <td>
-                <h4>{{ payment.agreement }}</h4>
+                <h4>{{ payment.agreement?.matricule }}</h4>
               </td>
               <td>
-                <h4>{{ payment.tenant }}</h4>
+                <h4>{{ payment.tenant?.fullname }}</h4>
               </td>
               <td>
                 <h4>{{ payment.amount }} DT</h4>
