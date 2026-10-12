@@ -4,8 +4,26 @@ $text-dark: #12122e;
 $text-muted: #4a586c;
 $border: #e9ecef;
 
+:host {
+  display: block;
+  max-width: 100%;
+}
+
+// Override the theme's fixed navbar-search widths (250px / hidden on xs)
+// so the trigger input shrinks with its container on small screens.
+.navbar-search {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  transform: none;
+}
+
 .search-wrapper {
+  width: 100%;
+
   .input-group {
+    flex-wrap: nowrap;
+    width: 100%;
     background: #fafbfc;
     border: 1.5px solid transparent;
     border-radius: 4px;
@@ -25,8 +43,11 @@ $border: #e9ecef;
       font-size: 0.875rem;
       color: $text-dark;
       cursor: pointer;
-      min-width: 210px;
+      flex: 1 1 auto;
+      width: 1%; // lets the flex item shrink instead of the theme's 250px
+      min-width: 0;
       padding-left: 8px;
+      text-overflow: ellipsis;
 
       &::placeholder {
         color: $text-muted;
