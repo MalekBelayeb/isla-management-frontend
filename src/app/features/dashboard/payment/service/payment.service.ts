@@ -90,4 +90,13 @@ export class PaymentService {
       },
     );
   }
+
+  getFinancialOperations(urlParameters: string) {
+    return this.httpClient.get<any>(
+      `${conts.getFinancialOperationsUrl}${urlParameters}`,
+      {
+        observe: 'response',
+      },
+    );
+  }
 }

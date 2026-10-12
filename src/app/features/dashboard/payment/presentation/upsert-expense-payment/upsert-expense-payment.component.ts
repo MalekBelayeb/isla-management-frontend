@@ -14,12 +14,10 @@ import {
 } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import {
-  agreementIdFieldRequiredIfcategoryIsRentValidator,
   bankFieldRequiredIfMethodIsCheckValidator,
   checkNumberFieldRequiredIfMethodIsCheckValidator,
   transferNumberFieldRequiredIfMethodIsTransferValidator,
 } from '@core/form-validators/form-validators';
-import { Agreement } from '@dashboard/agreement/entity/agreement';
 import { AgreementDetails } from '@dashboard/agreement/entity/agreement-details';
 import { PaymentDetails } from '@dashboard/payment/entity/payment-details';
 import { PaymentService } from '@dashboard/payment/service/payment.service';
@@ -38,7 +36,6 @@ import { propertyPrefix } from 'src/app/variables/consts';
   styleUrl: './upsert-expense-payment.component.css',
 })
 export class UpsertExpensePaymentComponent implements OnInit {
-
   expenseFormGroup: FormGroup;
 
   submitted = false;

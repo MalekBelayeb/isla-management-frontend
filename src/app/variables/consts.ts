@@ -35,4 +35,5 @@ export const conts = {
   getPaymentUrl: `${environment.url}/payment`,
   generateReceiptUrl: `${environment.url}/payment/generate-receipt`,
   getFinancialBalanceUrl: `${environment.url}/payment/balance`,
+  getFinancialOperationsUrl: `${environment.url}/payment/financial-operations`,
 };

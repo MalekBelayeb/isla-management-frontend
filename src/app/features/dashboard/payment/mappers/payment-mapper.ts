@@ -133,9 +133,11 @@ export class PaymentMapper {
           ? `${propertyPrefix}${item.agreement?.apartment?.property?.matricule ?? ''}`
           : item.property
             ? `${propertyPrefix}${item.property?.matricule}`
-            : item.type === 'expense_agency'
+            : item.type === 'expense_agency' || item.type === 'income_agency'
               ? 'Agence'
-              : '-',
+              : item.type === 'expense_bank' || item.type === 'income_bank'
+                ? 'Banque'
+                : '-',
         rentStartDate: item.rentStartDate,
         reason: `${this.getReason(item)} `,
         rentEndDate: item.rentEndDate,

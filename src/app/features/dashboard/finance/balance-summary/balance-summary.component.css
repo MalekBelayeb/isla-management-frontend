@@ -1,3 +1,64 @@
+/* ============================================================
+   CARD / HEADER (same layout as the bank/agency lists,
+   dark accent identifies the global summary)
+   ============================================================ */
+.payments-card {
+  border: none;
+  border-radius: 0.75rem;
+  box-shadow: 0 2px 16px rgba(50, 50, 93, 0.08), 0 1px 4px rgba(0, 0, 0, 0.06);
+  /* no overflow: hidden, it clipped the search-input dropdowns;
+     the header/footer round their own corners instead */
+}
+
+.payments-header {
+  padding: 1.25rem 1.5rem;
+  border-radius: 0.75rem 0.75rem 0 0;
+  background: #ffffff;
+  box-shadow: inset 0 3px 0 #172b4d;
+}
+
+.payments-header-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #172b4d 0%, #1a174d 100%);
+  box-shadow: 0 4px 10px rgba(23, 43, 77, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.payments-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #12122e;
+  letter-spacing: 0.01em;
+}
+
+.payments-count-badge {
+  display: inline-block;
+  background: #eceff5;
+  color: #172b4d;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.2em 0.6em;
+  border-radius: 999px;
+  letter-spacing: 0.02em;
+}
+
+.filter-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #4a586c;
+  margin-bottom: 0.4rem;
+  display: block;
+}
+
 /* Long values wrap inside their cell instead of overlapping the next ones */
 .table td.cell-wrap {
   white-space: normal;
@@ -22,4 +83,101 @@
   flex: 1 1 120px;
   min-width: 0;
   margin-bottom: 0;
+}
+
+/* ============================================================
+   PAGINATION FOOTER (same as income/expense lists)
+   ============================================================ */
+.payments-footer {
+  border-radius: 0 0 0.75rem 0.75rem;
+  background: #ffffff;
+  border-top: 1px solid #f0f2f8;
+}
+
+.pagination-info {
+  font-size: 0.8rem;
+}
+
+/* ============================================================
+   EMPTY STATE (same as income/expense lists)
+   ============================================================ */
+.payments-table--hidden {
+  display: none !important;
+}
+
+.payments-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3.5rem 1.5rem;
+  text-align: center;
+}
+
+.empty-icon-wrapper {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: #f0f2f8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: #adb5bd;
+  margin-bottom: 1rem;
+}
+
+.empty-title {
+  font-size: 0.975rem;
+  font-weight: 700;
+  color: #12122e;
+  margin-bottom: 0.35rem;
+}
+
+.empty-subtitle {
+  font-size: 0.85rem;
+  color: #4a586c;
+  margin-bottom: 0;
+  max-width: 360px;
+}
+
+/* ============================================================
+   SKELETON LOADING (same as income/expense lists)
+   ============================================================ */
+@keyframes skeleton-shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+
+.skel {
+  border-radius: 4px;
+  background: linear-gradient(
+    90deg,
+    #edf0f7 25%,
+    #f5f7fc 50%,
+    #edf0f7 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s ease-in-out infinite;
+}
+
+.skel-text {
+  height: 13px;
+}
+
+.skel-badge {
+  height: 22px;
+  border-radius: 999px;
+}
+
+/* stat cards: placeholder for the amount */
+.skel-value {
+  height: 22px;
+  width: 140px;
+}
+
+.skeleton-row td {
+  padding: 0.95rem 1rem;
+  border-top: 1px solid #f6f9fc;
+  vertical-align: middle;
 }

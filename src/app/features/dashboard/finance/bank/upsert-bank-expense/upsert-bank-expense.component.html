@@ -1,10 +1,30 @@
-<div class="card">
-  <div class="card-header">
-    <h3 class="mb-0">Créer une dépense agence</h3>
+<div class="card form-card">
+  <!-- Card Header -->
+  <div class="card-header border-0 form-header">
+    <div class="d-flex align-items-center">
+      <div class="form-header-icon mr-3">
+        <i class="fas fa-university"></i>
+      </div>
+      <div>
+        <h3 class="mb-0 form-title">
+          {{
+            paymentDetails
+              ? "Modifier opération bancaire de dépense"
+              : "Créer une opération bancaire de dépense"
+          }}
+        </h3>
+        <p class="text-muted text-sm mb-0 mt-1">
+          <span class="type-tag type-tag--expense">
+            <i class="fas fa-arrow-down mr-1"></i>Dépense
+          </span>
+          Opérations bancaires
+        </p>
+      </div>
+    </div>
   </div>
 
   <div class="card-body">
-    <form [formGroup]="agencyExpenseFormGroup" (ngSubmit)="upsertPayment()">
+    <form [formGroup]="bankExpenseFormGroup" (ngSubmit)="upsertPayment()">
       <div class="form-group row">
         <label
           class="col-md-2 col-form-label form-control-label"
@@ -26,7 +46,7 @@
                 focused: focus1 === true,
                 'is-invalid':
                   submitted &&
-                  agencyExpenseFormGroup.controls['amount']?.errors?.[
+                  bankExpenseFormGroup.controls['amount']?.errors?.[
                     'required'
                   ],
               }"
@@ -37,7 +57,7 @@
           <div
             *ngIf="
               submitted &&
-              agencyExpenseFormGroup.controls['amount']?.errors?.['required']
+              bankExpenseFormGroup.controls['amount']?.errors?.['required']
             "
             class="error-text"
           >
@@ -64,7 +84,7 @@
             [maxSize]="3"
             [isInvalid]="
               submitted &&
-              agencyExpenseFormGroup.controls['category'].errors?.['required']
+              bankExpenseFormGroup.controls['category'].errors?.['required']
             "
             [errorMessage]="
               'Champs incorrect, Catégorie de paiment est obligatoire'
@@ -116,7 +136,7 @@
             [maxSize]="3"
             [isInvalid]="
               submitted &&
-              agencyExpenseFormGroup.controls['method']?.errors?.['required']
+              bankExpenseFormGroup.controls['method']?.errors?.['required']
             "
             [errorMessage]="
               'Champs incorrect, Méthode de paiment est obligatoire'
@@ -125,6 +145,126 @@
             [searchResult]="paymentMethodTypeList"
             [isEditable]="false"
           ></app-search-input>
+        </div>
+      </div>
+
+      <div
+        *ngIf="bankExpenseFormGroup.get('method')?.value == 'check'"
+        class="form-group row"
+      >
+        <label
+          class="col-md-2 col-form-label form-control-label"
+          for="example-text-input"
+        >
+          Banque <span class="text-danger">*</span>
+        </label>
+
+        <div class="col-md-10">
+          <div class="input-group input-group-merge">
+            <input
+              formControlName="bank"
+              class="form-control"
+              id="example-text-input"
+              placeholder=""
+              type="text"
+              value=""
+              [ngClass]="{
+                focused: focus2 === true,
+                'is-invalid':
+                  submitted &&
+                  bankExpenseFormGroup.errors?.['bankFieldIsRequired'],
+              }"
+              (focus)="focus2 = true"
+              (blur)="focus2 = false"
+            />
+          </div>
+          <div
+            *ngIf="
+              submitted && bankExpenseFormGroup.errors?.['bankFieldIsRequired']
+            "
+            class="error-text"
+          >
+            Champs incorrect, Banque est obligatoire.
+          </div>
+        </div>
+      </div>
+      <div
+        *ngIf="bankExpenseFormGroup.get('method')?.value == 'check'"
+        class="form-group row"
+      >
+        <label
+          class="col-md-2 col-form-label form-control-label"
+          for="example-text-input"
+        >
+          Numéro de chéque <span class="text-danger">*</span>
+        </label>
+
+        <div class="col-md-10">
+          <div class="input-group input-group-merge">
+            <input
+              formControlName="checkNumber"
+              class="form-control"
+              id="example-text-input"
+              type="text"
+              value=""
+              [ngClass]="{
+                focused: focus3 === true,
+                'is-invalid':
+                  submitted &&
+                  bankExpenseFormGroup.errors?.['checkNumberFieldIsIncorrect'],
+              }"
+              (focus)="focus3 = true"
+              (blur)="focus3 = false"
+            />
+          </div>
+          <div
+            *ngIf="
+              submitted &&
+              bankExpenseFormGroup.errors?.['checkNumberFieldIsIncorrect']
+            "
+            class="error-text"
+          >
+            Champs incorrect, Numéro de chéque est incorrect.
+          </div>
+        </div>
+      </div>
+      <div
+        *ngIf="bankExpenseFormGroup.get('method')?.value == 'transfer'"
+        class="form-group row"
+      >
+        <label
+          class="col-md-2 col-form-label form-control-label"
+          for="example-text-input"
+        >
+          Numéro de virement <span class="text-danger">*</span>
+        </label>
+
+        <div class="col-md-10">
+          <div class="input-group input-group-merge">
+            <input
+              formControlName="transferNumber"
+              class="form-control"
+              id="example-text-input"
+              type="text"
+              [ngClass]="{
+                focused: focus4 === true,
+                'is-invalid':
+                  submitted &&
+                  bankExpenseFormGroup.errors?.['transferNumberFieldIsIncorrect'],
+              }"
+              (focus)="focus4 = true"
+              (blur)="focus4 = false"
+            />
+          </div>
+          <div
+            *ngIf="
+              submitted &&
+              bankExpenseFormGroup.errors?.['transferNumberFieldIsIncorrect']
+            "
+            class="error-text"
+          >
+            Champs incorrect, Numéro de virement est incorrect.
+          </div>
         </div>
       </div>
 
@@ -139,12 +279,12 @@
         <div class="col-md-10">
           <app-date-range-picker
             [startDateValue]="
-              agencyExpenseFormGroup.controls['paymentDate']?.value
+              bankExpenseFormGroup.controls['paymentDate']?.value
             "
             (startDate)="onPaymentDateChange($event)"
             [startDateInvalid]="
               submitted &&
-              agencyExpenseFormGroup.controls['paymentDate']?.errors?.[
+              bankExpenseFormGroup.controls['paymentDate']?.errors?.[
                 'required'
               ]
             "

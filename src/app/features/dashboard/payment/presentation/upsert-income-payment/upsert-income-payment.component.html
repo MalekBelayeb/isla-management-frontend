@@ -1,11 +1,26 @@
-<div class="card">
-  <div class="card-header">
-    <h3 *ngIf="paymentDetails" class="mb-0">Modifier opération de recette</h3>
-    <ng-container>
-      <small> <i class="fas fa-arrow-up text-success mr-1"> </i> Recette</small>
-    </ng-container>
-
-    <h3 *ngIf="!paymentDetails" class="mb-0">Créer une opération de recette</h3>
+<div class="card form-card">
+  <!-- Card Header -->
+  <div class="card-header border-0 form-header">
+    <div class="d-flex align-items-center">
+      <div class="form-header-icon mr-3">
+        <i class="fas fa-arrow-up"></i>
+      </div>
+      <div>
+        <h3 class="mb-0 form-title">
+          {{
+            paymentDetails
+              ? "Modifier opération de recette"
+              : "Créer une opération de recette"
+          }}
+        </h3>
+        <p class="text-muted text-sm mb-0 mt-1">
+          <span class="type-tag type-tag--income">
+            <i class="fas fa-arrow-up mr-1"></i>Recette
+          </span>
+          loyers, charges, cautions et autres
+        </p>
+      </div>
+    </div>
   </div>
 
   <div class="card-body">

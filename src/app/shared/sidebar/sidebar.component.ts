@@ -91,31 +91,18 @@ export const DASHBOARD_ROUTES: RouteInfo[] = [
     icontype: 'fa-solid fa-coins text-primary',
     children: [
       {
-        path: 'expenses',
-        title: 'Dépenses',
+        path: 'agency',
+        title: 'Agence',
         type: 'link',
       },
       {
-        path: 'income',
-        title: 'Recettes',
+        path: 'bank',
+        title: 'Banque',
         type: 'link',
       },
       {
         path: 'balance-summary',
-        title: 'Bilan',
-        type: 'link',
-      },
-    ],
-  },
-  {
-    path: '/dashboard/finance',
-    title: 'Agence',
-    type: 'sub',
-    icontype: 'fa-solid fa-suitcase text-primary',
-    children: [
-      {
-        path: 'expenses',
-        title: 'Comptes',
+        title: 'Bilan total',
         type: 'link',
       },
     ],

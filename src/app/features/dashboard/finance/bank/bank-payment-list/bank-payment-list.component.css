@@ -1,0 +1,134 @@
+/* ============================================================
+   CARD / HEADER (same layout as the income/expense lists,
+   blue accent to identify bank operations)
+   ============================================================ */
+.payments-card {
+  border: none;
+  border-radius: 0.75rem;
+  box-shadow: 0 2px 16px rgba(50, 50, 93, 0.08), 0 1px 4px rgba(0, 0, 0, 0.06);
+  /* no overflow: hidden, it clipped the search-input dropdowns;
+     the header/footer round their own corners instead */
+}
+
+.payments-header {
+  padding: 1.25rem 1.5rem;
+  border-radius: 0.75rem 0.75rem 0 0;
+  background: #ffffff;
+  box-shadow: inset 0 3px 0 #11cdef;
+}
+
+.payments-header-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #11cdef 0%, #1171ef 100%);
+  box-shadow: 0 4px 10px rgba(17, 205, 239, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.payments-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #12122e;
+  letter-spacing: 0.01em;
+}
+
+.payments-count-badge {
+  display: inline-block;
+  background: #e6f9fd;
+  color: #0b7d93;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.2em 0.6em;
+  border-radius: 999px;
+  letter-spacing: 0.02em;
+}
+
+.header-actions {
+  gap: 0.5rem;
+}
+
+.add-btn {
+  white-space: nowrap;
+  margin-top: 0.5rem;
+}
+
+@media (min-width: 576px) {
+  .add-btn {
+    margin-top: 0;
+  }
+}
+
+/* Long values wrap inside their cell instead of overlapping the next ones */
+.table td.cell-wrap {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  min-width: 140px;
+  max-width: 220px;
+}
+
+.table td.cell-wrap--wide {
+  min-width: 260px;
+  max-width: 420px;
+}
+
+/* Libellés: tenant and reason side by side, stacked when space is short */
+.label-cell {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+}
+
+.label-cell h4 {
+  flex: 1 1 120px;
+  min-width: 0;
+  margin-bottom: 0;
+}
+
+/* ============================================================
+   PAGINATION FOOTER (same as income/expense lists)
+   ============================================================ */
+.payments-footer {
+  border-radius: 0 0 0.75rem 0.75rem;
+  background: #ffffff;
+  border-top: 1px solid #f0f2f8;
+}
+
+.pagination-info {
+  font-size: 0.8rem;
+}
+
+/* ============================================================
+   SKELETON LOADING (same as income/expense lists)
+   ============================================================ */
+@keyframes skeleton-shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+
+.skel {
+  border-radius: 4px;
+  background: linear-gradient(
+    90deg,
+    #edf0f7 25%,
+    #f5f7fc 50%,
+    #edf0f7 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s ease-in-out infinite;
+}
+
+.skel-text {
+  height: 13px;
+}
+
+.skeleton-row td {
+  padding: 0.95rem 1rem;
+  border-top: 1px solid #f6f9fc;
+  vertical-align: middle;
+}

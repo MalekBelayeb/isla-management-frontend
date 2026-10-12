@@ -4,9 +4,18 @@
       <div class="card-body">
         <div class="row">
           <div class="col">
-            <h5 class="card-title text-uppercase text-muted mb-0">Dépenses</h5>
+            <h5 class="card-title text-uppercase text-muted mb-0">
+              Bilan total
+            </h5>
 
-            <span class="h2 font-weight-bold mb-0">
+            <div
+              *ngIf="isLoadingFetchingPayments"
+              class="skel skel-value mt-2"
+            ></div>
+            <span
+              *ngIf="!isLoadingFetchingPayments"
+              class="h2 font-weight-bold mb-0"
+            >
               {{ totalExpense | number: "1.3-3" }} TND
             </span>
           </div>
@@ -38,7 +47,14 @@
           <div class="col">
             <h5 class="card-title text-uppercase text-muted mb-0">Recettes</h5>
 
-            <span class="h2 font-weight-bold mb-0">
+            <div
+              *ngIf="isLoadingFetchingPayments"
+              class="skel skel-value mt-2"
+            ></div>
+            <span
+              *ngIf="!isLoadingFetchingPayments"
+              class="h2 font-weight-bold mb-0"
+            >
               {{ totalIncome | number: "1.3-3" }} TND
             </span>
           </div>
@@ -72,7 +88,14 @@
               BILAN TOTAL
             </h5>
 
-            <span class="h2 font-weight-bold mb-0">
+            <div
+              *ngIf="isLoadingFetchingPayments"
+              class="skel skel-value mt-2"
+            ></div>
+            <span
+              *ngIf="!isLoadingFetchingPayments"
+              class="h2 font-weight-bold mb-0"
+            >
               {{ netBalance | number: "1.3-3" }} TND
             </span>
           </div>
@@ -98,11 +121,21 @@
   </div>
 </div>
 
-<div class="card">
-  <div class="card-header border-0">
-    <div class="row">
-      <div class="col-6">
-        <h3 class="mb-0">Filtrer les dépenses</h3>
+<div class="card payments-card">
+  <!-- Card Header -->
+  <div class="card-header border-0 payments-header">
+    <div class="d-flex align-items-center justify-content-between flex-wrap">
+      <div class="d-flex align-items-center">
+        <div class="payments-header-icon mr-3">
+          <i class="fas fa-balance-scale"></i>
+        </div>
+        <div>
+          <h3 class="mb-0 payments-title">Bilan des opérations</h3>
+          <p class="text-muted text-sm mb-0 mt-1">
+            <span class="payments-count-badge">{{ totalLength }}</span>
+            opération(s) — recettes et dépenses des biens et de l’agence
+          </p>
+        </div>
       </div>
     </div>
   </div>
@@ -144,13 +177,75 @@
             ></app-search-input>
           </div>
         </div>
-        <div class="col-md-9">
+        <div class="col-md-3">
+          <div class="form-group">
+            <app-search-input
+              [clearInput]="false"
+              [prefixIcon]="'fas fa-search'"
+              [searchPlaceholder]="'Filtrer par type de paiement'"
+              [searchLabel]="'Résultats'"
+              [prefixText]="'Type:'"
+              [maxSize]="4"
+              [searchInputValue]="paymentTypeSearchValue.title"
+              (selectedResultItem)="onSelectedPaymentTypeSearchItem($event)"
+              [searchResult]="paymentTypes"
+              [isEditable]="false"
+            ></app-search-input>
+          </div>
+        </div>
+        <div class="col-md-6">
           <app-date-range-picker
             [startDateValue]="filtersFormGroup.controls['startDate']?.value"
             [endDateValue]="filtersFormGroup.controls['endDate']?.value"
             (startDate)="onStartDateChange($event)"
             (endDate)="onEndDateChange($event)"
           ></app-date-range-picker>
+        </div>
+      </div>
+
+      <div class="row mb-4">
+        <div class="col-md-3">
+          <div class="form-group">
+            <label class="filter-label">Propriétaire</label>
+            <app-owner-searchable-modal
+              [searchInputPlaceholder]="'Filtrer par propriétaire'"
+              [selectedValue]="searchOwnerValue"
+              (ownerClicked)="onSelectedOwnerSearchItem($event)"
+            />
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="form-group">
+            <label class="filter-label">Propriété (Bien)</label>
+            <app-property-searchable-modal
+              [searchInputPlaceholder]="'Filtrer par propriété (Bien)'"
+              [selectedValue]="searchPropertyValue"
+              (propertyClicked)="onSelectedPropertySearchItem($event)"
+            />
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="form-group">
+            <label class="filter-label">Contrat</label>
+            <app-agreement-searchable-modal
+              [searchInputPlaceholder]="'Filtrer par contrat'"
+              [selectedValue]="searchAgreementValue"
+              (agreementClicked)="onSelectedAgreementSearchItem($event)"
+            />
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="form-group">
+            <label class="filter-label">Local</label>
+            <app-apartment-searchable-modal
+              [searchInputPlaceholder]="'Filtrer par local'"
+              [selectedValue]="searchApartmentValue"
+              (apartmentClicked)="onSelectedApartmentSearchItem($event)"
+            />
+          </div>
         </div>
       </div>
 
@@ -165,17 +260,40 @@
   <div class="card-header">
     <div class="row align-items-center">
       <div class="col-8">
-        <h3 class="mb-0">Bilan</h3>
+        <h3 class="mb-0">Bilan total</h3>
       </div>
     </div>
   </div>
 
   <div class="card-body">
     <div class="table-responsive">
-      <table class="table align-items-center table-bordered table-hover">
+      <!-- Empty State -->
+      <div
+        *ngIf="
+          !isLoadingFetchingPayments && !financialBalance?.payments?.length
+        "
+        class="payments-empty-state"
+      >
+        <div class="empty-icon-wrapper">
+          <i class="fas fa-balance-scale"></i>
+        </div>
+        <h5 class="empty-title">Aucune opération trouvée</h5>
+        <p class="empty-subtitle">
+          Aucune recette ni dépense ne correspond à ces critères. Modifiez la
+          période ou les filtres puis relancez la recherche.
+        </p>
+      </div>
+
+      <table
+        class="table align-items-center table-bordered table-hover"
+        [class.payments-table--hidden]="
+          !isLoadingFetchingPayments && !financialBalance?.payments?.length
+        "
+      >
         <thead>
           <tr>
             <th scope="col">DATE</th>
+            <th scope="col">TYPE</th>
             <th scope="col">MÉTHODE</th>
             <th scope="col">COMPTES</th>
             <th class="text-center" scope="col">LIBELLES</th>
@@ -183,14 +301,27 @@
             <th scope="col">CREDIT</th>
           </tr>
         </thead>
-        <div
-          *ngIf="isLoadingFetchingPayments"
-          class="spinner-border text-primary mt-4 ml-4"
-          role="status"
-        ></div>
-        <tbody>
+
+        <!-- Skeleton rows while loading -->
+        <tbody *ngIf="isLoadingFetchingPayments">
+          <tr *ngFor="let i of [1, 2, 3, 4, 5, 6, 7, 8]" class="skeleton-row">
+            <td><div class="skel skel-text" style="width: 75px"></div></td>
+            <td><div class="skel skel-badge" style="width: 90px"></div></td>
+            <td><div class="skel skel-text" style="width: 85px"></div></td>
+            <td><div class="skel skel-text" style="width: 90px"></div></td>
+            <td><div class="skel skel-text" style="width: 220px"></div></td>
+            <td><div class="skel skel-text" style="width: 95px"></div></td>
+            <td><div class="skel skel-text" style="width: 95px"></div></td>
+          </tr>
+        </tbody>
+
+        <!-- Real rows -->
+        <tbody *ngIf="!isLoadingFetchingPayments">
           <tr *ngFor="let payment of financialBalance?.payments">
             <th scope="row">{{ payment.paymentDate | date: "dd/MM/yyyy" }}</th>
+            <td>
+              <h4>{{ getPaymentTypeTitle(payment.type) }}</h4>
+            </td>
             <td>
               <h4>{{ payment.method }}</h4>
             </td>
@@ -206,13 +337,25 @@
               </div>
             </td>
             <td>
-              <h4 *ngIf="payment.type == 'expense'">
+              <h4
+                *ngIf="
+                  payment.type == 'expense' ||
+                  payment.type == 'expense_agency' ||
+                  payment.type == 'expense_bank'
+                "
+              >
                 <i class="fas fa-arrow-down text-warning mr-3"> </i>
                 {{ payment.amount | number: "1.3-3" }} TND
               </h4>
             </td>
             <td>
-              <h4 *ngIf="payment.type == 'income'">
+              <h4
+                *ngIf="
+                  payment.type == 'income' ||
+                  payment.type == 'income_agency' ||
+                  payment.type == 'income_bank'
+                "
+              >
                 <i class="fas fa-arrow-up text-success mr-3"> </i>
                 {{ payment.totalAmount | number: "1.3-3" }} TND
               </h4>
@@ -220,7 +363,7 @@
           </tr>
 
           <tr>
-            <td colspan="4">
+            <td colspan="5">
               <div class="d-flex justify-content-end">
                 <h4>TOTAL:</h4>
               </div>
@@ -239,17 +382,49 @@
             </td>
           </tr>
           <tr>
-            <td colspan="4">
+            <td colspan="5">
               <div class="d-flex justify-content-end">
                 <h4>Solde créditeur:</h4>
               </div>
             </td>
-            <td colspan="2">
+            <td colspan="3">
               <h4>{{ financialBalance?.netBalance | number: "1.3-3" }} TND</h4>
             </td>
           </tr>
         </tbody>
       </table>
     </div>
+  </div>
+
+  <!-- Pagination Footer -->
+  <div class="card-footer payments-footer py-4">
+    <div class="d-flex align-items-center justify-content-between flex-wrap">
+      <span class="pagination-info text-muted">
+        Total : <strong>{{ totalLength }}</strong> opération(s)
+      </span>
+      <nav aria-label="Pagination des opérations">
+        <pagination
+          [totalItems]="totalLength"
+          [itemsPerPage]="pageSize"
+          [rotate]="false"
+          [boundaryLinks]="true"
+          [(ngModel)]="page"
+          firstText="&laquo;"
+          lastText="&raquo;"
+          [maxSize]="5"
+          class="justify-content-end mb-0"
+          [customPreviousTemplate]="prevTemplate"
+          (pageChanged)="pageChange($event)"
+          [customNextTemplate]="nextTemplate"
+        ></pagination>
+      </nav>
+    </div>
+
+    <ng-template #nextTemplate let-currentPage="currentPage">
+      <ng-container><i class="fas fa-angle-right"></i></ng-container>
+    </ng-template>
+    <ng-template #prevTemplate let-currentPage="currentPage">
+      <ng-container><i class="fas fa-angle-left"></i></ng-container>
+    </ng-template>
   </div>
 </div>

@@ -109,6 +109,7 @@ export class DataTypes {
 
   static paymentMethodTypeList: SearchResult[] = [
     { id: 'cash', title: 'Argent Liquide' },
+    { id: 'deposit', title: 'Versement' },
     { id: 'transfer', title: 'Virement Bancaire' },
     { id: 'check', title: 'Par Chéque' },
   ];
@@ -118,6 +119,11 @@ export class DataTypes {
     { id: 'others', title: 'Autres' },
   ];
 
+
+  static agencyIncomePaymentCategoryList: SearchResult[] = [
+    { id: 'agency_fees', title: "Frais d'agence" },
+    { id: 'others', title: 'Autres' },
+  ];
 
   static expensePaymentCategoryList: SearchResult[] = [
     { id: 'cleaning_fees', title: 'Frais de nettoyage' },

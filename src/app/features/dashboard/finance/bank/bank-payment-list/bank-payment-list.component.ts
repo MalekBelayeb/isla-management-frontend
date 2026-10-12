@@ -1,20 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { FinancialBalance } from '@dashboard/payment/entity/financial-balance';
+import { PageChangedEvent } from 'ngx-bootstrap/pagination';
 import { PaymentMapper } from '@dashboard/payment/mappers/payment-mapper';
 import { PaymentService } from '@dashboard/payment/service/payment.service';
-import { DataTypes } from '@models/data';
-import { ConfirmDialogService } from '@shared/confirm-dialog/confirm-dialog.service';
 import { SearchResult } from '@shared/search-input/search-input.component';
-import { ToastAlertService } from '@shared/toast-alert/toast-alert.service';
-import { BsModalService } from 'ngx-bootstrap/modal';
 
 @Component({
-  selector: 'app-income',
-  templateUrl: './income.component.html',
-  styleUrl: './income.component.css',
+  selector: 'app-bank-payment-list',
+  templateUrl: './bank-payment-list.component.html',
+  styleUrl: './bank-payment-list.component.css',
 })
-export class IncomeComponent implements OnInit {
+export class BankPaymentListComponent implements OnInit {
   bsValue = new Date();
   bsRangeValue: Date[];
   maxDate = new Date();
@@ -23,21 +20,23 @@ export class IncomeComponent implements OnInit {
     isAnimated: true,
     containerClass: 'theme-red',
   };
-
   filtersFormGroup: FormGroup;
   isLoadingFetchingPayments: boolean = false;
 
   paymentMethodTypeSearchValue: SearchResult = { id: 'all', title: 'Tout' };
   paymentMethodsType: SearchResult[] = [
+    { id: 'deposit', title: 'Versement Bancaire' },
+    { id: 'transfer', title: 'Virement Bancaire' },
+    { id: 'check', title: 'Par Chéque' },
+  ];
+  paymentTypeSearchValue: SearchResult = { id: 'all', title: 'Tout' };
+  paymentTypes: SearchResult[] = [
     { id: 'all', title: 'Tout' },
-    { id: 'cash', title: 'Argent liquide' },
-    { id: 'transfer,check', title: 'Banque' },
+    { id: 'income_bank', title: 'Recettes bancaires' },
+    { id: 'expense_bank', title: 'Dépenses bancaires' },
   ];
   constructor(
     private formBuilder: FormBuilder,
-    private confirmDialogService: ConfirmDialogService,
-    private modalService: BsModalService,
-    private toastAlertService: ToastAlertService,
     private paymentService: PaymentService,
   ) {
     this.maxDate.setDate(this.maxDate.getDate() + 7);
@@ -45,22 +44,40 @@ export class IncomeComponent implements OnInit {
     this.filtersFormGroup = this.formBuilder.group({
       startDate: new FormControl(''),
       endDate: new FormControl(''),
-      paymentMethod: new FormControl(''),
+      paymentMethod: new FormControl('check,deposit,transfer'),
+      type: new FormControl('income_bank,expense_bank'),
     });
   }
 
   ngOnInit(): void {
     this.setDefaultRentStartDateAndRentEndDate();
+
     this.getFinancialBalance();
   }
   financialBalance?: FinancialBalance;
 
+  totalLength = 0;
+  page = 1;
+  pageSize = 10;
+
+  pageChange(event: PageChangedEvent) {
+    this.page = event.page;
+    this.getFinancialBalance();
+  }
+
+  filterPayments() {
+    // new criteria: restart from the first page
+    this.page = 1;
+    this.getFinancialBalance();
+  }
+
   onSelectedPaymentMethodTypeSearchItem(event: SearchResult) {
     this.filtersFormGroup.get('paymentMethod')?.setValue(event.id);
   }
-  filterPayments() {
-    this.getFinancialBalance();
+  onSelectedPaymentTypeSearchItem(event: SearchResult) {
+    this.filtersFormGroup.get('type')?.setValue(event.id);
   }
+
   onStartDateChange($event: Date) {
     this.filtersFormGroup
       .get('startDate')
@@ -99,24 +116,39 @@ export class IncomeComponent implements OnInit {
   getFinancialBalance() {
     this.isLoadingFetchingPayments = true;
     if (this.filtersFormGroup.get('paymentMethod')?.value === 'all') {
-      this.filtersFormGroup.get('paymentMethod')?.setValue('');
+      this.filtersFormGroup
+        .get('paymentMethod')
+        ?.setValue('check,deposit,transfer');
+    }
+    if (this.filtersFormGroup.get('type')?.value === 'all') {
+      this.filtersFormGroup.get('type')?.setValue('income_bank,expense_bank');
     }
     const params = {
-      type: 'income',
+      type: this.filtersFormGroup.get('type')?.value,
+      page: `${this.page}`,
+      limit: `${this.pageSize}`,
       ...(this.filtersFormGroup.get('startDate')?.value && {
-        startDate: this.filtersFormGroup.get('startDate')?.value,
+        // first millisecond of the day, Tunis time (UTC+1, no DST)
+        startDate: `${this.filtersFormGroup.get('startDate')?.value}T00:00:00.000+01:00`,
       }),
       ...(this.filtersFormGroup.get('endDate')?.value && {
-        endDate: this.filtersFormGroup.get('endDate')?.value,
+        // last millisecond of the day, Tunis time
+        endDate: `${this.filtersFormGroup.get('endDate')?.value}T23:59:59.999+01:00`,
       }),
       ...(this.filtersFormGroup.get('paymentMethod')?.value && {
         paymentMethod: this.filtersFormGroup.get('paymentMethod')?.value,
       }),
     };
+
     const queryString = new URLSearchParams(params).toString();
-    this.paymentService.getFinancialBalance(`?${queryString}`).subscribe({
+    this.paymentService.getFinancialOperations(`?${queryString}`).subscribe({
       next: (value) => {
         this.financialBalance = PaymentMapper.mapFinancialBalance(value.body);
+        this.totalLength = value.body.totalPayment ?? 0;
+        this.isLoadingFetchingPayments = false;
+      },
+      error: () => {
+        // stop the skeleton rows
         this.isLoadingFetchingPayments = false;
       },
     });

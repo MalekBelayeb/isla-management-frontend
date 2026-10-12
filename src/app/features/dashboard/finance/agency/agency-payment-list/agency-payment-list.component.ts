@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { FinancialBalance } from '@dashboard/payment/entity/financial-balance';
+import { PageChangedEvent } from 'ngx-bootstrap/pagination';
 import { PaymentMapper } from '@dashboard/payment/mappers/payment-mapper';
 import { PaymentService } from '@dashboard/payment/service/payment.service';
 import { ConfirmDialogService } from '@shared/confirm-dialog/confirm-dialog.service';
@@ -9,11 +10,11 @@ import { ToastAlertService } from '@shared/toast-alert/toast-alert.service';
 import { BsModalService } from 'ngx-bootstrap/modal';
 
 @Component({
-  selector: 'app-expenses',
-  templateUrl: './expenses.component.html',
-  styleUrl: './expenses.component.css',
+  selector: 'app-agency-payment-list',
+  templateUrl: './agency-payment-list.component.html',
+  styleUrl: './agency-payment-list.component.css',
 })
-export class ExpensesComponent implements OnInit {
+export class AgencyPaymentListComponent implements OnInit {
   bsValue = new Date();
   bsRangeValue: Date[];
   maxDate = new Date();
@@ -22,6 +23,7 @@ export class ExpensesComponent implements OnInit {
     isAnimated: true,
     containerClass: 'theme-red',
   };
+
   filtersFormGroup: FormGroup;
   isLoadingFetchingPayments: boolean = false;
 
@@ -31,17 +33,8 @@ export class ExpensesComponent implements OnInit {
     { id: 'cash', title: 'Argent liquide' },
     { id: 'transfer,check', title: 'Banque' },
   ];
-  paymentTypeSearchValue: SearchResult = { id: 'all', title: 'Tout' };
-  paymentTypes: SearchResult[] = [
-    { id: 'all', title: 'Tout' },
-    { id: 'expense', title: 'Dépenses des biens' },
-    { id: 'expense_agency', title: 'Dépenses agence' },
-  ];
   constructor(
     private formBuilder: FormBuilder,
-    private confirmDialogService: ConfirmDialogService,
-    private modalService: BsModalService,
-    private toastAlertService: ToastAlertService,
     private paymentService: PaymentService,
   ) {
     this.maxDate.setDate(this.maxDate.getDate() + 7);
@@ -50,29 +43,33 @@ export class ExpensesComponent implements OnInit {
       startDate: new FormControl(''),
       endDate: new FormControl(''),
       paymentMethod: new FormControl(''),
-      type: new FormControl('expense,expense_agency'),
     });
   }
 
   ngOnInit(): void {
     this.setDefaultRentStartDateAndRentEndDate();
-
     this.getFinancialBalance();
   }
   financialBalance?: FinancialBalance;
 
-  filterPayments() {
-    this.getFinancialBalance();
-  }
-
   onSelectedPaymentMethodTypeSearchItem(event: SearchResult) {
     this.filtersFormGroup.get('paymentMethod')?.setValue(event.id);
   }
-  onSelectedPaymentTypeSearchItem(event: SearchResult) {
-    console.log(event.id);
-    this.filtersFormGroup.get('type')?.setValue(event.id);
+
+  totalLength = 0;
+  page = 1;
+  pageSize = 10;
+
+  pageChange(event: PageChangedEvent) {
+    this.page = event.page;
+    this.getFinancialBalance();
   }
 
+  filterPayments() {
+    // new criteria: restart from the first page
+    this.page = 1;
+    this.getFinancialBalance();
+  }
   onStartDateChange($event: Date) {
     this.filtersFormGroup
       .get('startDate')
@@ -113,28 +110,31 @@ export class ExpensesComponent implements OnInit {
     if (this.filtersFormGroup.get('paymentMethod')?.value === 'all') {
       this.filtersFormGroup.get('paymentMethod')?.setValue('');
     }
-    if (this.filtersFormGroup.get('type')?.value === 'all') {
-      this.filtersFormGroup
-        .get('type')
-        ?.setValue('expense,expense_agency');
-    }
     const params = {
-      type: this.filtersFormGroup.get('type')?.value,
+      type: 'income_agency,expense_agency',
+      page: `${this.page}`,
+      limit: `${this.pageSize}`,
       ...(this.filtersFormGroup.get('startDate')?.value && {
-        startDate: this.filtersFormGroup.get('startDate')?.value,
+        // first millisecond of the day, Tunis time (UTC+1, no DST)
+        startDate: `${this.filtersFormGroup.get('startDate')?.value}T00:00:00.000+01:00`,
       }),
       ...(this.filtersFormGroup.get('endDate')?.value && {
-        endDate: this.filtersFormGroup.get('endDate')?.value,
+        // last millisecond of the day, Tunis time
+        endDate: `${this.filtersFormGroup.get('endDate')?.value}T23:59:59.999+01:00`,
       }),
       ...(this.filtersFormGroup.get('paymentMethod')?.value && {
         paymentMethod: this.filtersFormGroup.get('paymentMethod')?.value,
       }),
     };
-
     const queryString = new URLSearchParams(params).toString();
-    this.paymentService.getFinancialBalance(`?${queryString}`).subscribe({
+    this.paymentService.getFinancialOperations(`?${queryString}`).subscribe({
       next: (value) => {
         this.financialBalance = PaymentMapper.mapFinancialBalance(value.body);
+        this.totalLength = value.body.totalPayment ?? 0;
+        this.isLoadingFetchingPayments = false;
+      },
+      error: () => {
+        // stop the skeleton rows
         this.isLoadingFetchingPayments = false;
       },
     });
