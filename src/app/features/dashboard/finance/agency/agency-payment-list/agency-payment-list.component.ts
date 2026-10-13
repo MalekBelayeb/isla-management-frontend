@@ -111,6 +111,7 @@ export class AgencyPaymentListComponent implements OnInit {
       this.filtersFormGroup.get('paymentMethod')?.setValue('');
     }
     const params = {
+      filterType: 'OR',
       type: 'income_agency,expense_agency',
       page: `${this.page}`,
       limit: `${this.pageSize}`,

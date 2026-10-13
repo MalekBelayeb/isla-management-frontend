@@ -30,6 +30,7 @@ export class BalanceSummaryComponent implements OnInit {
   filtersFormGroup: FormGroup;
   isLoadingFetchingPayments: boolean = false;
   paymentMethodTypeSearchValue: SearchResult = { id: 'all', title: 'Tout' };
+
   paymentMethodsType: SearchResult[] = [
     { id: 'all', title: 'Tout' },
     { id: 'cash', title: 'Argent liquide' },
@@ -37,6 +38,7 @@ export class BalanceSummaryComponent implements OnInit {
     { id: 'transfer', title: 'Virement Bancaire' },
     { id: 'deposit', title: 'Versement Bancaire' },
   ];
+
   paymentTypeSearchValue: SearchResult = { id: 'all', title: 'Tout' };
   paymentTypes: SearchResult[] = [
     { id: 'all', title: 'Tout' },
@@ -56,8 +58,8 @@ export class BalanceSummaryComponent implements OnInit {
     this.filtersFormGroup = this.formBuilder.group({
       startDate: new FormControl(''),
       endDate: new FormControl(''),
-      paymentMethod: new FormControl(''),
-      type: new FormControl(''),
+      paymentMethod: new FormControl('all'),
+      type: new FormControl('all'),
       ownerId: new FormControl(''),
       propertyId: new FormControl(''),
       agreementId: new FormControl(''),
@@ -111,7 +113,7 @@ export class BalanceSummaryComponent implements OnInit {
   onSelectedPaymentTypeSearchItem(event: SearchResult) {
     this.filtersFormGroup
       .get('type')
-      ?.setValue(event.id === 'all' ? '' : event.id);
+      ?.setValue(event.id === 'all' ? 'all' : event.id);
   }
 
   searchOwnerValue: string = '';
@@ -172,11 +174,18 @@ export class BalanceSummaryComponent implements OnInit {
     if (this.filtersFormGroup.get('paymentMethod')?.value === 'all') {
       this.filtersFormGroup.get('paymentMethod')?.setValue('');
     }
+    if (this.filtersFormGroup.get('type')?.value === 'all') {
+      this.filtersFormGroup
+        .get('type')
+        ?.setValue(
+          'expense,income,expense_agency,income_agency,expense_bank,income_bank',
+        );
+    }
+
     const params = {
-      // no type selected ("Tout"): every operation type
-      type:
-        this.filtersFormGroup.get('type')?.value ||
-        'expense,income,expense_agency,income_agency,expense_bank,income_bank',
+      filterType: 'AND',
+      paymentMethod: this.filtersFormGroup.get('paymentMethod')?.value,
+      type: this.filtersFormGroup.get('type')?.value,
       page: `${this.page}`,
       limit: `${this.pageSize}`,
       ...(this.filtersFormGroup.get('startDate')?.value && {
@@ -185,9 +194,7 @@ export class BalanceSummaryComponent implements OnInit {
       ...(this.filtersFormGroup.get('endDate')?.value && {
         endDate: this.filtersFormGroup.get('endDate')?.value,
       }),
-      ...(this.filtersFormGroup.get('paymentMethod')?.value && {
-        paymentMethod: this.filtersFormGroup.get('paymentMethod')?.value,
-      }),
+
       ...(this.filtersFormGroup.get('ownerId')?.value && {
         ownerId: this.filtersFormGroup.get('ownerId')?.value,
       }),

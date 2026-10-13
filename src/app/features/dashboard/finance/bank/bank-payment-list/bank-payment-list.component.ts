@@ -25,6 +25,7 @@ export class BankPaymentListComponent implements OnInit {
 
   paymentMethodTypeSearchValue: SearchResult = { id: 'all', title: 'Tout' };
   paymentMethodsType: SearchResult[] = [
+    { id: 'all', title: 'Tout' },
     { id: 'deposit', title: 'Versement Bancaire' },
     { id: 'transfer', title: 'Virement Bancaire' },
     { id: 'check', title: 'Par Chéque' },
@@ -34,6 +35,8 @@ export class BankPaymentListComponent implements OnInit {
     { id: 'all', title: 'Tout' },
     { id: 'income_bank', title: 'Recettes bancaires' },
     { id: 'expense_bank', title: 'Dépenses bancaires' },
+    { id: 'income', title: 'Recettes' },
+    { id: 'expense', title: 'Dépenses' },
   ];
   constructor(
     private formBuilder: FormBuilder,
@@ -44,8 +47,8 @@ export class BankPaymentListComponent implements OnInit {
     this.filtersFormGroup = this.formBuilder.group({
       startDate: new FormControl(''),
       endDate: new FormControl(''),
-      paymentMethod: new FormControl('check,deposit,transfer'),
-      type: new FormControl('income_bank,expense_bank'),
+      paymentMethod: new FormControl('all'),
+      type: new FormControl('all'),
     });
   }
 
@@ -59,6 +62,7 @@ export class BankPaymentListComponent implements OnInit {
   totalLength = 0;
   page = 1;
   pageSize = 10;
+  filterType = 'AND';
 
   pageChange(event: PageChangedEvent) {
     this.page = event.page;
@@ -74,6 +78,7 @@ export class BankPaymentListComponent implements OnInit {
   onSelectedPaymentMethodTypeSearchItem(event: SearchResult) {
     this.filtersFormGroup.get('paymentMethod')?.setValue(event.id);
   }
+
   onSelectedPaymentTypeSearchItem(event: SearchResult) {
     this.filtersFormGroup.get('type')?.setValue(event.id);
   }
@@ -115,15 +120,21 @@ export class BankPaymentListComponent implements OnInit {
   }
   getFinancialBalance() {
     this.isLoadingFetchingPayments = true;
+
     if (this.filtersFormGroup.get('paymentMethod')?.value === 'all') {
       this.filtersFormGroup
         .get('paymentMethod')
         ?.setValue('check,deposit,transfer');
     }
+
     if (this.filtersFormGroup.get('type')?.value === 'all') {
-      this.filtersFormGroup.get('type')?.setValue('income_bank,expense_bank');
+      this.filtersFormGroup
+        .get('type')
+        ?.setValue('income_bank,expense_bank,income,expense');
     }
+
     const params = {
+      filterType: this.filterType,
       type: this.filtersFormGroup.get('type')?.value,
       page: `${this.page}`,
       limit: `${this.pageSize}`,
