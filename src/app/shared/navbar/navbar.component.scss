@@ -9,7 +9,45 @@ $border:      #e9ecef;
   nav#navbar-main {
     background: #fff !important;
     box-shadow: 0 1px 6px rgba(50, 50, 93, 0.07);
-    padding: 0.92rem 0;
+    padding: 0.92rem 0 !important;
+  }
+
+  .navbar-container {
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
+
+    @media (min-width: 576px) {
+      padding-left: 1.5rem !important;
+      padding-right: 1.5rem !important;
+    }
+  }
+
+  // The search trigger shrinks before the avatar does
+  .navbar-search-host {
+    flex: 0 1 auto;
+    min-width: 0;
+  }
+
+  // Keep the user menu inside the viewport on phones
+  @media (max-width: 575.98px) {
+    .user-dropdown {
+      min-width: 0;
+      width: calc(100vw - 1.5rem);
+      max-width: 300px;
+    }
+  }
+}
+
+.menu-toggle-btn {
+  border: 0;
+  background: transparent;
+  flex-shrink: 0;
+
+  // .nav-icon-btn forces display:flex, so hide explicitly where the sidebar is visible
+  @media (min-width: 768px) {
+    &.nav-icon-btn {
+      display: none !important;
+    }
   }
 }
 

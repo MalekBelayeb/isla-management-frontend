@@ -1,8 +1,23 @@
-<div class="">
-    <app-sidebar [user]="user" [getUserIsLoading]="fetchUserIsLoading" class="sidenav fixed-left"></app-sidebar>
+<div class="dashboard-layout">
+    <app-sidebar
+        [user]="user"
+        [getUserIsLoading]="fetchUserIsLoading"
+        [mobileOpen]="isSidebarOpen"
+        (mobileClose)="isSidebarOpen = false"
+    ></app-sidebar>
+    <div
+        *ngIf="isSidebarOpen"
+        class="sidebar-backdrop d-md-none"
+        (click)="isSidebarOpen = false"
+    ></div>
     <div class="main-content">
-        <app-navbar [user]="user" (logoutClick)="logoutUser()" [getUserIsLoading]="fetchUserIsLoading"></app-navbar>
-        <div style="height: 86vh; overflow-y: scroll;" class="p-5">
+        <app-navbar
+            [user]="user"
+            (logoutClick)="logoutUser()"
+            (menuToggle)="isSidebarOpen = !isSidebarOpen"
+            [getUserIsLoading]="fetchUserIsLoading"
+        ></app-navbar>
+        <div class="page-content">
             <router-outlet></router-outlet>
         </div>
         <app-footer></app-footer>

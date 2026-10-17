@@ -2,12 +2,21 @@
   class="navbar navbar-top navbar-expand border-bottom bg-white navbar-light"
   id="navbar-main"
 >
-  <div class="container-fluid px-4">
+  <div class="container-fluid navbar-container">
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <!-- Mobile menu toggle -->
+      <button
+        type="button"
+        class="nav-icon-btn menu-toggle-btn mr-2"
+        aria-label="Ouvrir le menu"
+        (click)="menuToggle.emit()"
+      >
+        <i class="fas fa-bars"></i>
+      </button>
       <!-- Search trigger -->
-      <app-tenant-searchable-modal></app-tenant-searchable-modal>
+      <app-tenant-searchable-modal class="navbar-search-host"></app-tenant-searchable-modal>
       <!-- Notifications -->
-      <ul class="navbar-nav align-items-center ml-md-auto">
+      <ul class="navbar-nav align-items-center ml-auto">
         <!-- <li class="nav-item dropdown" dropdown placement="bottom-right">
           <a
             class="nav-link nav-icon-btn"
@@ -70,7 +79,7 @@
       </ul>
 
       <!-- User menu -->
-      <ul class="navbar-nav align-items-center ml-3">
+      <ul class="navbar-nav align-items-center ml-2 ml-md-3">
         <li class="nav-item dropdown" dropdown placement="bottom-right">
           <a
             class="nav-link user-nav-link d-flex align-items-center"

@@ -5,3 +5,14 @@
   background-color: #f0fbfe;
   font-size: 0.875rem;
 }
+
+/* The receipt is a fixed 800px print layout: scroll it on narrow screens instead of reflowing it */
+.receipt-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.receipt-scroll .rent-receipt {
+  width: max-content;
+  min-width: 100%;
+}

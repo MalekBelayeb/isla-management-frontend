@@ -1,0 +1,46 @@
+/* Sidebar widths: mobile (<768) off-canvas, tablet (768–1199) 68px icons, desktop (≥1200) 250px */
+.main-content {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh;
+  margin-left: 0;
+  transition: margin-left 0.2s ease;
+}
+
+.page-content {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  /* ≥ the 15px Bootstrap gutter so top-level .row negative margins don't overflow */
+  padding: 1rem;
+}
+
+.sidebar-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1040;
+  background: rgba(18, 18, 46, 0.45);
+}
+
+@media (min-width: 576px) {
+  .page-content {
+    padding: 1.5rem 1.25rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .main-content {
+    margin-left: 68px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .main-content {
+    margin-left: 250px;
+  }
+
+  .page-content {
+    padding: 3rem;
+  }
+}

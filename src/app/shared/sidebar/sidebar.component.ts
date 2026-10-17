@@ -1,5 +1,12 @@
-import { Component, HostListener, Input, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import {
+  Component,
+  EventEmitter,
+  HostListener,
+  Input,
+  OnInit,
+  Output,
+} from '@angular/core';
+import { NavigationEnd, Router } from '@angular/router';
 import { User } from '@models/user';
 
 export interface RouteInfo {
@@ -120,24 +127,41 @@ export class SidebarComponent implements OnInit {
   public menuItems: any[] = [];
   public isCollapsed = true;
 
+  // <768px: off-canvas full menu, 768–1199px: icon-only menu, ≥1200px: full menu
+  isMobile = false;
   isMinimalist = false;
 
   constructor(private router: Router) {}
 
   @Input() user?: User;
   @Input() getUserIsLoading = false;
+  @Input() mobileOpen = false;
+
+  @Output() mobileClose = new EventEmitter<void>();
 
   ngOnInit() {
-    this.isMinimalist = window.innerWidth < 1200;
+    this.updateLayout();
     this.menuItems = DASHBOARD_ROUTES.filter((menuItem) => menuItem);
     this.router.events.subscribe((event) => {
       this.isCollapsed = true;
+      if (event instanceof NavigationEnd && this.mobileOpen) {
+        this.mobileClose.emit();
+      }
     });
   }
 
-  @HostListener('window:resize', ['$event'])
+  @HostListener('window:resize')
   onResize() {
-    this.isMinimalist = window.innerWidth < 1200;
+    this.updateLayout();
+  }
+
+  private updateLayout() {
+    const width = window.innerWidth;
+    this.isMobile = width < 768;
+    this.isMinimalist = width >= 768 && width < 1200;
+    if (!this.isMobile && this.mobileOpen) {
+      this.mobileClose.emit();
+    }
   }
 
   navigateTo(parent: string, child: string) {

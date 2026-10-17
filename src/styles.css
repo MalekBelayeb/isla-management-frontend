@@ -37,6 +37,26 @@
   background: #f7f8ff;
 }
 
+/* Pagination: wrap instead of overflowing the card on narrow screens */
+.pagination {
+  flex-wrap: wrap;
+  row-gap: 0.35rem;
+}
+
+@media (max-width: 575.98px) {
+  .pagination .page-link {
+    width: 30px;
+    height: 30px;
+    margin: 0 2px;
+    font-size: 0.8rem;
+  }
+
+  .card-footer .pagination-info {
+    width: 100%;
+    margin-bottom: 0.75rem;
+  }
+}
+
 .action-dropdown .dropdown-divider {
   margin: 0.25rem 0;
   border-color: #e9ecef;

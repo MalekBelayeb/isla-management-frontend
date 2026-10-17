@@ -1,5 +1,10 @@
 <nav
-  [ngClass]="{ 'minimal-sidenav': isMinimalist, sidenav: !isMinimalist }"
+  [ngClass]="{
+    'minimal-sidenav': isMinimalist,
+    sidenav: !isMinimalist,
+    'mobile-sidenav': isMobile,
+    'mobile-open': isMobile && mobileOpen
+  }"
   class="navbar navbar-vertical fixed-left navbar-expand-xs navbar-light bg-white"
   id="sidenav-main"
 >
@@ -20,6 +25,15 @@
           <span class="sidebar-brand-name ml-2">{{ user.societyName }}</span>
         </div>
       </a>
+      <button
+        *ngIf="isMobile"
+        type="button"
+        class="sidebar-close-btn ml-auto"
+        aria-label="Fermer le menu"
+        (click)="mobileClose.emit()"
+      >
+        <i class="fas fa-times"></i>
+      </button>
     </div>
 
     <!-- Minimalist sidebar header -->
@@ -149,37 +163,38 @@
               </a>
             </div>
 
-            <div *ngIf="menuitem.children" class="minimalist-item">
+            <div *ngIf="menuitem.children" class="minimalist-item" dropdown>
               <a
-                routerLinkActive="active"
-                dropdown
                 dropdownToggle
-                [routerLink]="[]"
+                href="javascript:void(0)"
                 class="nav-link minimalist-link"
                 [title]="menuitem.title"
                 [attr.aria-label]="menuitem.title"
               >
                 <i class="fas {{ menuitem.icontype }}"></i>
-                <div
-                  class="dropdown-menu dropdown-menu-arrow dropdown-menu-left minimal-dropdown"
-                  *dropdownMenu
-                >
-                  <div class="dropdown-header noti-title">
-                    <h6 class="text-overflow m-0">{{ menuitem.title }}</h6>
-                  </div>
-                  <ul class="nav flex-column px-1">
-                    <li
-                      *ngFor="let childitem of menuitem.children"
-                      class="dropdown-item w-100 p-0"
-                      routerLink="{{ menuitem.path }}/{{ childitem.path }}"
-                    >
-                      <a class="minimal-nav-item-link d-flex w-100">
-                        {{ childitem.title }}
-                      </a>
-                    </li>
-                  </ul>
-                </div>
               </a>
+              <div
+                class="dropdown-menu dropdown-menu-arrow dropdown-menu-left minimal-dropdown"
+                *dropdownMenu
+              >
+                <div class="dropdown-header noti-title">
+                  <h6 class="text-overflow m-0">{{ menuitem.title }}</h6>
+                </div>
+                <ul class="nav flex-column px-1">
+                  <li
+                    *ngFor="let childitem of menuitem.children"
+                    class="dropdown-item w-100 p-0"
+                  >
+                    <a
+                      class="minimal-nav-item-link d-flex w-100"
+                      [routerLink]="menuitem.path + '/' + childitem.path"
+                      routerLinkActive="active"
+                    >
+                      {{ childitem.title }}
+                    </a>
+                  </li>
+                </ul>
+              </div>
             </div>
           </li>
         </ul>

@@ -39,6 +39,7 @@ export class NavbarComponent implements OnInit {
   @Input() getUserIsLoading = false;
 
   @Output() logoutClick = new EventEmitter<void>();
+  @Output() menuToggle = new EventEmitter<void>();
 
   placesAutocompleResult: SearchResult[] = [];
   sidenavOpen: boolean = true;
